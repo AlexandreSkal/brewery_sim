@@ -1,0 +1,6479 @@
+# ============================================================
+# tags.toml — Complete IO Tag Registry
+# LIM_H / LIM_L tags carry the physical range for each analog
+# These are static values — use them in Ignition UDT expressions
+# to compute % from engineering units without hardcoding ranges.
+#
+# Example Ignition expression for HLT1 fill %:
+#   ({AI_HLT1_LT} - {AI_HLT1_LT_LIM_L}) /
+#   ({AI_HLT1_LT_LIM_H} - {AI_HLT1_LT_LIM_L}) * 100
+# ============================================================
+
+[tags.DI_SILO_A_LS_HI]
+area = "a100_milling"
+type = "DI"
+description = "High level silo malte A"
+unit = "bool"
+initial = 0
+equipment = "SILO_A"
+
+[tags.DI_SILO_A_LS_LO]
+area = "a100_milling"
+type = "DI"
+description = "Low level silo malte A"
+unit = "bool"
+initial = 1
+equipment = "SILO_A"
+
+[tags.DI_SILO_B_LS_HI]
+area = "a100_milling"
+type = "DI"
+description = "High level silo malte B"
+unit = "bool"
+initial = 0
+equipment = "SILO_B"
+
+[tags.DI_SILO_B_LS_LO]
+area = "a100_milling"
+type = "DI"
+description = "Low level silo malte B"
+unit = "bool"
+initial = 1
+equipment = "SILO_B"
+
+[tags.DI_MILL_A_RUN]
+area = "a100_milling"
+type = "DI"
+description = "Mill A running"
+unit = "bool"
+initial = 0
+equipment = "MILL_A"
+
+[tags.DI_MILL_A_FAULT]
+area = "a100_milling"
+type = "DI"
+description = "Motor fault Mill A"
+unit = "bool"
+initial = 0
+equipment = "MILL_A"
+
+[tags.DI_MILL_B_RUN]
+area = "a100_milling"
+type = "DI"
+description = "Mill B running"
+unit = "bool"
+initial = 0
+equipment = "MILL_B"
+
+[tags.DI_MILL_B_FAULT]
+area = "a100_milling"
+type = "DI"
+description = "Motor fault Mill B"
+unit = "bool"
+initial = 0
+equipment = "MILL_B"
+
+[tags.DI_AUG_A_RUN]
+area = "a100_milling"
+type = "DI"
+description = "Auger A running"
+unit = "bool"
+initial = 0
+equipment = "MILL_A"
+
+[tags.DI_AUG_A_FAULT]
+area = "a100_milling"
+type = "DI"
+description = "Motor fault Auger A"
+unit = "bool"
+initial = 0
+equipment = "MILL_A"
+
+[tags.DI_AUG_B_RUN]
+area = "a100_milling"
+type = "DI"
+description = "Auger B running"
+unit = "bool"
+initial = 0
+equipment = "MILL_B"
+
+[tags.DI_AUG_B_FAULT]
+area = "a100_milling"
+type = "DI"
+description = "Motor fault Auger B"
+unit = "bool"
+initial = 0
+equipment = "MILL_B"
+
+[tags.DI_GRC_A_LS_HI]
+area = "a100_milling"
+type = "DI"
+description = "High level grist case A"
+unit = "bool"
+initial = 0
+equipment = "MILL_A"
+
+[tags.DI_GRC_B_LS_HI]
+area = "a100_milling"
+type = "DI"
+description = "High level grist case B"
+unit = "bool"
+initial = 0
+equipment = "MILL_B"
+
+[tags.DO_MILL_A_RUN]
+area = "a100_milling"
+type = "DO"
+description = "Start command Mill A"
+unit = "bool"
+initial = 0
+equipment = "MILL_A"
+
+[tags.DO_MILL_B_RUN]
+area = "a100_milling"
+type = "DO"
+description = "Start command Mill B"
+unit = "bool"
+initial = 0
+equipment = "MILL_B"
+
+[tags.DO_AUG_A_RUN]
+area = "a100_milling"
+type = "DO"
+description = "Start command Auger A"
+unit = "bool"
+initial = 0
+equipment = "MILL_A"
+
+[tags.DO_AUG_B_RUN]
+area = "a100_milling"
+type = "DO"
+description = "Start command Auger B"
+unit = "bool"
+initial = 0
+equipment = "MILL_B"
+
+[tags.AI_SILO_A_WT]
+area = "a100_milling"
+type = "AI"
+description = "Malt silo weight A"
+unit = "kg"
+min = 0
+max = 5000
+initial = 3500
+equipment = "SILO_A"
+
+[tags.AI_SILO_B_WT]
+area = "a100_milling"
+type = "AI"
+description = "Malt silo weight B"
+unit = "kg"
+min = 0
+max = 5000
+initial = 4200
+equipment = "SILO_B"
+
+[tags.AI_SILO_A_WT_LIM_H]
+area        = "a100_milling"
+type        = "AI"
+description = "High range limit — AI_SILO_A_WT"
+unit        = "kg"
+min         = 0
+max         = 5000
+initial     = 5000
+equipment   = "SILO_A"
+
+[tags.AI_SILO_A_WT_LIM_L]
+area        = "a100_milling"
+type        = "AI"
+description = "Low range limit — AI_SILO_A_WT"
+unit        = "kg"
+min         = 0
+max         = 5000
+initial     = 0
+equipment   = "SILO_A"
+
+[tags.AI_SILO_B_WT_LIM_H]
+area        = "a100_milling"
+type        = "AI"
+description = "High range limit — AI_SILO_B_WT"
+unit        = "kg"
+min         = 0
+max         = 5000
+initial     = 5000
+equipment   = "SILO_B"
+
+[tags.AI_SILO_B_WT_LIM_L]
+area        = "a100_milling"
+type        = "AI"
+description = "Low range limit — AI_SILO_B_WT"
+unit        = "kg"
+min         = 0
+max         = 5000
+initial     = 0
+equipment   = "SILO_B"
+
+[tags.AI_GRC_A_WT]
+area = "a100_milling"
+type = "AI"
+description = "Grist case weight A"
+unit = "kg"
+min = 0
+max = 500
+initial = 0
+equipment = "MILL_A"
+
+[tags.AI_GRC_A_WT_LIM_H]
+area = "a100_milling"
+type = "AI"
+description = "High range limit — AI_GRC_A_WT"
+unit = "kg"
+equipment = "MILL_A"
+min = 0
+max = 500
+initial = 500
+
+[tags.AI_GRC_A_WT_LIM_L]
+area = "a100_milling"
+type = "AI"
+description = "Low range limit — AI_GRC_A_WT"
+unit = "kg"
+equipment = "MILL_A"
+min = 0
+max = 500
+initial = 0
+
+[tags.AI_GRC_B_WT]
+area = "a100_milling"
+type = "AI"
+description = "Grist case weight B"
+unit = "kg"
+min = 0
+max = 500
+initial = 0
+equipment = "MILL_B"
+
+[tags.AI_GRC_B_WT_LIM_H]
+area = "a100_milling"
+type = "AI"
+description = "High range limit — AI_GRC_B_WT"
+unit = "kg"
+equipment = "MILL_B"
+min = 0
+max = 500
+initial = 500
+
+[tags.AI_GRC_B_WT_LIM_L]
+area = "a100_milling"
+type = "AI"
+description = "Low range limit — AI_GRC_B_WT"
+unit = "kg"
+equipment = "MILL_B"
+min = 0
+max = 500
+initial = 0
+
+[tags.AI_MILL_A_CURR]
+area = "a100_milling"
+type = "AI"
+description = "Motor current Mill A"
+unit = "A"
+min = 0
+max = 50
+initial = 0
+equipment = "MILL_A"
+
+[tags.AI_MILL_A_CURR_LIM_H]
+area = "a100_milling"
+type = "AI"
+description = "High range limit — AI_MILL_A_CURR"
+unit = "A"
+equipment = "MILL_A"
+min = 0
+max = 50
+initial = 50
+
+[tags.AI_MILL_A_CURR_LIM_L]
+area = "a100_milling"
+type = "AI"
+description = "Low range limit — AI_MILL_A_CURR"
+unit = "A"
+equipment = "MILL_A"
+min = 0
+max = 50
+initial = 0
+
+[tags.AI_MILL_B_CURR]
+area = "a100_milling"
+type = "AI"
+description = "Motor current Mill B"
+unit = "A"
+min = 0
+max = 50
+initial = 0
+equipment = "MILL_B"
+
+[tags.AI_MILL_B_CURR_LIM_H]
+area = "a100_milling"
+type = "AI"
+description = "High range limit — AI_MILL_B_CURR"
+unit = "A"
+equipment = "MILL_B"
+min = 0
+max = 50
+initial = 50
+
+[tags.AI_MILL_B_CURR_LIM_L]
+area = "a100_milling"
+type = "AI"
+description = "Low range limit — AI_MILL_B_CURR"
+unit = "A"
+equipment = "MILL_B"
+min = 0
+max = 50
+initial = 0
+
+[tags.DI_HLT1_LS_HI]
+area = "a200_utilities"
+type = "DI"
+description = "High level HLT 1"
+unit = "bool"
+initial = 0
+equipment = "HLT1"
+
+[tags.DI_HLT1_LS_LO]
+area = "a200_utilities"
+type = "DI"
+description = "Low level HLT 1"
+unit = "bool"
+initial = 1
+equipment = "HLT1"
+
+[tags.DI_HLT2_LS_HI]
+area = "a200_utilities"
+type = "DI"
+description = "High level HLT 2"
+unit = "bool"
+initial = 0
+equipment = "HLT2"
+
+[tags.DI_HLT2_LS_LO]
+area = "a200_utilities"
+type = "DI"
+description = "Low level HLT 2"
+unit = "bool"
+initial = 1
+equipment = "HLT2"
+
+[tags.DI_CLT_LS_HI]
+area = "a200_utilities"
+type = "DI"
+description = "High level CLT"
+unit = "bool"
+initial = 0
+equipment = "CLT"
+
+[tags.DI_CLT_LS_LO]
+area = "a200_utilities"
+type = "DI"
+description = "Low level CLT"
+unit = "bool"
+initial = 1
+equipment = "CLT"
+
+[tags.DI_BOILER_RUN]
+area = "a200_utilities"
+type = "DI"
+description = "Boiler running"
+unit = "bool"
+initial = 0
+equipment = "BOILER"
+
+[tags.DI_BOILER_FAULT]
+area = "a200_utilities"
+type = "DI"
+description = "Boiler fault"
+unit = "bool"
+initial = 0
+equipment = "BOILER"
+
+[tags.DI_STEAM_HI_PRESS]
+area = "a200_utilities"
+type = "DI"
+description = "Steam high pressure (safety)"
+unit = "bool"
+initial = 0
+equipment = "BOILER"
+
+[tags.DI_RO_RUN]
+area = "a200_utilities"
+type = "DI"
+description = "Sistema RO running"
+unit = "bool"
+initial = 1
+equipment = "RO"
+
+[tags.DI_RO_FAULT]
+area = "a200_utilities"
+type = "DI"
+description = "System fault RO"
+unit = "bool"
+initial = 0
+equipment = "RO"
+
+[tags.DI_GLYCOL_PUMP_RUN]
+area = "a200_utilities"
+type = "DI"
+description = "Glycol pump central running"
+unit = "bool"
+initial = 1
+equipment = "CHILLER"
+
+[tags.DI_GLYCOL_PUMP_FLT]
+area = "a200_utilities"
+type = "DI"
+description = "Glycol pump fault"
+unit = "bool"
+initial = 0
+equipment = "CHILLER"
+
+[tags.DI_CHILLER_RUN]
+area = "a200_utilities"
+type = "DI"
+description = "Chiller running"
+unit = "bool"
+initial = 1
+equipment = "CHILLER"
+
+[tags.DI_CHILLER_FAULT]
+area = "a200_utilities"
+type = "DI"
+description = "Chiller fault"
+unit = "bool"
+initial = 0
+equipment = "CHILLER"
+
+[tags.DO_HLT1_HEAT_EN]
+area = "a200_utilities"
+type = "DO"
+description = "Enable heating HLT 1"
+unit = "bool"
+initial = 0
+equipment = "HLT1"
+
+[tags.DO_HLT2_HEAT_EN]
+area = "a200_utilities"
+type = "DO"
+description = "Enable heating HLT 2"
+unit = "bool"
+initial = 0
+equipment = "HLT2"
+
+[tags.DO_CLT_GLYCOL_EN]
+area = "a200_utilities"
+type = "DO"
+description = "Enable glycol CLT"
+unit = "bool"
+initial = 1
+equipment = "CLT"
+
+[tags.DO_BOILER_START]
+area = "a200_utilities"
+type = "DO"
+description = "Start boiler"
+unit = "bool"
+initial = 0
+equipment = "BOILER"
+
+[tags.DO_RO_START]
+area = "a200_utilities"
+type = "DO"
+description = "Start RO system"
+unit = "bool"
+initial = 1
+equipment = "RO"
+
+[tags.DO_GLYCOL_PUMP_RUN]
+area = "a200_utilities"
+type = "DO"
+description = "Start glycol pump"
+unit = "bool"
+initial = 1
+equipment = "CHILLER"
+
+[tags.DO_CHILLER_START]
+area = "a200_utilities"
+type = "DO"
+description = "Start chiller"
+unit = "bool"
+initial = 1
+equipment = "CHILLER"
+
+[tags.AI_HLT1_TT]
+area = "a200_utilities"
+type = "AI"
+description = "Temperature HLT 1"
+unit = "°C"
+min = 0
+max = 100
+initial = 20
+equipment = "HLT1"
+
+[tags.AI_HLT1_TT_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_HLT1_TT"
+unit = "°C"
+equipment = "HLT1"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_HLT1_TT_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_HLT1_TT"
+unit = "°C"
+equipment = "HLT1"
+min = 0
+max = 100
+initial = 0
+
+[tags.AI_HLT1_LT]
+area = "a200_utilities"
+type = "AI"
+description = "Level HLT 1 [mm, 0-2200mm]"
+unit = "mm"
+min = 0
+max = 2200
+initial = 1760
+equipment = "HLT1"
+
+[tags.AI_HLT1_LT_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_HLT1_LT"
+unit = "mm"
+equipment = "HLT1"
+min = 0
+max = 2200
+initial = 2200
+
+[tags.AI_HLT1_LT_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_HLT1_LT"
+unit = "mm"
+equipment = "HLT1"
+min = 0
+max = 2200
+initial = 0
+
+[tags.AI_HLT2_TT]
+area = "a200_utilities"
+type = "AI"
+description = "Temperature HLT 2"
+unit = "°C"
+min = 0
+max = 100
+initial = 20
+equipment = "HLT2"
+
+[tags.AI_HLT2_TT_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_HLT2_TT"
+unit = "°C"
+equipment = "HLT2"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_HLT2_TT_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_HLT2_TT"
+unit = "°C"
+equipment = "HLT2"
+min = 0
+max = 100
+initial = 0
+
+[tags.AI_HLT2_LT]
+area = "a200_utilities"
+type = "AI"
+description = "Level HLT 2 [mm, 0-2200mm]"
+unit = "mm"
+min = 0
+max = 2200
+initial = 1760
+equipment = "HLT2"
+
+[tags.AI_HLT2_LT_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_HLT2_LT"
+unit = "mm"
+equipment = "HLT2"
+min = 0
+max = 2200
+initial = 2200
+
+[tags.AI_HLT2_LT_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_HLT2_LT"
+unit = "mm"
+equipment = "HLT2"
+min = 0
+max = 2200
+initial = 0
+
+[tags.AI_CLT_TT]
+area = "a200_utilities"
+type = "AI"
+description = "Temperature CLT"
+unit = "°C"
+min = 0
+max = 20
+initial = 4
+equipment = "CLT"
+
+[tags.AI_CLT_TT_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_CLT_TT"
+unit = "°C"
+equipment = "CLT"
+min = 0
+max = 20
+initial = 20
+
+[tags.AI_CLT_TT_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_CLT_TT"
+unit = "°C"
+equipment = "CLT"
+min = 0
+max = 20
+initial = 0
+
+[tags.AI_CLT_LT]
+area = "a200_utilities"
+type = "AI"
+description = "Level CLT [mm, 0-2000mm]"
+unit = "mm"
+min = 0
+max = 2000
+initial = 1600
+equipment = "CLT"
+
+[tags.AI_CLT_LT_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_CLT_LT"
+unit = "mm"
+equipment = "CLT"
+min = 0
+max = 2000
+initial = 2000
+
+[tags.AI_CLT_LT_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_CLT_LT"
+unit = "mm"
+equipment = "CLT"
+min = 0
+max = 2000
+initial = 0
+
+[tags.AI_STEAM_PT]
+area = "a200_utilities"
+type = "AI"
+description = "Steam pressure"
+unit = "bar"
+min = 0
+max = 10
+initial = 0
+equipment = "BOILER"
+
+[tags.AI_STEAM_PT_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_STEAM_PT"
+unit = "bar"
+equipment = "BOILER"
+min = 0
+max = 10
+initial = 10
+
+[tags.AI_STEAM_PT_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_STEAM_PT"
+unit = "bar"
+equipment = "BOILER"
+min = 0
+max = 10
+initial = 0
+
+[tags.AI_STEAM_TT]
+area = "a200_utilities"
+type = "AI"
+description = "Steam temperature"
+unit = "°C"
+min = 0
+max = 180
+initial = 20
+equipment = "BOILER"
+
+[tags.AI_STEAM_TT_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_STEAM_TT"
+unit = "°C"
+equipment = "BOILER"
+min = 0
+max = 180
+initial = 180
+
+[tags.AI_STEAM_TT_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_STEAM_TT"
+unit = "°C"
+equipment = "BOILER"
+min = 0
+max = 180
+initial = 0
+
+[tags.AI_STEAM_FLOW]
+area = "a200_utilities"
+type = "AI"
+description = "Steam flow"
+unit = "kg/h"
+min = 0
+max = 500
+initial = 0
+equipment = "BOILER"
+
+[tags.AI_STEAM_FLOW_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_STEAM_FLOW"
+unit = "kg/h"
+equipment = "BOILER"
+min = 0
+max = 500
+initial = 500
+
+[tags.AI_STEAM_FLOW_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_STEAM_FLOW"
+unit = "kg/h"
+equipment = "BOILER"
+min = 0
+max = 500
+initial = 0
+
+[tags.AI_WATER_FLOW_IN]
+area = "a200_utilities"
+type = "AI"
+description = "Inlet water flow"
+unit = "L/h"
+min = 0
+max = 2000
+initial = 0
+equipment = "RO"
+
+[tags.AI_WATER_FLOW_IN_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_WATER_FLOW_IN"
+unit = "L/h"
+equipment = "RO"
+min = 0
+max = 2000
+initial = 2000
+
+[tags.AI_WATER_FLOW_IN_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_WATER_FLOW_IN"
+unit = "L/h"
+equipment = "RO"
+min = 0
+max = 2000
+initial = 0
+
+[tags.AI_WATER_TDS]
+area = "a200_utilities"
+type = "AI"
+description = "Treated water TDS"
+unit = "ppm"
+min = 0
+max = 500
+initial = 45
+equipment = "RO"
+
+[tags.AI_WATER_TDS_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_WATER_TDS"
+unit = "ppm"
+equipment = "RO"
+min = 0
+max = 500
+initial = 500
+
+[tags.AI_WATER_TDS_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_WATER_TDS"
+unit = "ppm"
+equipment = "RO"
+min = 0
+max = 500
+initial = 0
+
+[tags.AI_WATER_PH]
+area = "a200_utilities"
+type = "AI"
+description = "Treated water pH"
+unit = "pH"
+min = 5
+max = 9
+initial = 7.0
+equipment = "RO"
+
+[tags.AI_WATER_PH_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_WATER_PH"
+unit = "pH"
+equipment = "RO"
+min = 5
+max = 9
+initial = 9
+
+[tags.AI_WATER_PH_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_WATER_PH"
+unit = "pH"
+equipment = "RO"
+min = 5
+max = 9
+initial = 5
+
+[tags.AI_GLYCOL_TT_SUP]
+area = "a200_utilities"
+type = "AI"
+description = "Glycol supply temperature"
+unit = "°C"
+min = -10
+max = 10
+initial = -2
+equipment = "CHILLER"
+
+[tags.AI_GLYCOL_TT_SUP_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_GLYCOL_TT_SUP"
+unit = "°C"
+equipment = "CHILLER"
+min = -10
+max = 10
+initial = 10
+
+[tags.AI_GLYCOL_TT_SUP_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_GLYCOL_TT_SUP"
+unit = "°C"
+equipment = "CHILLER"
+min = -10
+max = 10
+initial = -10
+
+[tags.AI_GLYCOL_TT_RET]
+area = "a200_utilities"
+type = "AI"
+description = "Glycol return temperature"
+unit = "°C"
+min = -5
+max = 15
+initial = 3
+equipment = "CHILLER"
+
+[tags.AI_GLYCOL_TT_RET_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_GLYCOL_TT_RET"
+unit = "°C"
+equipment = "CHILLER"
+min = -5
+max = 15
+initial = 15
+
+[tags.AI_GLYCOL_TT_RET_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_GLYCOL_TT_RET"
+unit = "°C"
+equipment = "CHILLER"
+min = -5
+max = 15
+initial = -5
+
+[tags.AI_GLYCOL_FLOW]
+area = "a200_utilities"
+type = "AI"
+description = "Glycol flow"
+unit = "L/h"
+min = 0
+max = 1000
+initial = 400
+equipment = "CHILLER"
+
+[tags.AI_GLYCOL_FLOW_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_GLYCOL_FLOW"
+unit = "L/h"
+equipment = "CHILLER"
+min = 0
+max = 1000
+initial = 1000
+
+[tags.AI_GLYCOL_FLOW_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_GLYCOL_FLOW"
+unit = "L/h"
+equipment = "CHILLER"
+min = 0
+max = 1000
+initial = 0
+
+[tags.AI_ELEC_KW_HLT]
+area = "a200_utilities"
+type = "AI"
+description = "HLTs electrical consumption"
+unit = "kW"
+min = 0
+max = 50
+initial = 0
+equipment = "HLT1"
+
+[tags.AI_ELEC_KW_HLT_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_ELEC_KW_HLT"
+unit = "kW"
+equipment = "HLT1"
+min = 0
+max = 50
+initial = 50
+
+[tags.AI_ELEC_KW_HLT_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_ELEC_KW_HLT"
+unit = "kW"
+equipment = "HLT1"
+min = 0
+max = 50
+initial = 0
+
+[tags.AI_ELEC_KW_CHILLER]
+area = "a200_utilities"
+type = "AI"
+description = "Chiller electrical consumption"
+unit = "kW"
+min = 0
+max = 100
+initial = 35
+equipment = "CHILLER"
+
+[tags.AI_ELEC_KW_CHILLER_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AI_ELEC_KW_CHILLER"
+unit = "kW"
+equipment = "CHILLER"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_ELEC_KW_CHILLER_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AI_ELEC_KW_CHILLER"
+unit = "kW"
+equipment = "CHILLER"
+min = 0
+max = 100
+initial = 0
+
+[tags.AO_HLT1_HEAT_SP]
+area = "a200_utilities"
+type = "AO"
+description = "Temperature setpoint HLT 1"
+unit = "°C"
+min = 0
+max = 100
+initial = 72
+equipment = "HLT1"
+
+[tags.AO_HLT1_HEAT_SP_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AO_HLT1_HEAT_SP"
+unit = "°C"
+equipment = "HLT1"
+min = 0
+max = 100
+initial = 100
+
+[tags.AO_HLT1_HEAT_SP_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AO_HLT1_HEAT_SP"
+unit = "°C"
+equipment = "HLT1"
+min = 0
+max = 100
+initial = 0
+
+[tags.AO_HLT2_HEAT_SP]
+area = "a200_utilities"
+type = "AO"
+description = "Temperature setpoint HLT 2"
+unit = "°C"
+min = 0
+max = 100
+initial = 72
+equipment = "HLT2"
+
+[tags.AO_HLT2_HEAT_SP_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AO_HLT2_HEAT_SP"
+unit = "°C"
+equipment = "HLT2"
+min = 0
+max = 100
+initial = 100
+
+[tags.AO_HLT2_HEAT_SP_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AO_HLT2_HEAT_SP"
+unit = "°C"
+equipment = "HLT2"
+min = 0
+max = 100
+initial = 0
+
+[tags.AO_CLT_TEMP_SP]
+area = "a200_utilities"
+type = "AO"
+description = "Temperature setpoint CLT"
+unit = "°C"
+min = 0
+max = 15
+initial = 4
+equipment = "CLT"
+
+[tags.AO_CLT_TEMP_SP_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AO_CLT_TEMP_SP"
+unit = "°C"
+equipment = "CLT"
+min = 0
+max = 15
+initial = 15
+
+[tags.AO_CLT_TEMP_SP_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AO_CLT_TEMP_SP"
+unit = "°C"
+equipment = "CLT"
+min = 0
+max = 15
+initial = 0
+
+[tags.AO_STEAM_PRESS_SP]
+area = "a200_utilities"
+type = "AO"
+description = "Steam pressure setpoint"
+unit = "bar"
+min = 0
+max = 10
+initial = 4
+equipment = "BOILER"
+
+[tags.AO_STEAM_PRESS_SP_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AO_STEAM_PRESS_SP"
+unit = "bar"
+equipment = "BOILER"
+min = 0
+max = 10
+initial = 10
+
+[tags.AO_STEAM_PRESS_SP_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AO_STEAM_PRESS_SP"
+unit = "bar"
+equipment = "BOILER"
+min = 0
+max = 10
+initial = 0
+
+[tags.AO_GLYCOL_TEMP_SP]
+area = "a200_utilities"
+type = "AO"
+description = "Glycol supply temperature setpoint"
+unit = "°C"
+min = -10
+max = 0
+initial = -2
+equipment = "CHILLER"
+
+[tags.AO_GLYCOL_TEMP_SP_LIM_H]
+area = "a200_utilities"
+type = "AI"
+description = "High range limit — AO_GLYCOL_TEMP_SP"
+unit = "°C"
+equipment = "CHILLER"
+min = -10
+max = 0
+initial = 0
+
+[tags.AO_GLYCOL_TEMP_SP_LIM_L]
+area = "a200_utilities"
+type = "AI"
+description = "Low range limit — AO_GLYCOL_TEMP_SP"
+unit = "°C"
+equipment = "CHILLER"
+min = -10
+max = 0
+initial = -10
+
+[tags.DI_MT1_LS_HI]
+area = "a300_brewhouse"
+type = "DI"
+description = "High level Mash Tun 1"
+unit = "bool"
+initial = 0
+equipment = "MT1"
+
+[tags.DI_MT1_LS_LO]
+area = "a300_brewhouse"
+type = "DI"
+description = "Low level Mash Tun 1"
+unit = "bool"
+initial = 1
+equipment = "MT1"
+
+[tags.DI_MT1_RAKE_RUN]
+area = "a300_brewhouse"
+type = "DI"
+description = "Rake Mash Tun 1 running"
+unit = "bool"
+initial = 0
+equipment = "MT1"
+
+[tags.DI_MT1_RAKE_FLT]
+area = "a300_brewhouse"
+type = "DI"
+description = "Rake faulte MT1"
+unit = "bool"
+initial = 0
+equipment = "MT1"
+
+[tags.DI_LT1_LS_HI]
+area = "a300_brewhouse"
+type = "DI"
+description = "High level Lauter Tun 1"
+unit = "bool"
+initial = 0
+equipment = "LT1"
+
+[tags.DI_LT1_LS_LO]
+area = "a300_brewhouse"
+type = "DI"
+description = "Low level Lauter Tun 1"
+unit = "bool"
+initial = 1
+equipment = "LT1"
+
+[tags.DI_LT1_RAKE_RUN]
+area = "a300_brewhouse"
+type = "DI"
+description = "Rake Lauter Tun 1 running"
+unit = "bool"
+initial = 0
+equipment = "LT1"
+
+[tags.DI_LT1_RAKE_FLT]
+area = "a300_brewhouse"
+type = "DI"
+description = "Rake faulte LT1"
+unit = "bool"
+initial = 0
+equipment = "LT1"
+
+[tags.DI_KT1_LS_HI]
+area = "a300_brewhouse"
+type = "DI"
+description = "High level Kettle 1"
+unit = "bool"
+initial = 0
+equipment = "KT1"
+
+[tags.DI_KT1_LS_LO]
+area = "a300_brewhouse"
+type = "DI"
+description = "Low level Kettle 1"
+unit = "bool"
+initial = 1
+equipment = "KT1"
+
+[tags.DI_WP1_LS_HI]
+area = "a300_brewhouse"
+type = "DI"
+description = "High level Whirlpool 1"
+unit = "bool"
+initial = 0
+equipment = "WP1"
+
+[tags.DI_WP1_LS_LO]
+area = "a300_brewhouse"
+type = "DI"
+description = "Low level Whirlpool 1"
+unit = "bool"
+initial = 1
+equipment = "WP1"
+
+[tags.DI_MT2_LS_HI]
+area = "a300_brewhouse"
+type = "DI"
+description = "High level Mash Tun 2"
+unit = "bool"
+initial = 0
+equipment = "MT2"
+
+[tags.DI_MT2_LS_LO]
+area = "a300_brewhouse"
+type = "DI"
+description = "Low level Mash Tun 2"
+unit = "bool"
+initial = 1
+equipment = "MT2"
+
+[tags.DI_MT2_RAKE_RUN]
+area = "a300_brewhouse"
+type = "DI"
+description = "Rake Mash Tun 2 running"
+unit = "bool"
+initial = 0
+equipment = "MT2"
+
+[tags.DI_MT2_RAKE_FLT]
+area = "a300_brewhouse"
+type = "DI"
+description = "Rake faulte MT2"
+unit = "bool"
+initial = 0
+equipment = "MT2"
+
+[tags.DI_LT2_LS_HI]
+area = "a300_brewhouse"
+type = "DI"
+description = "High level Lauter Tun 2"
+unit = "bool"
+initial = 0
+equipment = "LT2"
+
+[tags.DI_LT2_LS_LO]
+area = "a300_brewhouse"
+type = "DI"
+description = "Low level Lauter Tun 2"
+unit = "bool"
+initial = 1
+equipment = "LT2"
+
+[tags.DI_LT2_RAKE_RUN]
+area = "a300_brewhouse"
+type = "DI"
+description = "Rake Lauter Tun 2 running"
+unit = "bool"
+initial = 0
+equipment = "LT2"
+
+[tags.DI_LT2_RAKE_FLT]
+area = "a300_brewhouse"
+type = "DI"
+description = "Rake faulte LT2"
+unit = "bool"
+initial = 0
+equipment = "LT2"
+
+[tags.DI_KT2_LS_HI]
+area = "a300_brewhouse"
+type = "DI"
+description = "High level Kettle 2"
+unit = "bool"
+initial = 0
+equipment = "KT2"
+
+[tags.DI_KT2_LS_LO]
+area = "a300_brewhouse"
+type = "DI"
+description = "Low level Kettle 2"
+unit = "bool"
+initial = 1
+equipment = "KT2"
+
+[tags.DI_WP2_LS_HI]
+area = "a300_brewhouse"
+type = "DI"
+description = "High level Whirlpool 2"
+unit = "bool"
+initial = 0
+equipment = "WP2"
+
+[tags.DI_WP2_LS_LO]
+area = "a300_brewhouse"
+type = "DI"
+description = "Low level Whirlpool 2"
+unit = "bool"
+initial = 1
+equipment = "WP2"
+
+[tags.DI_PMP_MT1_RUN]
+area = "a300_brewhouse"
+type = "DI"
+description = "MT pump1 running"
+unit = "bool"
+initial = 0
+equipment = "MT1"
+
+[tags.DI_PMP_MT1_FLT]
+area = "a300_brewhouse"
+type = "DI"
+description = "Pump fault MT1"
+unit = "bool"
+initial = 0
+equipment = "MT1"
+
+[tags.DI_PMP_MT2_RUN]
+area = "a300_brewhouse"
+type = "DI"
+description = "MT pump2 running"
+unit = "bool"
+initial = 0
+equipment = "MT2"
+
+[tags.DI_PMP_MT2_FLT]
+area = "a300_brewhouse"
+type = "DI"
+description = "Pump fault MT2"
+unit = "bool"
+initial = 0
+equipment = "MT2"
+
+[tags.DI_PMP_WP1_RUN]
+area = "a300_brewhouse"
+type = "DI"
+description = "WP pump1 running"
+unit = "bool"
+initial = 0
+equipment = "WP1"
+
+[tags.DI_PMP_WP1_FLT]
+area = "a300_brewhouse"
+type = "DI"
+description = "Pump fault WP1"
+unit = "bool"
+initial = 0
+equipment = "WP1"
+
+[tags.DI_PMP_WP2_RUN]
+area = "a300_brewhouse"
+type = "DI"
+description = "WP pump2 running"
+unit = "bool"
+initial = 0
+equipment = "WP2"
+
+[tags.DI_PMP_WP2_FLT]
+area = "a300_brewhouse"
+type = "DI"
+description = "Pump fault WP2"
+unit = "bool"
+initial = 0
+equipment = "WP2"
+
+[tags.DO_MT1_RAKE_RUN]
+area = "a300_brewhouse"
+type = "DO"
+description = "Start rake MT1"
+unit = "bool"
+initial = 0
+equipment = "MT1"
+
+[tags.DO_MT1_HEAT_EN]
+area = "a300_brewhouse"
+type = "DO"
+description = "Heating MT1"
+unit = "bool"
+initial = 0
+equipment = "MT1"
+
+[tags.DO_MT1_PUMP_RUN]
+area = "a300_brewhouse"
+type = "DO"
+description = "MT pump1"
+unit = "bool"
+initial = 0
+equipment = "MT1"
+
+[tags.DO_MT2_RAKE_RUN]
+area = "a300_brewhouse"
+type = "DO"
+description = "Start rake MT2"
+unit = "bool"
+initial = 0
+equipment = "MT2"
+
+[tags.DO_MT2_HEAT_EN]
+area = "a300_brewhouse"
+type = "DO"
+description = "Heating MT2"
+unit = "bool"
+initial = 0
+equipment = "MT2"
+
+[tags.DO_MT2_PUMP_RUN]
+area = "a300_brewhouse"
+type = "DO"
+description = "MT pump2"
+unit = "bool"
+initial = 0
+equipment = "MT2"
+
+[tags.DO_LT1_RAKE_RUN]
+area = "a300_brewhouse"
+type = "DO"
+description = "Start rake LT1"
+unit = "bool"
+initial = 0
+equipment = "LT1"
+
+[tags.DO_LT2_RAKE_RUN]
+area = "a300_brewhouse"
+type = "DO"
+description = "Start rake LT2"
+unit = "bool"
+initial = 0
+equipment = "LT2"
+
+[tags.DO_KT1_HEAT_EN]
+area = "a300_brewhouse"
+type = "DO"
+description = "Heating Kettle 1"
+unit = "bool"
+initial = 0
+equipment = "KT1"
+
+[tags.DO_KT2_HEAT_EN]
+area = "a300_brewhouse"
+type = "DO"
+description = "Heating Kettle 2"
+unit = "bool"
+initial = 0
+equipment = "KT2"
+
+[tags.DO_WP1_PUMP_RUN]
+area = "a300_brewhouse"
+type = "DO"
+description = "WP pump1"
+unit = "bool"
+initial = 0
+equipment = "WP1"
+
+[tags.DO_WP2_PUMP_RUN]
+area = "a300_brewhouse"
+type = "DO"
+description = "WP pump2"
+unit = "bool"
+initial = 0
+equipment = "WP2"
+
+[tags.AI_MT1_TT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Temperature Mash Tun 1"
+unit = "°C"
+min = 0
+max = 100
+initial = 20
+equipment = "MT1"
+
+[tags.AI_MT1_TT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_MT1_TT"
+unit = "°C"
+equipment = "MT1"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_MT1_TT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_MT1_TT"
+unit = "°C"
+equipment = "MT1"
+min = 0
+max = 100
+initial = 0
+
+[tags.AI_MT1_LT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Level Mash Tun 1 [mm, 0-2200mm]"
+unit = "mm"
+min = 0
+max = 2200
+initial = 1760
+equipment = "MT1"
+
+[tags.AI_MT1_LT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_MT1_LT"
+unit = "mm"
+equipment = "MT1"
+min = 0
+max = 2200
+initial = 2200
+
+[tags.AI_MT1_LT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_MT1_LT"
+unit = "mm"
+equipment = "MT1"
+min = 0
+max = 2200
+initial = 0
+
+[tags.AI_MT1_PH]
+area = "a300_brewhouse"
+type = "AI"
+description = "Wort pH MT1"
+unit = "pH"
+min = 4
+max = 8
+initial = 5.4
+equipment = "MT1"
+
+[tags.AI_MT1_PH_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_MT1_PH"
+unit = "pH"
+equipment = "MT1"
+min = 4
+max = 8
+initial = 8
+
+[tags.AI_MT1_PH_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_MT1_PH"
+unit = "pH"
+equipment = "MT1"
+min = 4
+max = 8
+initial = 4
+
+[tags.AI_LT1_TT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Temperature Lauter Tun 1"
+unit = "°C"
+min = 0
+max = 100
+initial = 20
+equipment = "LT1"
+
+[tags.AI_LT1_TT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_LT1_TT"
+unit = "°C"
+equipment = "LT1"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_LT1_TT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_LT1_TT"
+unit = "°C"
+equipment = "LT1"
+min = 0
+max = 100
+initial = 0
+
+[tags.AI_LT1_LT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Level Lauter Tun 1 [mm, 0-1800mm]"
+unit = "mm"
+min = 0
+max = 1800
+initial = 1440
+equipment = "LT1"
+
+[tags.AI_LT1_LT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_LT1_LT"
+unit = "mm"
+equipment = "LT1"
+min = 0
+max = 1800
+initial = 1800
+
+[tags.AI_LT1_LT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_LT1_LT"
+unit = "mm"
+equipment = "LT1"
+min = 0
+max = 1800
+initial = 0
+
+[tags.AI_LT1_TURB]
+area = "a300_brewhouse"
+type = "AI"
+description = "Wort turbidity LT1"
+unit = "NTU"
+min = 0
+max = 1000
+initial = 0
+equipment = "LT1"
+
+[tags.AI_LT1_TURB_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_LT1_TURB"
+unit = "NTU"
+equipment = "LT1"
+min = 0
+max = 1000
+initial = 1000
+
+[tags.AI_LT1_TURB_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_LT1_TURB"
+unit = "NTU"
+equipment = "LT1"
+min = 0
+max = 1000
+initial = 0
+
+[tags.AI_LT1_FLOW]
+area = "a300_brewhouse"
+type = "AI"
+description = "Wort flow LT1→KT1"
+unit = "L/h"
+min = 0
+max = 1000
+initial = 0
+equipment = "LT1"
+
+[tags.AI_LT1_FLOW_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_LT1_FLOW"
+unit = "L/h"
+equipment = "LT1"
+min = 0
+max = 1000
+initial = 1000
+
+[tags.AI_LT1_FLOW_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_LT1_FLOW"
+unit = "L/h"
+equipment = "LT1"
+min = 0
+max = 1000
+initial = 0
+
+[tags.AI_KT1_TT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Temperature Kettle 1"
+unit = "°C"
+min = 0
+max = 120
+initial = 20
+equipment = "KT1"
+
+[tags.AI_KT1_TT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_KT1_TT"
+unit = "°C"
+equipment = "KT1"
+min = 0
+max = 120
+initial = 120
+
+[tags.AI_KT1_TT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_KT1_TT"
+unit = "°C"
+equipment = "KT1"
+min = 0
+max = 120
+initial = 0
+
+[tags.AI_KT1_LT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Level Kettle 1 [mm, 0-2400mm]"
+unit = "mm"
+min = 0
+max = 2400
+initial = 1920
+equipment = "KT1"
+
+[tags.AI_KT1_LT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_KT1_LT"
+unit = "mm"
+equipment = "KT1"
+min = 0
+max = 2400
+initial = 2400
+
+[tags.AI_KT1_LT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_KT1_LT"
+unit = "mm"
+equipment = "KT1"
+min = 0
+max = 2400
+initial = 0
+
+[tags.AI_KT1_STEAM_FLOW]
+area = "a300_brewhouse"
+type = "AI"
+description = "Steam consumed Kettle 1"
+unit = "kg/h"
+min = 0
+max = 300
+initial = 0
+equipment = "KT1"
+
+[tags.AI_KT1_STEAM_FLOW_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_KT1_STEAM_FLOW"
+unit = "kg/h"
+equipment = "KT1"
+min = 0
+max = 300
+initial = 300
+
+[tags.AI_KT1_STEAM_FLOW_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_KT1_STEAM_FLOW"
+unit = "kg/h"
+equipment = "KT1"
+min = 0
+max = 300
+initial = 0
+
+[tags.AI_WP1_TT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Temperature Whirlpool 1"
+unit = "°C"
+min = 0
+max = 100
+initial = 20
+equipment = "WP1"
+
+[tags.AI_WP1_TT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_WP1_TT"
+unit = "°C"
+equipment = "WP1"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_WP1_TT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_WP1_TT"
+unit = "°C"
+equipment = "WP1"
+min = 0
+max = 100
+initial = 0
+
+[tags.AI_WP1_LT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Level Whirlpool 1 [mm, 0-1200mm]"
+unit = "mm"
+min = 0
+max = 1200
+initial = 960
+equipment = "WP1"
+
+[tags.AI_WP1_LT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_WP1_LT"
+unit = "mm"
+equipment = "WP1"
+min = 0
+max = 1200
+initial = 1200
+
+[tags.AI_WP1_LT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_WP1_LT"
+unit = "mm"
+equipment = "WP1"
+min = 0
+max = 1200
+initial = 0
+
+[tags.AI_WP1_TURB]
+area = "a300_brewhouse"
+type = "AI"
+description = "Turbidity pós-WP1"
+unit = "NTU"
+min = 0
+max = 500
+initial = 0
+equipment = "WP1"
+
+[tags.AI_WP1_TURB_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_WP1_TURB"
+unit = "NTU"
+equipment = "WP1"
+min = 0
+max = 500
+initial = 500
+
+[tags.AI_WP1_TURB_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_WP1_TURB"
+unit = "NTU"
+equipment = "WP1"
+min = 0
+max = 500
+initial = 0
+
+[tags.AI_MT2_TT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Temperature Mash Tun 2"
+unit = "°C"
+min = 0
+max = 100
+initial = 20
+equipment = "MT2"
+
+[tags.AI_MT2_TT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_MT2_TT"
+unit = "°C"
+equipment = "MT2"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_MT2_TT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_MT2_TT"
+unit = "°C"
+equipment = "MT2"
+min = 0
+max = 100
+initial = 0
+
+[tags.AI_MT2_LT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Level Mash Tun 2 [mm, 0-2200mm]"
+unit = "mm"
+min = 0
+max = 2200
+initial = 1760
+equipment = "MT2"
+
+[tags.AI_MT2_LT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_MT2_LT"
+unit = "mm"
+equipment = "MT2"
+min = 0
+max = 2200
+initial = 2200
+
+[tags.AI_MT2_LT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_MT2_LT"
+unit = "mm"
+equipment = "MT2"
+min = 0
+max = 2200
+initial = 0
+
+[tags.AI_MT2_PH]
+area = "a300_brewhouse"
+type = "AI"
+description = "Wort pH MT2"
+unit = "pH"
+min = 4
+max = 8
+initial = 5.4
+equipment = "MT2"
+
+[tags.AI_MT2_PH_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_MT2_PH"
+unit = "pH"
+equipment = "MT2"
+min = 4
+max = 8
+initial = 8
+
+[tags.AI_MT2_PH_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_MT2_PH"
+unit = "pH"
+equipment = "MT2"
+min = 4
+max = 8
+initial = 4
+
+[tags.AI_LT2_TT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Temperature Lauter Tun 2"
+unit = "°C"
+min = 0
+max = 100
+initial = 20
+equipment = "LT2"
+
+[tags.AI_LT2_TT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_LT2_TT"
+unit = "°C"
+equipment = "LT2"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_LT2_TT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_LT2_TT"
+unit = "°C"
+equipment = "LT2"
+min = 0
+max = 100
+initial = 0
+
+[tags.AI_LT2_LT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Level Lauter Tun 2 [mm, 0-1800mm]"
+unit = "mm"
+min = 0
+max = 1800
+initial = 1440
+equipment = "LT2"
+
+[tags.AI_LT2_LT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_LT2_LT"
+unit = "mm"
+equipment = "LT2"
+min = 0
+max = 1800
+initial = 1800
+
+[tags.AI_LT2_LT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_LT2_LT"
+unit = "mm"
+equipment = "LT2"
+min = 0
+max = 1800
+initial = 0
+
+[tags.AI_LT2_TURB]
+area = "a300_brewhouse"
+type = "AI"
+description = "Wort turbidity LT2"
+unit = "NTU"
+min = 0
+max = 1000
+initial = 0
+equipment = "LT2"
+
+[tags.AI_LT2_TURB_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_LT2_TURB"
+unit = "NTU"
+equipment = "LT2"
+min = 0
+max = 1000
+initial = 1000
+
+[tags.AI_LT2_TURB_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_LT2_TURB"
+unit = "NTU"
+equipment = "LT2"
+min = 0
+max = 1000
+initial = 0
+
+[tags.AI_LT2_FLOW]
+area = "a300_brewhouse"
+type = "AI"
+description = "Wort flow LT2→KT2"
+unit = "L/h"
+min = 0
+max = 1000
+initial = 0
+equipment = "LT2"
+
+[tags.AI_LT2_FLOW_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_LT2_FLOW"
+unit = "L/h"
+equipment = "LT2"
+min = 0
+max = 1000
+initial = 1000
+
+[tags.AI_LT2_FLOW_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_LT2_FLOW"
+unit = "L/h"
+equipment = "LT2"
+min = 0
+max = 1000
+initial = 0
+
+[tags.AI_KT2_TT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Temperature Kettle 2"
+unit = "°C"
+min = 0
+max = 120
+initial = 20
+equipment = "KT2"
+
+[tags.AI_KT2_TT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_KT2_TT"
+unit = "°C"
+equipment = "KT2"
+min = 0
+max = 120
+initial = 120
+
+[tags.AI_KT2_TT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_KT2_TT"
+unit = "°C"
+equipment = "KT2"
+min = 0
+max = 120
+initial = 0
+
+[tags.AI_KT2_LT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Level Kettle 2 [mm, 0-2400mm]"
+unit = "mm"
+min = 0
+max = 2400
+initial = 1920
+equipment = "KT2"
+
+[tags.AI_KT2_LT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_KT2_LT"
+unit = "mm"
+equipment = "KT2"
+min = 0
+max = 2400
+initial = 2400
+
+[tags.AI_KT2_LT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_KT2_LT"
+unit = "mm"
+equipment = "KT2"
+min = 0
+max = 2400
+initial = 0
+
+[tags.AI_KT2_STEAM_FLOW]
+area = "a300_brewhouse"
+type = "AI"
+description = "Steam consumed Kettle 2"
+unit = "kg/h"
+min = 0
+max = 300
+initial = 0
+equipment = "KT2"
+
+[tags.AI_KT2_STEAM_FLOW_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_KT2_STEAM_FLOW"
+unit = "kg/h"
+equipment = "KT2"
+min = 0
+max = 300
+initial = 300
+
+[tags.AI_KT2_STEAM_FLOW_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_KT2_STEAM_FLOW"
+unit = "kg/h"
+equipment = "KT2"
+min = 0
+max = 300
+initial = 0
+
+[tags.AI_WP2_TT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Temperature Whirlpool 2"
+unit = "°C"
+min = 0
+max = 100
+initial = 20
+equipment = "WP2"
+
+[tags.AI_WP2_TT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_WP2_TT"
+unit = "°C"
+equipment = "WP2"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_WP2_TT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_WP2_TT"
+unit = "°C"
+equipment = "WP2"
+min = 0
+max = 100
+initial = 0
+
+[tags.AI_WP2_LT]
+area = "a300_brewhouse"
+type = "AI"
+description = "Level Whirlpool 2 [mm, 0-1200mm]"
+unit = "mm"
+min = 0
+max = 1200
+initial = 960
+equipment = "WP2"
+
+[tags.AI_WP2_LT_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_WP2_LT"
+unit = "mm"
+equipment = "WP2"
+min = 0
+max = 1200
+initial = 1200
+
+[tags.AI_WP2_LT_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_WP2_LT"
+unit = "mm"
+equipment = "WP2"
+min = 0
+max = 1200
+initial = 0
+
+[tags.AI_WP2_TURB]
+area = "a300_brewhouse"
+type = "AI"
+description = "Turbidity pós-WP2"
+unit = "NTU"
+min = 0
+max = 500
+initial = 0
+equipment = "WP2"
+
+[tags.AI_WP2_TURB_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_WP2_TURB"
+unit = "NTU"
+equipment = "WP2"
+min = 0
+max = 500
+initial = 500
+
+[tags.AI_WP2_TURB_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_WP2_TURB"
+unit = "NTU"
+equipment = "WP2"
+min = 0
+max = 500
+initial = 0
+
+[tags.AI_WORT1_BRIX]
+area = "a300_brewhouse"
+type = "AI"
+description = "Wort density line 1"
+unit = "°P"
+min = 0
+max = 30
+initial = 0
+equipment = "LT1"
+
+[tags.AI_WORT1_BRIX_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_WORT1_BRIX"
+unit = "°P"
+equipment = "LT1"
+min = 0
+max = 30
+initial = 30
+
+[tags.AI_WORT1_BRIX_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_WORT1_BRIX"
+unit = "°P"
+equipment = "LT1"
+min = 0
+max = 30
+initial = 0
+
+[tags.AI_WORT2_BRIX]
+area = "a300_brewhouse"
+type = "AI"
+description = "Wort density line 2"
+unit = "°P"
+min = 0
+max = 30
+initial = 0
+equipment = "LT2"
+
+[tags.AI_WORT2_BRIX_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_WORT2_BRIX"
+unit = "°P"
+equipment = "LT2"
+min = 0
+max = 30
+initial = 30
+
+[tags.AI_WORT2_BRIX_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_WORT2_BRIX"
+unit = "°P"
+equipment = "LT2"
+min = 0
+max = 30
+initial = 0
+
+[tags.AI_ELEC_KW_BH1]
+area = "a300_brewhouse"
+type = "AI"
+description = "Brewhouse electrical consumption L1"
+unit = "kW"
+min = 0
+max = 100
+initial = 2
+equipment = "KT1"
+
+[tags.AI_ELEC_KW_BH1_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_ELEC_KW_BH1"
+unit = "kW"
+equipment = "KT1"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_ELEC_KW_BH1_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_ELEC_KW_BH1"
+unit = "kW"
+equipment = "KT1"
+min = 0
+max = 100
+initial = 0
+
+[tags.AI_ELEC_KW_BH2]
+area = "a300_brewhouse"
+type = "AI"
+description = "Brewhouse electrical consumption L2"
+unit = "kW"
+min = 0
+max = 100
+initial = 2
+equipment = "KT2"
+
+[tags.AI_ELEC_KW_BH2_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AI_ELEC_KW_BH2"
+unit = "kW"
+equipment = "KT2"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_ELEC_KW_BH2_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AI_ELEC_KW_BH2"
+unit = "kW"
+equipment = "KT2"
+min = 0
+max = 100
+initial = 0
+
+[tags.AO_MT1_HEAT_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Temperature setpoint MT1"
+unit = "°C"
+min = 0
+max = 100
+initial = 52
+equipment = "MT1"
+
+[tags.AO_MT1_HEAT_SP_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AO_MT1_HEAT_SP"
+unit = "°C"
+equipment = "MT1"
+min = 0
+max = 100
+initial = 100
+
+[tags.AO_MT1_HEAT_SP_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AO_MT1_HEAT_SP"
+unit = "°C"
+equipment = "MT1"
+min = 0
+max = 100
+initial = 0
+
+[tags.AO_MT2_HEAT_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Temperature setpoint MT2"
+unit = "°C"
+min = 0
+max = 100
+initial = 52
+equipment = "MT2"
+
+[tags.AO_MT2_HEAT_SP_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AO_MT2_HEAT_SP"
+unit = "°C"
+equipment = "MT2"
+min = 0
+max = 100
+initial = 100
+
+[tags.AO_MT2_HEAT_SP_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AO_MT2_HEAT_SP"
+unit = "°C"
+equipment = "MT2"
+min = 0
+max = 100
+initial = 0
+
+[tags.AO_KT1_HEAT_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Power setpoint Kettle 1"
+unit = "%"
+min = 0
+max = 100
+initial = 0
+equipment = "KT1"
+
+[tags.AO_KT1_HEAT_SP_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AO_KT1_HEAT_SP"
+unit = "%"
+equipment = "KT1"
+min = 0
+max = 100
+initial = 100
+
+[tags.AO_KT1_HEAT_SP_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AO_KT1_HEAT_SP"
+unit = "%"
+equipment = "KT1"
+min = 0
+max = 100
+initial = 0
+
+[tags.AO_KT2_HEAT_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Power setpoint Kettle 2"
+unit = "%"
+min = 0
+max = 100
+initial = 0
+equipment = "KT2"
+
+[tags.AO_KT2_HEAT_SP_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AO_KT2_HEAT_SP"
+unit = "%"
+equipment = "KT2"
+min = 0
+max = 100
+initial = 100
+
+[tags.AO_KT2_HEAT_SP_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AO_KT2_HEAT_SP"
+unit = "%"
+equipment = "KT2"
+min = 0
+max = 100
+initial = 0
+
+[tags.AO_LT1_RAKE_SPD]
+area = "a300_brewhouse"
+type = "AO"
+description = "Rake speed LT1 (VFD)"
+unit = "%"
+min = 0
+max = 100
+initial = 0
+equipment = "LT1"
+
+[tags.AO_LT1_RAKE_SPD_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AO_LT1_RAKE_SPD"
+unit = "%"
+equipment = "LT1"
+min = 0
+max = 100
+initial = 100
+
+[tags.AO_LT1_RAKE_SPD_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AO_LT1_RAKE_SPD"
+unit = "%"
+equipment = "LT1"
+min = 0
+max = 100
+initial = 0
+
+[tags.AO_LT2_RAKE_SPD]
+area = "a300_brewhouse"
+type = "AO"
+description = "Rake speed LT2 (VFD)"
+unit = "%"
+min = 0
+max = 100
+initial = 0
+equipment = "LT2"
+
+[tags.AO_LT2_RAKE_SPD_LIM_H]
+area = "a300_brewhouse"
+type = "AI"
+description = "High range limit — AO_LT2_RAKE_SPD"
+unit = "%"
+equipment = "LT2"
+min = 0
+max = 100
+initial = 100
+
+[tags.AO_LT2_RAKE_SPD_LIM_L]
+area = "a300_brewhouse"
+type = "AI"
+description = "Low range limit — AO_LT2_RAKE_SPD"
+unit = "%"
+equipment = "LT2"
+min = 0
+max = 100
+initial = 0
+
+[tags.DI_HX1_PMP_RUN]
+area = "a400_cooling"
+type = "DI"
+description = "Wort pump HX1 running"
+unit = "bool"
+initial = 0
+equipment = "HX1"
+
+[tags.DI_HX1_PMP_FLT]
+area = "a400_cooling"
+type = "DI"
+description = "Pump fault HX1"
+unit = "bool"
+initial = 0
+equipment = "HX1"
+
+[tags.DI_HX2_PMP_RUN]
+area = "a400_cooling"
+type = "DI"
+description = "Wort pump HX2 running"
+unit = "bool"
+initial = 0
+equipment = "HX2"
+
+[tags.DI_HX2_PMP_FLT]
+area = "a400_cooling"
+type = "DI"
+description = "Pump fault HX2"
+unit = "bool"
+initial = 0
+equipment = "HX2"
+
+[tags.DO_HX1_PMP_WORT]
+area = "a400_cooling"
+type = "DO"
+description = "Start wort pump HX1"
+unit = "bool"
+initial = 0
+equipment = "HX1"
+
+[tags.DO_HX1_PMP_WATER]
+area = "a400_cooling"
+type = "DO"
+description = "Start water pump HX1"
+unit = "bool"
+initial = 0
+equipment = "HX1"
+
+[tags.DO_HX2_PMP_WORT]
+area = "a400_cooling"
+type = "DO"
+description = "Start wort pump HX2"
+unit = "bool"
+initial = 0
+equipment = "HX2"
+
+[tags.DO_HX2_PMP_WATER]
+area = "a400_cooling"
+type = "DO"
+description = "Start water pump HX2"
+unit = "bool"
+initial = 0
+equipment = "HX2"
+
+[tags.DO_O2_VALVE_L1]
+area = "a400_cooling"
+type = "DO"
+description = "O2 aeration valve L1"
+unit = "bool"
+initial = 0
+equipment = "HX1"
+
+[tags.DO_O2_VALVE_L2]
+area = "a400_cooling"
+type = "DO"
+description = "O2 aeration valve L2"
+unit = "bool"
+initial = 0
+equipment = "HX2"
+
+[tags.AI_HX1_TT_IN]
+area = "a400_cooling"
+type = "AI"
+description = "Wort inlet temperature HX1"
+unit = "°C"
+min = 60
+max = 100
+initial = 80
+equipment = "HX1"
+
+[tags.AI_HX1_TT_IN_LIM_H]
+area = "a400_cooling"
+type = "AI"
+description = "High range limit — AI_HX1_TT_IN"
+unit = "°C"
+equipment = "HX1"
+min = 60
+max = 100
+initial = 100
+
+[tags.AI_HX1_TT_IN_LIM_L]
+area = "a400_cooling"
+type = "AI"
+description = "Low range limit — AI_HX1_TT_IN"
+unit = "°C"
+equipment = "HX1"
+min = 60
+max = 100
+initial = 60
+
+[tags.AI_HX1_TT_OUT]
+area = "a400_cooling"
+type = "AI"
+description = "Wort outlet temperature HX1"
+unit = "°C"
+min = 5
+max = 30
+initial = 20
+equipment = "HX1"
+
+[tags.AI_HX1_TT_OUT_LIM_H]
+area = "a400_cooling"
+type = "AI"
+description = "High range limit — AI_HX1_TT_OUT"
+unit = "°C"
+equipment = "HX1"
+min = 5
+max = 30
+initial = 30
+
+[tags.AI_HX1_TT_OUT_LIM_L]
+area = "a400_cooling"
+type = "AI"
+description = "Low range limit — AI_HX1_TT_OUT"
+unit = "°C"
+equipment = "HX1"
+min = 5
+max = 30
+initial = 5
+
+[tags.AI_HX1_FLOW_WORT]
+area = "a400_cooling"
+type = "AI"
+description = "Wort flow HX1 (totalizer)"
+unit = "L/h"
+min = 0
+max = 1000
+initial = 0
+equipment = "HX1"
+
+[tags.AI_HX1_FLOW_WORT_LIM_H]
+area = "a400_cooling"
+type = "AI"
+description = "High range limit — AI_HX1_FLOW_WORT"
+unit = "L/h"
+equipment = "HX1"
+min = 0
+max = 1000
+initial = 1000
+
+[tags.AI_HX1_FLOW_WORT_LIM_L]
+area = "a400_cooling"
+type = "AI"
+description = "Low range limit — AI_HX1_FLOW_WORT"
+unit = "L/h"
+equipment = "HX1"
+min = 0
+max = 1000
+initial = 0
+
+[tags.AI_HX1_O2_PPM]
+area = "a400_cooling"
+type = "AI"
+description = "Dissolved O2 pós-aeração L1"
+unit = "ppm"
+min = 0
+max = 20
+initial = 0
+equipment = "HX1"
+
+[tags.AI_HX1_O2_PPM_LIM_H]
+area = "a400_cooling"
+type = "AI"
+description = "High range limit — AI_HX1_O2_PPM"
+unit = "ppm"
+equipment = "HX1"
+min = 0
+max = 20
+initial = 20
+
+[tags.AI_HX1_O2_PPM_LIM_L]
+area = "a400_cooling"
+type = "AI"
+description = "Low range limit — AI_HX1_O2_PPM"
+unit = "ppm"
+equipment = "HX1"
+min = 0
+max = 20
+initial = 0
+
+[tags.AI_HX2_TT_IN]
+area = "a400_cooling"
+type = "AI"
+description = "Wort inlet temperature HX2"
+unit = "°C"
+min = 60
+max = 100
+initial = 80
+equipment = "HX2"
+
+[tags.AI_HX2_TT_IN_LIM_H]
+area = "a400_cooling"
+type = "AI"
+description = "High range limit — AI_HX2_TT_IN"
+unit = "°C"
+equipment = "HX2"
+min = 60
+max = 100
+initial = 100
+
+[tags.AI_HX2_TT_IN_LIM_L]
+area = "a400_cooling"
+type = "AI"
+description = "Low range limit — AI_HX2_TT_IN"
+unit = "°C"
+equipment = "HX2"
+min = 60
+max = 100
+initial = 60
+
+[tags.AI_HX2_TT_OUT]
+area = "a400_cooling"
+type = "AI"
+description = "Wort outlet temperature HX2"
+unit = "°C"
+min = 5
+max = 30
+initial = 20
+equipment = "HX2"
+
+[tags.AI_HX2_TT_OUT_LIM_H]
+area = "a400_cooling"
+type = "AI"
+description = "High range limit — AI_HX2_TT_OUT"
+unit = "°C"
+equipment = "HX2"
+min = 5
+max = 30
+initial = 30
+
+[tags.AI_HX2_TT_OUT_LIM_L]
+area = "a400_cooling"
+type = "AI"
+description = "Low range limit — AI_HX2_TT_OUT"
+unit = "°C"
+equipment = "HX2"
+min = 5
+max = 30
+initial = 5
+
+[tags.AI_HX2_FLOW_WORT]
+area = "a400_cooling"
+type = "AI"
+description = "Wort flow HX2 (totalizer)"
+unit = "L/h"
+min = 0
+max = 1000
+initial = 0
+equipment = "HX2"
+
+[tags.AI_HX2_FLOW_WORT_LIM_H]
+area = "a400_cooling"
+type = "AI"
+description = "High range limit — AI_HX2_FLOW_WORT"
+unit = "L/h"
+equipment = "HX2"
+min = 0
+max = 1000
+initial = 1000
+
+[tags.AI_HX2_FLOW_WORT_LIM_L]
+area = "a400_cooling"
+type = "AI"
+description = "Low range limit — AI_HX2_FLOW_WORT"
+unit = "L/h"
+equipment = "HX2"
+min = 0
+max = 1000
+initial = 0
+
+[tags.AI_HX2_O2_PPM]
+area = "a400_cooling"
+type = "AI"
+description = "Dissolved O2 pós-aeração L2"
+unit = "ppm"
+min = 0
+max = 20
+initial = 0
+equipment = "HX2"
+
+[tags.AI_HX2_O2_PPM_LIM_H]
+area = "a400_cooling"
+type = "AI"
+description = "High range limit — AI_HX2_O2_PPM"
+unit = "ppm"
+equipment = "HX2"
+min = 0
+max = 20
+initial = 20
+
+[tags.AI_HX2_O2_PPM_LIM_L]
+area = "a400_cooling"
+type = "AI"
+description = "Low range limit — AI_HX2_O2_PPM"
+unit = "ppm"
+equipment = "HX2"
+min = 0
+max = 20
+initial = 0
+
+[tags.AO_HX1_WATER_FLOW]
+area = "a400_cooling"
+type = "AO"
+description = "Cooling water valve control HX1"
+unit = "%"
+min = 0
+max = 100
+initial = 0
+equipment = "HX1"
+
+[tags.AO_HX1_WATER_FLOW_LIM_H]
+area = "a400_cooling"
+type = "AI"
+description = "High range limit — AO_HX1_WATER_FLOW"
+unit = "%"
+equipment = "HX1"
+min = 0
+max = 100
+initial = 100
+
+[tags.AO_HX1_WATER_FLOW_LIM_L]
+area = "a400_cooling"
+type = "AI"
+description = "Low range limit — AO_HX1_WATER_FLOW"
+unit = "%"
+equipment = "HX1"
+min = 0
+max = 100
+initial = 0
+
+[tags.AO_HX2_WATER_FLOW]
+area = "a400_cooling"
+type = "AO"
+description = "Cooling water valve control HX2"
+unit = "%"
+min = 0
+max = 100
+initial = 0
+equipment = "HX2"
+
+[tags.AO_HX2_WATER_FLOW_LIM_H]
+area = "a400_cooling"
+type = "AI"
+description = "High range limit — AO_HX2_WATER_FLOW"
+unit = "%"
+equipment = "HX2"
+min = 0
+max = 100
+initial = 100
+
+[tags.AO_HX2_WATER_FLOW_LIM_L]
+area = "a400_cooling"
+type = "AI"
+description = "Low range limit — AO_HX2_WATER_FLOW"
+unit = "%"
+equipment = "HX2"
+min = 0
+max = 100
+initial = 0
+
+[tags.AO_O2_FLOW_L1]
+area = "a400_cooling"
+type = "AO"
+description = "O2 aeration setpoint L1"
+unit = "L/h"
+min = 0
+max = 100
+initial = 0
+equipment = "HX1"
+
+[tags.AO_O2_FLOW_L1_LIM_H]
+area = "a400_cooling"
+type = "AI"
+description = "High range limit — AO_O2_FLOW_L1"
+unit = "L/h"
+equipment = "HX1"
+min = 0
+max = 100
+initial = 100
+
+[tags.AO_O2_FLOW_L1_LIM_L]
+area = "a400_cooling"
+type = "AI"
+description = "Low range limit — AO_O2_FLOW_L1"
+unit = "L/h"
+equipment = "HX1"
+min = 0
+max = 100
+initial = 0
+
+[tags.AO_O2_FLOW_L2]
+area = "a400_cooling"
+type = "AO"
+description = "O2 aeration setpoint L2"
+unit = "L/h"
+min = 0
+max = 100
+initial = 0
+equipment = "HX2"
+
+[tags.AO_O2_FLOW_L2_LIM_H]
+area = "a400_cooling"
+type = "AI"
+description = "High range limit — AO_O2_FLOW_L2"
+unit = "L/h"
+equipment = "HX2"
+min = 0
+max = 100
+initial = 100
+
+[tags.AO_O2_FLOW_L2_LIM_L]
+area = "a400_cooling"
+type = "AI"
+description = "Low range limit — AO_O2_FLOW_L2"
+unit = "L/h"
+equipment = "HX2"
+min = 0
+max = 100
+initial = 0
+
+[tags.DI_FV1_LS_HI]
+area = "a500_fermentation"
+type = "DI"
+description = "High level FV1"
+unit = "bool"
+initial = 0
+equipment = "FV1"
+
+[tags.DI_FV1_LS_LO]
+area = "a500_fermentation"
+type = "DI"
+description = "Low level FV1"
+unit = "bool"
+initial = 1
+equipment = "FV1"
+
+[tags.DI_FV1_PRV]
+area = "a500_fermentation"
+type = "DI"
+description = "PRV FV1 open"
+unit = "bool"
+initial = 0
+equipment = "FV1"
+
+[tags.DI_FV1_GLY_RUN]
+area = "a500_fermentation"
+type = "DI"
+description = "Glycol FV1 open"
+unit = "bool"
+initial = 0
+equipment = "FV1"
+
+[tags.DO_FV1_GLY_EN]
+area = "a500_fermentation"
+type = "DO"
+description = "Enable glycol FV1"
+unit = "bool"
+initial = 0
+equipment = "FV1"
+
+[tags.DO_FV1_CO2_VENT]
+area = "a500_fermentation"
+type = "DO"
+description = "Venteo CO2 FV1"
+unit = "bool"
+initial = 0
+equipment = "FV1"
+
+[tags.DO_FV1_SPUND]
+area = "a500_fermentation"
+type = "DO"
+description = "Spunding FV1"
+unit = "bool"
+initial = 0
+equipment = "FV1"
+
+[tags.AI_FV1_TT]
+area = "a500_fermentation"
+type = "AI"
+description = "Temperature FV1"
+unit = "°C"
+min = -5
+max = 30
+initial = 20
+equipment = "FV1"
+
+[tags.AI_FV1_TT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV1_TT"
+unit = "°C"
+equipment = "FV1"
+min = -5
+max = 30
+initial = 30
+
+[tags.AI_FV1_TT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV1_TT"
+unit = "°C"
+equipment = "FV1"
+min = -5
+max = 30
+initial = -5
+
+[tags.AI_FV1_PT]
+area = "a500_fermentation"
+type = "AI"
+description = "Pressure FV1"
+unit = "bar"
+min = 0
+max = 3
+initial = 0
+equipment = "FV1"
+
+[tags.AI_FV1_PT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV1_PT"
+unit = "bar"
+equipment = "FV1"
+min = 0
+max = 3
+initial = 3
+
+[tags.AI_FV1_PT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV1_PT"
+unit = "bar"
+equipment = "FV1"
+min = 0
+max = 3
+initial = 0
+
+[tags.AI_FV1_PH]
+area = "a500_fermentation"
+type = "AI"
+description = "pH FV1"
+unit = "pH"
+min = 3
+max = 7
+initial = 5.4
+equipment = "FV1"
+
+[tags.AI_FV1_PH_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV1_PH"
+unit = "pH"
+equipment = "FV1"
+min = 3
+max = 7
+initial = 7
+
+[tags.AI_FV1_PH_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV1_PH"
+unit = "pH"
+equipment = "FV1"
+min = 3
+max = 7
+initial = 3
+
+[tags.AI_FV1_BRIX]
+area = "a500_fermentation"
+type = "AI"
+description = "Density FV1"
+unit = "°P"
+min = 0
+max = 30
+initial = 0
+equipment = "FV1"
+
+[tags.AI_FV1_BRIX_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV1_BRIX"
+unit = "°P"
+equipment = "FV1"
+min = 0
+max = 30
+initial = 30
+
+[tags.AI_FV1_BRIX_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV1_BRIX"
+unit = "°P"
+equipment = "FV1"
+min = 0
+max = 30
+initial = 0
+
+[tags.AI_FV1_CO2_PPM]
+area = "a500_fermentation"
+type = "AI"
+description = "CDissolved O2 FV1"
+unit = "g/L"
+min = 0
+max = 8
+initial = 0
+equipment = "FV1"
+
+[tags.AI_FV1_CO2_PPM_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV1_CO2_PPM"
+unit = "g/L"
+equipment = "FV1"
+min = 0
+max = 8
+initial = 8
+
+[tags.AI_FV1_CO2_PPM_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV1_CO2_PPM"
+unit = "g/L"
+equipment = "FV1"
+min = 0
+max = 8
+initial = 0
+
+[tags.AI_FV1_LT]
+area = "a500_fermentation"
+type = "AI"
+description = "Level FV1 [mm, 0-4500mm]"
+unit = "mm"
+min = 0
+max = 4500
+initial = 3600
+equipment = "FV1"
+
+[tags.AI_FV1_LT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV1_LT"
+unit = "mm"
+equipment = "FV1"
+min = 0
+max = 4500
+initial = 4500
+
+[tags.AI_FV1_LT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV1_LT"
+unit = "mm"
+equipment = "FV1"
+min = 0
+max = 4500
+initial = 0
+
+[tags.AO_FV1_TEMP_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Temperature setpoint FV1"
+unit = "°C"
+min = -5
+max = 30
+initial = 20
+equipment = "FV1"
+
+[tags.AO_FV1_TEMP_SP_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AO_FV1_TEMP_SP"
+unit = "°C"
+equipment = "FV1"
+min = -5
+max = 30
+initial = 30
+
+[tags.AO_FV1_TEMP_SP_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AO_FV1_TEMP_SP"
+unit = "°C"
+equipment = "FV1"
+min = -5
+max = 30
+initial = -5
+
+[tags.AO_FV1_PRESS_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Pressure setpoint FV1"
+unit = "bar"
+min = 0
+max = 2
+initial = 0
+equipment = "FV1"
+
+[tags.AO_FV1_PRESS_SP_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AO_FV1_PRESS_SP"
+unit = "bar"
+equipment = "FV1"
+min = 0
+max = 2
+initial = 2
+
+[tags.AO_FV1_PRESS_SP_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AO_FV1_PRESS_SP"
+unit = "bar"
+equipment = "FV1"
+min = 0
+max = 2
+initial = 0
+
+[tags.DI_FV2_LS_HI]
+area = "a500_fermentation"
+type = "DI"
+description = "High level FV2"
+unit = "bool"
+initial = 0
+equipment = "FV2"
+
+[tags.DI_FV2_LS_LO]
+area = "a500_fermentation"
+type = "DI"
+description = "Low level FV2"
+unit = "bool"
+initial = 1
+equipment = "FV2"
+
+[tags.DI_FV2_PRV]
+area = "a500_fermentation"
+type = "DI"
+description = "PRV FV2 open"
+unit = "bool"
+initial = 0
+equipment = "FV2"
+
+[tags.DI_FV2_GLY_RUN]
+area = "a500_fermentation"
+type = "DI"
+description = "Glycol FV2 open"
+unit = "bool"
+initial = 0
+equipment = "FV2"
+
+[tags.DO_FV2_GLY_EN]
+area = "a500_fermentation"
+type = "DO"
+description = "Enable glycol FV2"
+unit = "bool"
+initial = 0
+equipment = "FV2"
+
+[tags.DO_FV2_CO2_VENT]
+area = "a500_fermentation"
+type = "DO"
+description = "Venteo CO2 FV2"
+unit = "bool"
+initial = 0
+equipment = "FV2"
+
+[tags.DO_FV2_SPUND]
+area = "a500_fermentation"
+type = "DO"
+description = "Spunding FV2"
+unit = "bool"
+initial = 0
+equipment = "FV2"
+
+[tags.AI_FV2_TT]
+area = "a500_fermentation"
+type = "AI"
+description = "Temperature FV2"
+unit = "°C"
+min = -5
+max = 30
+initial = 20
+equipment = "FV2"
+
+[tags.AI_FV2_TT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV2_TT"
+unit = "°C"
+equipment = "FV2"
+min = -5
+max = 30
+initial = 30
+
+[tags.AI_FV2_TT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV2_TT"
+unit = "°C"
+equipment = "FV2"
+min = -5
+max = 30
+initial = -5
+
+[tags.AI_FV2_PT]
+area = "a500_fermentation"
+type = "AI"
+description = "Pressure FV2"
+unit = "bar"
+min = 0
+max = 3
+initial = 0
+equipment = "FV2"
+
+[tags.AI_FV2_PT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV2_PT"
+unit = "bar"
+equipment = "FV2"
+min = 0
+max = 3
+initial = 3
+
+[tags.AI_FV2_PT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV2_PT"
+unit = "bar"
+equipment = "FV2"
+min = 0
+max = 3
+initial = 0
+
+[tags.AI_FV2_PH]
+area = "a500_fermentation"
+type = "AI"
+description = "pH FV2"
+unit = "pH"
+min = 3
+max = 7
+initial = 5.4
+equipment = "FV2"
+
+[tags.AI_FV2_PH_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV2_PH"
+unit = "pH"
+equipment = "FV2"
+min = 3
+max = 7
+initial = 7
+
+[tags.AI_FV2_PH_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV2_PH"
+unit = "pH"
+equipment = "FV2"
+min = 3
+max = 7
+initial = 3
+
+[tags.AI_FV2_BRIX]
+area = "a500_fermentation"
+type = "AI"
+description = "Density FV2"
+unit = "°P"
+min = 0
+max = 30
+initial = 0
+equipment = "FV2"
+
+[tags.AI_FV2_BRIX_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV2_BRIX"
+unit = "°P"
+equipment = "FV2"
+min = 0
+max = 30
+initial = 30
+
+[tags.AI_FV2_BRIX_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV2_BRIX"
+unit = "°P"
+equipment = "FV2"
+min = 0
+max = 30
+initial = 0
+
+[tags.AI_FV2_CO2_PPM]
+area = "a500_fermentation"
+type = "AI"
+description = "CDissolved O2 FV2"
+unit = "g/L"
+min = 0
+max = 8
+initial = 0
+equipment = "FV2"
+
+[tags.AI_FV2_CO2_PPM_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV2_CO2_PPM"
+unit = "g/L"
+equipment = "FV2"
+min = 0
+max = 8
+initial = 8
+
+[tags.AI_FV2_CO2_PPM_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV2_CO2_PPM"
+unit = "g/L"
+equipment = "FV2"
+min = 0
+max = 8
+initial = 0
+
+[tags.AI_FV2_LT]
+area = "a500_fermentation"
+type = "AI"
+description = "Level FV2 [mm, 0-4500mm]"
+unit = "mm"
+min = 0
+max = 4500
+initial = 3600
+equipment = "FV2"
+
+[tags.AI_FV2_LT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV2_LT"
+unit = "mm"
+equipment = "FV2"
+min = 0
+max = 4500
+initial = 4500
+
+[tags.AI_FV2_LT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV2_LT"
+unit = "mm"
+equipment = "FV2"
+min = 0
+max = 4500
+initial = 0
+
+[tags.AO_FV2_TEMP_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Temperature setpoint FV2"
+unit = "°C"
+min = -5
+max = 30
+initial = 20
+equipment = "FV2"
+
+[tags.AO_FV2_TEMP_SP_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AO_FV2_TEMP_SP"
+unit = "°C"
+equipment = "FV2"
+min = -5
+max = 30
+initial = 30
+
+[tags.AO_FV2_TEMP_SP_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AO_FV2_TEMP_SP"
+unit = "°C"
+equipment = "FV2"
+min = -5
+max = 30
+initial = -5
+
+[tags.AO_FV2_PRESS_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Pressure setpoint FV2"
+unit = "bar"
+min = 0
+max = 2
+initial = 0
+equipment = "FV2"
+
+[tags.AO_FV2_PRESS_SP_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AO_FV2_PRESS_SP"
+unit = "bar"
+equipment = "FV2"
+min = 0
+max = 2
+initial = 2
+
+[tags.AO_FV2_PRESS_SP_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AO_FV2_PRESS_SP"
+unit = "bar"
+equipment = "FV2"
+min = 0
+max = 2
+initial = 0
+
+[tags.DI_FV3_LS_HI]
+area = "a500_fermentation"
+type = "DI"
+description = "High level FV3"
+unit = "bool"
+initial = 0
+equipment = "FV3"
+
+[tags.DI_FV3_LS_LO]
+area = "a500_fermentation"
+type = "DI"
+description = "Low level FV3"
+unit = "bool"
+initial = 1
+equipment = "FV3"
+
+[tags.DI_FV3_PRV]
+area = "a500_fermentation"
+type = "DI"
+description = "PRV FV3 open"
+unit = "bool"
+initial = 0
+equipment = "FV3"
+
+[tags.DI_FV3_GLY_RUN]
+area = "a500_fermentation"
+type = "DI"
+description = "Glycol FV3 open"
+unit = "bool"
+initial = 0
+equipment = "FV3"
+
+[tags.DO_FV3_GLY_EN]
+area = "a500_fermentation"
+type = "DO"
+description = "Enable glycol FV3"
+unit = "bool"
+initial = 0
+equipment = "FV3"
+
+[tags.DO_FV3_CO2_VENT]
+area = "a500_fermentation"
+type = "DO"
+description = "Venteo CO2 FV3"
+unit = "bool"
+initial = 0
+equipment = "FV3"
+
+[tags.DO_FV3_SPUND]
+area = "a500_fermentation"
+type = "DO"
+description = "Spunding FV3"
+unit = "bool"
+initial = 0
+equipment = "FV3"
+
+[tags.AI_FV3_TT]
+area = "a500_fermentation"
+type = "AI"
+description = "Temperature FV3"
+unit = "°C"
+min = -5
+max = 30
+initial = 20
+equipment = "FV3"
+
+[tags.AI_FV3_TT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV3_TT"
+unit = "°C"
+equipment = "FV3"
+min = -5
+max = 30
+initial = 30
+
+[tags.AI_FV3_TT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV3_TT"
+unit = "°C"
+equipment = "FV3"
+min = -5
+max = 30
+initial = -5
+
+[tags.AI_FV3_PT]
+area = "a500_fermentation"
+type = "AI"
+description = "Pressure FV3"
+unit = "bar"
+min = 0
+max = 3
+initial = 0
+equipment = "FV3"
+
+[tags.AI_FV3_PT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV3_PT"
+unit = "bar"
+equipment = "FV3"
+min = 0
+max = 3
+initial = 3
+
+[tags.AI_FV3_PT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV3_PT"
+unit = "bar"
+equipment = "FV3"
+min = 0
+max = 3
+initial = 0
+
+[tags.AI_FV3_PH]
+area = "a500_fermentation"
+type = "AI"
+description = "pH FV3"
+unit = "pH"
+min = 3
+max = 7
+initial = 5.4
+equipment = "FV3"
+
+[tags.AI_FV3_PH_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV3_PH"
+unit = "pH"
+equipment = "FV3"
+min = 3
+max = 7
+initial = 7
+
+[tags.AI_FV3_PH_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV3_PH"
+unit = "pH"
+equipment = "FV3"
+min = 3
+max = 7
+initial = 3
+
+[tags.AI_FV3_BRIX]
+area = "a500_fermentation"
+type = "AI"
+description = "Density FV3"
+unit = "°P"
+min = 0
+max = 30
+initial = 0
+equipment = "FV3"
+
+[tags.AI_FV3_BRIX_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV3_BRIX"
+unit = "°P"
+equipment = "FV3"
+min = 0
+max = 30
+initial = 30
+
+[tags.AI_FV3_BRIX_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV3_BRIX"
+unit = "°P"
+equipment = "FV3"
+min = 0
+max = 30
+initial = 0
+
+[tags.AI_FV3_CO2_PPM]
+area = "a500_fermentation"
+type = "AI"
+description = "CDissolved O2 FV3"
+unit = "g/L"
+min = 0
+max = 8
+initial = 0
+equipment = "FV3"
+
+[tags.AI_FV3_CO2_PPM_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV3_CO2_PPM"
+unit = "g/L"
+equipment = "FV3"
+min = 0
+max = 8
+initial = 8
+
+[tags.AI_FV3_CO2_PPM_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV3_CO2_PPM"
+unit = "g/L"
+equipment = "FV3"
+min = 0
+max = 8
+initial = 0
+
+[tags.AI_FV3_LT]
+area = "a500_fermentation"
+type = "AI"
+description = "Level FV3 [mm, 0-4500mm]"
+unit = "mm"
+min = 0
+max = 4500
+initial = 3600
+equipment = "FV3"
+
+[tags.AI_FV3_LT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV3_LT"
+unit = "mm"
+equipment = "FV3"
+min = 0
+max = 4500
+initial = 4500
+
+[tags.AI_FV3_LT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV3_LT"
+unit = "mm"
+equipment = "FV3"
+min = 0
+max = 4500
+initial = 0
+
+[tags.AO_FV3_TEMP_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Temperature setpoint FV3"
+unit = "°C"
+min = -5
+max = 30
+initial = 20
+equipment = "FV3"
+
+[tags.AO_FV3_TEMP_SP_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AO_FV3_TEMP_SP"
+unit = "°C"
+equipment = "FV3"
+min = -5
+max = 30
+initial = 30
+
+[tags.AO_FV3_TEMP_SP_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AO_FV3_TEMP_SP"
+unit = "°C"
+equipment = "FV3"
+min = -5
+max = 30
+initial = -5
+
+[tags.AO_FV3_PRESS_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Pressure setpoint FV3"
+unit = "bar"
+min = 0
+max = 2
+initial = 0
+equipment = "FV3"
+
+[tags.AO_FV3_PRESS_SP_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AO_FV3_PRESS_SP"
+unit = "bar"
+equipment = "FV3"
+min = 0
+max = 2
+initial = 2
+
+[tags.AO_FV3_PRESS_SP_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AO_FV3_PRESS_SP"
+unit = "bar"
+equipment = "FV3"
+min = 0
+max = 2
+initial = 0
+
+[tags.DI_FV4_LS_HI]
+area = "a500_fermentation"
+type = "DI"
+description = "High level FV4"
+unit = "bool"
+initial = 0
+equipment = "FV4"
+
+[tags.DI_FV4_LS_LO]
+area = "a500_fermentation"
+type = "DI"
+description = "Low level FV4"
+unit = "bool"
+initial = 1
+equipment = "FV4"
+
+[tags.DI_FV4_PRV]
+area = "a500_fermentation"
+type = "DI"
+description = "PRV FV4 open"
+unit = "bool"
+initial = 0
+equipment = "FV4"
+
+[tags.DI_FV4_GLY_RUN]
+area = "a500_fermentation"
+type = "DI"
+description = "Glycol FV4 open"
+unit = "bool"
+initial = 0
+equipment = "FV4"
+
+[tags.DO_FV4_GLY_EN]
+area = "a500_fermentation"
+type = "DO"
+description = "Enable glycol FV4"
+unit = "bool"
+initial = 0
+equipment = "FV4"
+
+[tags.DO_FV4_CO2_VENT]
+area = "a500_fermentation"
+type = "DO"
+description = "Venteo CO2 FV4"
+unit = "bool"
+initial = 0
+equipment = "FV4"
+
+[tags.DO_FV4_SPUND]
+area = "a500_fermentation"
+type = "DO"
+description = "Spunding FV4"
+unit = "bool"
+initial = 0
+equipment = "FV4"
+
+[tags.AI_FV4_TT]
+area = "a500_fermentation"
+type = "AI"
+description = "Temperature FV4"
+unit = "°C"
+min = -5
+max = 30
+initial = 20
+equipment = "FV4"
+
+[tags.AI_FV4_TT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV4_TT"
+unit = "°C"
+equipment = "FV4"
+min = -5
+max = 30
+initial = 30
+
+[tags.AI_FV4_TT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV4_TT"
+unit = "°C"
+equipment = "FV4"
+min = -5
+max = 30
+initial = -5
+
+[tags.AI_FV4_PT]
+area = "a500_fermentation"
+type = "AI"
+description = "Pressure FV4"
+unit = "bar"
+min = 0
+max = 3
+initial = 0
+equipment = "FV4"
+
+[tags.AI_FV4_PT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV4_PT"
+unit = "bar"
+equipment = "FV4"
+min = 0
+max = 3
+initial = 3
+
+[tags.AI_FV4_PT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV4_PT"
+unit = "bar"
+equipment = "FV4"
+min = 0
+max = 3
+initial = 0
+
+[tags.AI_FV4_PH]
+area = "a500_fermentation"
+type = "AI"
+description = "pH FV4"
+unit = "pH"
+min = 3
+max = 7
+initial = 5.4
+equipment = "FV4"
+
+[tags.AI_FV4_PH_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV4_PH"
+unit = "pH"
+equipment = "FV4"
+min = 3
+max = 7
+initial = 7
+
+[tags.AI_FV4_PH_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV4_PH"
+unit = "pH"
+equipment = "FV4"
+min = 3
+max = 7
+initial = 3
+
+[tags.AI_FV4_BRIX]
+area = "a500_fermentation"
+type = "AI"
+description = "Density FV4"
+unit = "°P"
+min = 0
+max = 30
+initial = 0
+equipment = "FV4"
+
+[tags.AI_FV4_BRIX_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV4_BRIX"
+unit = "°P"
+equipment = "FV4"
+min = 0
+max = 30
+initial = 30
+
+[tags.AI_FV4_BRIX_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV4_BRIX"
+unit = "°P"
+equipment = "FV4"
+min = 0
+max = 30
+initial = 0
+
+[tags.AI_FV4_CO2_PPM]
+area = "a500_fermentation"
+type = "AI"
+description = "CDissolved O2 FV4"
+unit = "g/L"
+min = 0
+max = 8
+initial = 0
+equipment = "FV4"
+
+[tags.AI_FV4_CO2_PPM_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV4_CO2_PPM"
+unit = "g/L"
+equipment = "FV4"
+min = 0
+max = 8
+initial = 8
+
+[tags.AI_FV4_CO2_PPM_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV4_CO2_PPM"
+unit = "g/L"
+equipment = "FV4"
+min = 0
+max = 8
+initial = 0
+
+[tags.AI_FV4_LT]
+area = "a500_fermentation"
+type = "AI"
+description = "Level FV4 [mm, 0-4500mm]"
+unit = "mm"
+min = 0
+max = 4500
+initial = 3600
+equipment = "FV4"
+
+[tags.AI_FV4_LT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV4_LT"
+unit = "mm"
+equipment = "FV4"
+min = 0
+max = 4500
+initial = 4500
+
+[tags.AI_FV4_LT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV4_LT"
+unit = "mm"
+equipment = "FV4"
+min = 0
+max = 4500
+initial = 0
+
+[tags.AO_FV4_TEMP_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Temperature setpoint FV4"
+unit = "°C"
+min = -5
+max = 30
+initial = 20
+equipment = "FV4"
+
+[tags.AO_FV4_TEMP_SP_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AO_FV4_TEMP_SP"
+unit = "°C"
+equipment = "FV4"
+min = -5
+max = 30
+initial = 30
+
+[tags.AO_FV4_TEMP_SP_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AO_FV4_TEMP_SP"
+unit = "°C"
+equipment = "FV4"
+min = -5
+max = 30
+initial = -5
+
+[tags.AO_FV4_PRESS_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Pressure setpoint FV4"
+unit = "bar"
+min = 0
+max = 2
+initial = 0
+equipment = "FV4"
+
+[tags.AO_FV4_PRESS_SP_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AO_FV4_PRESS_SP"
+unit = "bar"
+equipment = "FV4"
+min = 0
+max = 2
+initial = 2
+
+[tags.AO_FV4_PRESS_SP_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AO_FV4_PRESS_SP"
+unit = "bar"
+equipment = "FV4"
+min = 0
+max = 2
+initial = 0
+
+[tags.DI_FV5_LS_HI]
+area = "a500_fermentation"
+type = "DI"
+description = "High level FV5"
+unit = "bool"
+initial = 0
+equipment = "FV5"
+
+[tags.DI_FV5_LS_LO]
+area = "a500_fermentation"
+type = "DI"
+description = "Low level FV5"
+unit = "bool"
+initial = 1
+equipment = "FV5"
+
+[tags.DI_FV5_PRV]
+area = "a500_fermentation"
+type = "DI"
+description = "PRV FV5 open"
+unit = "bool"
+initial = 0
+equipment = "FV5"
+
+[tags.DI_FV5_GLY_RUN]
+area = "a500_fermentation"
+type = "DI"
+description = "Glycol FV5 open"
+unit = "bool"
+initial = 0
+equipment = "FV5"
+
+[tags.DO_FV5_GLY_EN]
+area = "a500_fermentation"
+type = "DO"
+description = "Enable glycol FV5"
+unit = "bool"
+initial = 0
+equipment = "FV5"
+
+[tags.DO_FV5_CO2_VENT]
+area = "a500_fermentation"
+type = "DO"
+description = "Venteo CO2 FV5"
+unit = "bool"
+initial = 0
+equipment = "FV5"
+
+[tags.DO_FV5_SPUND]
+area = "a500_fermentation"
+type = "DO"
+description = "Spunding FV5"
+unit = "bool"
+initial = 0
+equipment = "FV5"
+
+[tags.AI_FV5_TT]
+area = "a500_fermentation"
+type = "AI"
+description = "Temperature FV5"
+unit = "°C"
+min = -5
+max = 30
+initial = 20
+equipment = "FV5"
+
+[tags.AI_FV5_TT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV5_TT"
+unit = "°C"
+equipment = "FV5"
+min = -5
+max = 30
+initial = 30
+
+[tags.AI_FV5_TT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV5_TT"
+unit = "°C"
+equipment = "FV5"
+min = -5
+max = 30
+initial = -5
+
+[tags.AI_FV5_PT]
+area = "a500_fermentation"
+type = "AI"
+description = "Pressure FV5"
+unit = "bar"
+min = 0
+max = 3
+initial = 0
+equipment = "FV5"
+
+[tags.AI_FV5_PT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV5_PT"
+unit = "bar"
+equipment = "FV5"
+min = 0
+max = 3
+initial = 3
+
+[tags.AI_FV5_PT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV5_PT"
+unit = "bar"
+equipment = "FV5"
+min = 0
+max = 3
+initial = 0
+
+[tags.AI_FV5_PH]
+area = "a500_fermentation"
+type = "AI"
+description = "pH FV5"
+unit = "pH"
+min = 3
+max = 7
+initial = 5.4
+equipment = "FV5"
+
+[tags.AI_FV5_PH_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV5_PH"
+unit = "pH"
+equipment = "FV5"
+min = 3
+max = 7
+initial = 7
+
+[tags.AI_FV5_PH_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV5_PH"
+unit = "pH"
+equipment = "FV5"
+min = 3
+max = 7
+initial = 3
+
+[tags.AI_FV5_BRIX]
+area = "a500_fermentation"
+type = "AI"
+description = "Density FV5"
+unit = "°P"
+min = 0
+max = 30
+initial = 0
+equipment = "FV5"
+
+[tags.AI_FV5_BRIX_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV5_BRIX"
+unit = "°P"
+equipment = "FV5"
+min = 0
+max = 30
+initial = 30
+
+[tags.AI_FV5_BRIX_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV5_BRIX"
+unit = "°P"
+equipment = "FV5"
+min = 0
+max = 30
+initial = 0
+
+[tags.AI_FV5_CO2_PPM]
+area = "a500_fermentation"
+type = "AI"
+description = "CDissolved O2 FV5"
+unit = "g/L"
+min = 0
+max = 8
+initial = 0
+equipment = "FV5"
+
+[tags.AI_FV5_CO2_PPM_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV5_CO2_PPM"
+unit = "g/L"
+equipment = "FV5"
+min = 0
+max = 8
+initial = 8
+
+[tags.AI_FV5_CO2_PPM_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV5_CO2_PPM"
+unit = "g/L"
+equipment = "FV5"
+min = 0
+max = 8
+initial = 0
+
+[tags.AI_FV5_LT]
+area = "a500_fermentation"
+type = "AI"
+description = "Level FV5 [mm, 0-4500mm]"
+unit = "mm"
+min = 0
+max = 4500
+initial = 3600
+equipment = "FV5"
+
+[tags.AI_FV5_LT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV5_LT"
+unit = "mm"
+equipment = "FV5"
+min = 0
+max = 4500
+initial = 4500
+
+[tags.AI_FV5_LT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV5_LT"
+unit = "mm"
+equipment = "FV5"
+min = 0
+max = 4500
+initial = 0
+
+[tags.AO_FV5_TEMP_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Temperature setpoint FV5"
+unit = "°C"
+min = -5
+max = 30
+initial = 20
+equipment = "FV5"
+
+[tags.AO_FV5_TEMP_SP_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AO_FV5_TEMP_SP"
+unit = "°C"
+equipment = "FV5"
+min = -5
+max = 30
+initial = 30
+
+[tags.AO_FV5_TEMP_SP_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AO_FV5_TEMP_SP"
+unit = "°C"
+equipment = "FV5"
+min = -5
+max = 30
+initial = -5
+
+[tags.AO_FV5_PRESS_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Pressure setpoint FV5"
+unit = "bar"
+min = 0
+max = 2
+initial = 0
+equipment = "FV5"
+
+[tags.AO_FV5_PRESS_SP_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AO_FV5_PRESS_SP"
+unit = "bar"
+equipment = "FV5"
+min = 0
+max = 2
+initial = 2
+
+[tags.AO_FV5_PRESS_SP_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AO_FV5_PRESS_SP"
+unit = "bar"
+equipment = "FV5"
+min = 0
+max = 2
+initial = 0
+
+[tags.DI_FV6_LS_HI]
+area = "a500_fermentation"
+type = "DI"
+description = "High level FV6"
+unit = "bool"
+initial = 0
+equipment = "FV6"
+
+[tags.DI_FV6_LS_LO]
+area = "a500_fermentation"
+type = "DI"
+description = "Low level FV6"
+unit = "bool"
+initial = 1
+equipment = "FV6"
+
+[tags.DI_FV6_PRV]
+area = "a500_fermentation"
+type = "DI"
+description = "PRV FV6 open"
+unit = "bool"
+initial = 0
+equipment = "FV6"
+
+[tags.DI_FV6_GLY_RUN]
+area = "a500_fermentation"
+type = "DI"
+description = "Glycol FV6 open"
+unit = "bool"
+initial = 0
+equipment = "FV6"
+
+[tags.DO_FV6_GLY_EN]
+area = "a500_fermentation"
+type = "DO"
+description = "Enable glycol FV6"
+unit = "bool"
+initial = 0
+equipment = "FV6"
+
+[tags.DO_FV6_CO2_VENT]
+area = "a500_fermentation"
+type = "DO"
+description = "Venteo CO2 FV6"
+unit = "bool"
+initial = 0
+equipment = "FV6"
+
+[tags.DO_FV6_SPUND]
+area = "a500_fermentation"
+type = "DO"
+description = "Spunding FV6"
+unit = "bool"
+initial = 0
+equipment = "FV6"
+
+[tags.AI_FV6_TT]
+area = "a500_fermentation"
+type = "AI"
+description = "Temperature FV6"
+unit = "°C"
+min = -5
+max = 30
+initial = 20
+equipment = "FV6"
+
+[tags.AI_FV6_TT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV6_TT"
+unit = "°C"
+equipment = "FV6"
+min = -5
+max = 30
+initial = 30
+
+[tags.AI_FV6_TT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV6_TT"
+unit = "°C"
+equipment = "FV6"
+min = -5
+max = 30
+initial = -5
+
+[tags.AI_FV6_PT]
+area = "a500_fermentation"
+type = "AI"
+description = "Pressure FV6"
+unit = "bar"
+min = 0
+max = 3
+initial = 0
+equipment = "FV6"
+
+[tags.AI_FV6_PT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV6_PT"
+unit = "bar"
+equipment = "FV6"
+min = 0
+max = 3
+initial = 3
+
+[tags.AI_FV6_PT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV6_PT"
+unit = "bar"
+equipment = "FV6"
+min = 0
+max = 3
+initial = 0
+
+[tags.AI_FV6_PH]
+area = "a500_fermentation"
+type = "AI"
+description = "pH FV6"
+unit = "pH"
+min = 3
+max = 7
+initial = 5.4
+equipment = "FV6"
+
+[tags.AI_FV6_PH_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV6_PH"
+unit = "pH"
+equipment = "FV6"
+min = 3
+max = 7
+initial = 7
+
+[tags.AI_FV6_PH_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV6_PH"
+unit = "pH"
+equipment = "FV6"
+min = 3
+max = 7
+initial = 3
+
+[tags.AI_FV6_BRIX]
+area = "a500_fermentation"
+type = "AI"
+description = "Density FV6"
+unit = "°P"
+min = 0
+max = 30
+initial = 0
+equipment = "FV6"
+
+[tags.AI_FV6_BRIX_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV6_BRIX"
+unit = "°P"
+equipment = "FV6"
+min = 0
+max = 30
+initial = 30
+
+[tags.AI_FV6_BRIX_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV6_BRIX"
+unit = "°P"
+equipment = "FV6"
+min = 0
+max = 30
+initial = 0
+
+[tags.AI_FV6_CO2_PPM]
+area = "a500_fermentation"
+type = "AI"
+description = "CDissolved O2 FV6"
+unit = "g/L"
+min = 0
+max = 8
+initial = 0
+equipment = "FV6"
+
+[tags.AI_FV6_CO2_PPM_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV6_CO2_PPM"
+unit = "g/L"
+equipment = "FV6"
+min = 0
+max = 8
+initial = 8
+
+[tags.AI_FV6_CO2_PPM_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV6_CO2_PPM"
+unit = "g/L"
+equipment = "FV6"
+min = 0
+max = 8
+initial = 0
+
+[tags.AI_FV6_LT]
+area = "a500_fermentation"
+type = "AI"
+description = "Level FV6 [mm, 0-4500mm]"
+unit = "mm"
+min = 0
+max = 4500
+initial = 3600
+equipment = "FV6"
+
+[tags.AI_FV6_LT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_FV6_LT"
+unit = "mm"
+equipment = "FV6"
+min = 0
+max = 4500
+initial = 4500
+
+[tags.AI_FV6_LT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_FV6_LT"
+unit = "mm"
+equipment = "FV6"
+min = 0
+max = 4500
+initial = 0
+
+[tags.AO_FV6_TEMP_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Temperature setpoint FV6"
+unit = "°C"
+min = -5
+max = 30
+initial = 20
+equipment = "FV6"
+
+[tags.AO_FV6_TEMP_SP_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AO_FV6_TEMP_SP"
+unit = "°C"
+equipment = "FV6"
+min = -5
+max = 30
+initial = 30
+
+[tags.AO_FV6_TEMP_SP_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AO_FV6_TEMP_SP"
+unit = "°C"
+equipment = "FV6"
+min = -5
+max = 30
+initial = -5
+
+[tags.AO_FV6_PRESS_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Pressure setpoint FV6"
+unit = "bar"
+min = 0
+max = 2
+initial = 0
+equipment = "FV6"
+
+[tags.AO_FV6_PRESS_SP_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AO_FV6_PRESS_SP"
+unit = "bar"
+equipment = "FV6"
+min = 0
+max = 2
+initial = 2
+
+[tags.AO_FV6_PRESS_SP_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AO_FV6_PRESS_SP"
+unit = "bar"
+equipment = "FV6"
+min = 0
+max = 2
+initial = 0
+
+[tags.DI_YB1_LS]
+area = "a500_fermentation"
+type = "DI"
+description = "Level Yeast Brink 1"
+unit = "bool"
+initial = 0
+equipment = "YB1"
+
+[tags.DI_YB2_LS]
+area = "a500_fermentation"
+type = "DI"
+description = "Level Yeast Brink 2"
+unit = "bool"
+initial = 0
+equipment = "YB2"
+
+[tags.AI_YB1_TT]
+area = "a500_fermentation"
+type = "AI"
+description = "Temperature Yeast Brink 1"
+unit = "°C"
+min = 0
+max = 20
+initial = 4
+equipment = "YB1"
+
+[tags.AI_YB1_TT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_YB1_TT"
+unit = "°C"
+equipment = "YB1"
+min = 0
+max = 20
+initial = 20
+
+[tags.AI_YB1_TT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_YB1_TT"
+unit = "°C"
+equipment = "YB1"
+min = 0
+max = 20
+initial = 0
+
+[tags.AI_YB2_TT]
+area = "a500_fermentation"
+type = "AI"
+description = "Temperature Yeast Brink 2"
+unit = "°C"
+min = 0
+max = 20
+initial = 4
+equipment = "YB2"
+
+[tags.AI_YB2_TT_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_YB2_TT"
+unit = "°C"
+equipment = "YB2"
+min = 0
+max = 20
+initial = 20
+
+[tags.AI_YB2_TT_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_YB2_TT"
+unit = "°C"
+equipment = "YB2"
+min = 0
+max = 20
+initial = 0
+
+[tags.AI_CO2_FLOW_FV]
+area = "a500_fermentation"
+type = "AI"
+description = "Recovered CO2 flow"
+unit = "kg/h"
+min = 0
+max = 50
+initial = 0
+equipment = "CO2_REC"
+
+[tags.AI_CO2_FLOW_FV_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_CO2_FLOW_FV"
+unit = "kg/h"
+equipment = "CO2_REC"
+min = 0
+max = 50
+initial = 50
+
+[tags.AI_CO2_FLOW_FV_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_CO2_FLOW_FV"
+unit = "kg/h"
+equipment = "CO2_REC"
+min = 0
+max = 50
+initial = 0
+
+[tags.AI_CO2_TANK_PRESS]
+area = "a500_fermentation"
+type = "AI"
+description = "CO2 tank pressure"
+unit = "bar"
+min = 0
+max = 20
+initial = 8
+equipment = "CO2_REC"
+
+[tags.AI_CO2_TANK_PRESS_LIM_H]
+area = "a500_fermentation"
+type = "AI"
+description = "High range limit — AI_CO2_TANK_PRESS"
+unit = "bar"
+equipment = "CO2_REC"
+min = 0
+max = 20
+initial = 20
+
+[tags.AI_CO2_TANK_PRESS_LIM_L]
+area = "a500_fermentation"
+type = "AI"
+description = "Low range limit — AI_CO2_TANK_PRESS"
+unit = "bar"
+equipment = "CO2_REC"
+min = 0
+max = 20
+initial = 0
+
+[tags.AI_CO2_TANK_WT]
+area = "a500_fermentation"
+type = "AI"
+description = "CO2 tank weight"
+unit = "kg"
+min = 0
+max = 5000
+initial = 2000
+equipment = "CO2_REC"
+
+[tags.DI_BBT1_LS_HI]
+area = "a600_maturation"
+type = "DI"
+description = "High level BBT 1"
+unit = "bool"
+initial = 0
+equipment = "BBT1"
+
+[tags.DI_BBT1_LS_LO]
+area = "a600_maturation"
+type = "DI"
+description = "Low level BBT 1"
+unit = "bool"
+initial = 1
+equipment = "BBT1"
+
+[tags.DI_BBT2_LS_HI]
+area = "a600_maturation"
+type = "DI"
+description = "High level BBT 2"
+unit = "bool"
+initial = 0
+equipment = "BBT2"
+
+[tags.DI_BBT2_LS_LO]
+area = "a600_maturation"
+type = "DI"
+description = "Low level BBT 2"
+unit = "bool"
+initial = 1
+equipment = "BBT2"
+
+[tags.DI_FILT_PMP_RUN]
+area = "a600_maturation"
+type = "DI"
+description = "Pump filtro running"
+unit = "bool"
+initial = 0
+equipment = "FILTER"
+
+[tags.DI_FILT_PMP_FLT]
+area = "a600_maturation"
+type = "DI"
+description = "Pump fault filtro"
+unit = "bool"
+initial = 0
+equipment = "FILTER"
+
+[tags.DI_CENT_RUN]
+area = "a600_maturation"
+type = "DI"
+description = "Centrífuga running"
+unit = "bool"
+initial = 0
+equipment = "CENTRIFUGE"
+
+[tags.DI_CENT_FAULT]
+area = "a600_maturation"
+type = "DI"
+description = "Centrifuge fault"
+unit = "bool"
+initial = 0
+equipment = "CENTRIFUGE"
+
+[tags.DO_BBT1_GLY_EN]
+area = "a600_maturation"
+type = "DO"
+description = "Glycol BBT 1"
+unit = "bool"
+initial = 0
+equipment = "BBT1"
+
+[tags.DO_BBT1_CO2_CARB]
+area = "a600_maturation"
+type = "DO"
+description = "Carbonation BBT 1"
+unit = "bool"
+initial = 0
+equipment = "BBT1"
+
+[tags.DO_BBT2_GLY_EN]
+area = "a600_maturation"
+type = "DO"
+description = "Glycol BBT 2"
+unit = "bool"
+initial = 0
+equipment = "BBT2"
+
+[tags.DO_BBT2_CO2_CARB]
+area = "a600_maturation"
+type = "DO"
+description = "Carbonation BBT 2"
+unit = "bool"
+initial = 0
+equipment = "BBT2"
+
+[tags.DO_FILT_PMP_RUN]
+area = "a600_maturation"
+type = "DO"
+description = "Start pump filtro"
+unit = "bool"
+initial = 0
+equipment = "FILTER"
+
+[tags.DO_CENT_START]
+area = "a600_maturation"
+type = "DO"
+description = "Start centrifuge"
+unit = "bool"
+initial = 0
+equipment = "CENTRIFUGE"
+
+[tags.AI_BBT1_TT]
+area = "a600_maturation"
+type = "AI"
+description = "Temperature BBT 1"
+unit = "°C"
+min = 0
+max = 20
+initial = 2
+equipment = "BBT1"
+
+[tags.AI_BBT1_TT_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT1_TT"
+unit = "°C"
+equipment = "BBT1"
+min = 0
+max = 20
+initial = 20
+
+[tags.AI_BBT1_TT_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT1_TT"
+unit = "°C"
+equipment = "BBT1"
+min = 0
+max = 20
+initial = 0
+
+[tags.AI_BBT1_PT]
+area = "a600_maturation"
+type = "AI"
+description = "Pressure BBT 1"
+unit = "bar"
+min = 0
+max = 4
+initial = 0
+equipment = "BBT1"
+
+[tags.AI_BBT1_PT_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT1_PT"
+unit = "bar"
+equipment = "BBT1"
+min = 0
+max = 4
+initial = 4
+
+[tags.AI_BBT1_PT_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT1_PT"
+unit = "bar"
+equipment = "BBT1"
+min = 0
+max = 4
+initial = 0
+
+[tags.AI_BBT1_LT]
+area = "a600_maturation"
+type = "AI"
+description = "Level BBT 1 [mm, 0-3200mm]"
+unit = "mm"
+min = 0
+max = 3200
+initial = 2560
+equipment = "BBT1"
+
+[tags.AI_BBT1_LT_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT1_LT"
+unit = "mm"
+equipment = "BBT1"
+min = 0
+max = 3200
+initial = 3200
+
+[tags.AI_BBT1_LT_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT1_LT"
+unit = "mm"
+equipment = "BBT1"
+min = 0
+max = 3200
+initial = 0
+
+[tags.AI_BBT1_CO2]
+area = "a600_maturation"
+type = "AI"
+description = "CBBT dissolved O2 1"
+unit = "g/L"
+min = 0
+max = 8
+initial = 0
+equipment = "BBT1"
+
+[tags.AI_BBT1_CO2_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT1_CO2"
+unit = "g/L"
+equipment = "BBT1"
+min = 0
+max = 8
+initial = 8
+
+[tags.AI_BBT1_CO2_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT1_CO2"
+unit = "g/L"
+equipment = "BBT1"
+min = 0
+max = 8
+initial = 0
+
+[tags.AI_BBT1_O2]
+area = "a600_maturation"
+type = "AI"
+description = "BBT dissolved O2 1 (TPO)"
+unit = "ppb"
+min = 0
+max = 500
+initial = 50
+equipment = "BBT1"
+
+[tags.AI_BBT1_O2_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT1_O2"
+unit = "ppb"
+equipment = "BBT1"
+min = 0
+max = 500
+initial = 500
+
+[tags.AI_BBT1_O2_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT1_O2"
+unit = "ppb"
+equipment = "BBT1"
+min = 0
+max = 500
+initial = 0
+
+[tags.AI_BBT1_TURB]
+area = "a600_maturation"
+type = "AI"
+description = "Turbidity BBT 1"
+unit = "EBC"
+min = 0
+max = 100
+initial = 0
+equipment = "BBT1"
+
+[tags.AI_BBT1_TURB_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT1_TURB"
+unit = "EBC"
+equipment = "BBT1"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_BBT1_TURB_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT1_TURB"
+unit = "EBC"
+equipment = "BBT1"
+min = 0
+max = 100
+initial = 0
+
+[tags.AI_BBT1_PH]
+area = "a600_maturation"
+type = "AI"
+description = "pH BBT 1"
+unit = "pH"
+min = 3
+max = 7
+initial = 4.2
+equipment = "BBT1"
+
+[tags.AI_BBT1_PH_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT1_PH"
+unit = "pH"
+equipment = "BBT1"
+min = 3
+max = 7
+initial = 7
+
+[tags.AI_BBT1_PH_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT1_PH"
+unit = "pH"
+equipment = "BBT1"
+min = 3
+max = 7
+initial = 3
+
+[tags.AI_BBT2_TT]
+area = "a600_maturation"
+type = "AI"
+description = "Temperature BBT 2"
+unit = "°C"
+min = 0
+max = 20
+initial = 2
+equipment = "BBT2"
+
+[tags.AI_BBT2_TT_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT2_TT"
+unit = "°C"
+equipment = "BBT2"
+min = 0
+max = 20
+initial = 20
+
+[tags.AI_BBT2_TT_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT2_TT"
+unit = "°C"
+equipment = "BBT2"
+min = 0
+max = 20
+initial = 0
+
+[tags.AI_BBT2_PT]
+area = "a600_maturation"
+type = "AI"
+description = "Pressure BBT 2"
+unit = "bar"
+min = 0
+max = 4
+initial = 0
+equipment = "BBT2"
+
+[tags.AI_BBT2_PT_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT2_PT"
+unit = "bar"
+equipment = "BBT2"
+min = 0
+max = 4
+initial = 4
+
+[tags.AI_BBT2_PT_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT2_PT"
+unit = "bar"
+equipment = "BBT2"
+min = 0
+max = 4
+initial = 0
+
+[tags.AI_BBT2_LT]
+area = "a600_maturation"
+type = "AI"
+description = "Level BBT 2 [mm, 0-3200mm]"
+unit = "mm"
+min = 0
+max = 3200
+initial = 2560
+equipment = "BBT2"
+
+[tags.AI_BBT2_LT_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT2_LT"
+unit = "mm"
+equipment = "BBT2"
+min = 0
+max = 3200
+initial = 3200
+
+[tags.AI_BBT2_LT_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT2_LT"
+unit = "mm"
+equipment = "BBT2"
+min = 0
+max = 3200
+initial = 0
+
+[tags.AI_BBT2_CO2]
+area = "a600_maturation"
+type = "AI"
+description = "CBBT dissolved O2 2"
+unit = "g/L"
+min = 0
+max = 8
+initial = 0
+equipment = "BBT2"
+
+[tags.AI_BBT2_CO2_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT2_CO2"
+unit = "g/L"
+equipment = "BBT2"
+min = 0
+max = 8
+initial = 8
+
+[tags.AI_BBT2_CO2_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT2_CO2"
+unit = "g/L"
+equipment = "BBT2"
+min = 0
+max = 8
+initial = 0
+
+[tags.AI_BBT2_O2]
+area = "a600_maturation"
+type = "AI"
+description = "BBT dissolved O2 2 (TPO)"
+unit = "ppb"
+min = 0
+max = 500
+initial = 50
+equipment = "BBT2"
+
+[tags.AI_BBT2_O2_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT2_O2"
+unit = "ppb"
+equipment = "BBT2"
+min = 0
+max = 500
+initial = 500
+
+[tags.AI_BBT2_O2_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT2_O2"
+unit = "ppb"
+equipment = "BBT2"
+min = 0
+max = 500
+initial = 0
+
+[tags.AI_BBT2_TURB]
+area = "a600_maturation"
+type = "AI"
+description = "Turbidity BBT 2"
+unit = "EBC"
+min = 0
+max = 100
+initial = 0
+equipment = "BBT2"
+
+[tags.AI_BBT2_TURB_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT2_TURB"
+unit = "EBC"
+equipment = "BBT2"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_BBT2_TURB_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT2_TURB"
+unit = "EBC"
+equipment = "BBT2"
+min = 0
+max = 100
+initial = 0
+
+[tags.AI_BBT2_PH]
+area = "a600_maturation"
+type = "AI"
+description = "pH BBT 2"
+unit = "pH"
+min = 3
+max = 7
+initial = 4.2
+equipment = "BBT2"
+
+[tags.AI_BBT2_PH_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_BBT2_PH"
+unit = "pH"
+equipment = "BBT2"
+min = 3
+max = 7
+initial = 7
+
+[tags.AI_BBT2_PH_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_BBT2_PH"
+unit = "pH"
+equipment = "BBT2"
+min = 3
+max = 7
+initial = 3
+
+[tags.AI_FILT_DP]
+area = "a600_maturation"
+type = "AI"
+description = "Differential pressure filtro"
+unit = "bar"
+min = 0
+max = 5
+initial = 0.1
+equipment = "FILTER"
+
+[tags.AI_FILT_DP_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_FILT_DP"
+unit = "bar"
+equipment = "FILTER"
+min = 0
+max = 5
+initial = 5
+
+[tags.AI_FILT_DP_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_FILT_DP"
+unit = "bar"
+equipment = "FILTER"
+min = 0
+max = 5
+initial = 0
+
+[tags.AI_FILT_FLOW]
+area = "a600_maturation"
+type = "AI"
+description = "Flow filtro"
+unit = "L/h"
+min = 0
+max = 1000
+initial = 0
+equipment = "FILTER"
+
+[tags.AI_FILT_FLOW_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_FILT_FLOW"
+unit = "L/h"
+equipment = "FILTER"
+min = 0
+max = 1000
+initial = 1000
+
+[tags.AI_FILT_FLOW_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_FILT_FLOW"
+unit = "L/h"
+equipment = "FILTER"
+min = 0
+max = 1000
+initial = 0
+
+[tags.AI_CENT_TURB_OUT]
+area = "a600_maturation"
+type = "AI"
+description = "Centrifuge outlet turbidity"
+unit = "NTU"
+min = 0
+max = 200
+initial = 0
+equipment = "CENTRIFUGE"
+
+[tags.AI_CENT_TURB_OUT_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_CENT_TURB_OUT"
+unit = "NTU"
+equipment = "CENTRIFUGE"
+min = 0
+max = 200
+initial = 200
+
+[tags.AI_CENT_TURB_OUT_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_CENT_TURB_OUT"
+unit = "NTU"
+equipment = "CENTRIFUGE"
+min = 0
+max = 200
+initial = 0
+
+[tags.AI_CENT_FLOW]
+area = "a600_maturation"
+type = "AI"
+description = "Centrifuge outlet flow"
+unit = "L/h"
+min = 0
+max = 2000
+initial = 0
+equipment = "CENTRIFUGE"
+
+[tags.AI_CENT_FLOW_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AI_CENT_FLOW"
+unit = "L/h"
+equipment = "CENTRIFUGE"
+min = 0
+max = 2000
+initial = 2000
+
+[tags.AI_CENT_FLOW_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AI_CENT_FLOW"
+unit = "L/h"
+equipment = "CENTRIFUGE"
+min = 0
+max = 2000
+initial = 0
+
+[tags.AI_BEER_LOSS_FV_BBT]
+area = "a600_maturation"
+type = "AI"
+description = "Losses FV→BBT"
+unit = "L"
+min = 0
+max = 200
+initial = 0
+equipment = "BBT1"
+
+[tags.AO_BBT1_TEMP_SP]
+area = "a600_maturation"
+type = "AO"
+description = "Temperature setpoint BBT 1"
+unit = "°C"
+min = 0
+max = 10
+initial = 2
+equipment = "BBT1"
+
+[tags.AO_BBT1_TEMP_SP_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AO_BBT1_TEMP_SP"
+unit = "°C"
+equipment = "BBT1"
+min = 0
+max = 10
+initial = 10
+
+[tags.AO_BBT1_TEMP_SP_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AO_BBT1_TEMP_SP"
+unit = "°C"
+equipment = "BBT1"
+min = 0
+max = 10
+initial = 0
+
+[tags.AO_BBT1_CO2_SP]
+area = "a600_maturation"
+type = "AO"
+description = "Carbonation setpoint BBT 1"
+unit = "bar"
+min = 0
+max = 3
+initial = 2.1
+equipment = "BBT1"
+
+[tags.AO_BBT1_CO2_SP_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AO_BBT1_CO2_SP"
+unit = "bar"
+equipment = "BBT1"
+min = 0
+max = 3
+initial = 3
+
+[tags.AO_BBT1_CO2_SP_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AO_BBT1_CO2_SP"
+unit = "bar"
+equipment = "BBT1"
+min = 0
+max = 3
+initial = 0
+
+[tags.AO_BBT2_TEMP_SP]
+area = "a600_maturation"
+type = "AO"
+description = "Temperature setpoint BBT 2"
+unit = "°C"
+min = 0
+max = 10
+initial = 2
+equipment = "BBT2"
+
+[tags.AO_BBT2_TEMP_SP_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AO_BBT2_TEMP_SP"
+unit = "°C"
+equipment = "BBT2"
+min = 0
+max = 10
+initial = 10
+
+[tags.AO_BBT2_TEMP_SP_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AO_BBT2_TEMP_SP"
+unit = "°C"
+equipment = "BBT2"
+min = 0
+max = 10
+initial = 0
+
+[tags.AO_BBT2_CO2_SP]
+area = "a600_maturation"
+type = "AO"
+description = "Carbonation setpoint BBT 2"
+unit = "bar"
+min = 0
+max = 3
+initial = 2.1
+equipment = "BBT2"
+
+[tags.AO_BBT2_CO2_SP_LIM_H]
+area = "a600_maturation"
+type = "AI"
+description = "High range limit — AO_BBT2_CO2_SP"
+unit = "bar"
+equipment = "BBT2"
+min = 0
+max = 3
+initial = 3
+
+[tags.AO_BBT2_CO2_SP_LIM_L]
+area = "a600_maturation"
+type = "AI"
+description = "Low range limit — AO_BBT2_CO2_SP"
+unit = "bar"
+equipment = "BBT2"
+min = 0
+max = 3
+initial = 0
+
+[tags.DI_KEG_LINE_RUN]
+area = "a700_packaging"
+type = "DI"
+description = "Linha kegging running"
+unit = "bool"
+initial = 0
+equipment = "KEG_LINE"
+
+[tags.DI_KEG_LINE_FLT]
+area = "a700_packaging"
+type = "DI"
+description = "Line fault kegging"
+unit = "bool"
+initial = 0
+equipment = "KEG_LINE"
+
+[tags.DI_CAN_LINE_RUN]
+area = "a700_packaging"
+type = "DI"
+description = "Linha canning running"
+unit = "bool"
+initial = 0
+equipment = "CAN_LINE"
+
+[tags.DI_CAN_LINE_FLT]
+area = "a700_packaging"
+type = "DI"
+description = "Line fault canning"
+unit = "bool"
+initial = 0
+equipment = "CAN_LINE"
+
+[tags.DI_KEG_SENSOR]
+area = "a700_packaging"
+type = "DI"
+description = "Keg position sensor"
+unit = "bool"
+initial = 0
+equipment = "KEG_LINE"
+
+[tags.DI_CAN_SENSOR]
+area = "a700_packaging"
+type = "DI"
+description = "Can passing sensor"
+unit = "bool"
+initial = 0
+equipment = "CAN_LINE"
+
+[tags.DI_KEG_FULL]
+area = "a700_packaging"
+type = "DI"
+description = "Keg full"
+unit = "bool"
+initial = 0
+equipment = "KEG_LINE"
+
+[tags.DI_LABEL_RUN]
+area = "a700_packaging"
+type = "DI"
+description = "Rotuladora running"
+unit = "bool"
+initial = 0
+equipment = "LABELER"
+
+[tags.DI_LABEL_FLT]
+area = "a700_packaging"
+type = "DI"
+description = "Labeler fault"
+unit = "bool"
+initial = 0
+equipment = "LABELER"
+
+[tags.DO_KEG_LINE_START]
+area = "a700_packaging"
+type = "DO"
+description = "Start kegging line"
+unit = "bool"
+initial = 0
+equipment = "KEG_LINE"
+
+[tags.DO_CAN_LINE_START]
+area = "a700_packaging"
+type = "DO"
+description = "Start canning line"
+unit = "bool"
+initial = 0
+equipment = "CAN_LINE"
+
+[tags.DO_LABEL_START]
+area = "a700_packaging"
+type = "DO"
+description = "Start labeler"
+unit = "bool"
+initial = 0
+equipment = "LABELER"
+
+[tags.AI_KEG_COUNT]
+area = "a700_packaging"
+type = "AI"
+description = "Packaged kegs counter"
+unit = "kegs"
+min = 0
+max = 99999
+initial = 0
+equipment = "KEG_LINE"
+
+[tags.AI_CAN_COUNT]
+area = "a700_packaging"
+type = "AI"
+description = "Packaged cans counter"
+unit = "latas"
+min = 0
+max = 9999999
+initial = 0
+equipment = "CAN_LINE"
+
+[tags.AI_KEG_FILL_PRESS]
+area = "a700_packaging"
+type = "AI"
+description = "Pressure enchimento keg"
+unit = "bar"
+min = 0
+max = 5
+initial = 0
+equipment = "KEG_LINE"
+
+[tags.AI_KEG_FILL_PRESS_LIM_H]
+area = "a700_packaging"
+type = "AI"
+description = "High range limit — AI_KEG_FILL_PRESS"
+unit = "bar"
+equipment = "KEG_LINE"
+min = 0
+max = 5
+initial = 5
+
+[tags.AI_KEG_FILL_PRESS_LIM_L]
+area = "a700_packaging"
+type = "AI"
+description = "Low range limit — AI_KEG_FILL_PRESS"
+unit = "bar"
+equipment = "KEG_LINE"
+min = 0
+max = 5
+initial = 0
+
+[tags.AI_CAN_DO_PPB]
+area = "a700_packaging"
+type = "AI"
+description = "Inline canning dissolved O2"
+unit = "ppb"
+min = 0
+max = 200
+initial = 0
+equipment = "CAN_LINE"
+
+[tags.AI_CAN_DO_PPB_LIM_H]
+area = "a700_packaging"
+type = "AI"
+description = "High range limit — AI_CAN_DO_PPB"
+unit = "ppb"
+equipment = "CAN_LINE"
+min = 0
+max = 200
+initial = 200
+
+[tags.AI_CAN_DO_PPB_LIM_L]
+area = "a700_packaging"
+type = "AI"
+description = "Low range limit — AI_CAN_DO_PPB"
+unit = "ppb"
+equipment = "CAN_LINE"
+min = 0
+max = 200
+initial = 0
+
+[tags.AI_CAN_FILL_VOL]
+area = "a700_packaging"
+type = "AI"
+description = "Volume per can"
+unit = "mL"
+min = 330
+max = 500
+initial = 355
+equipment = "CAN_LINE"
+
+[tags.AI_CAN_FILL_VOL_LIM_H]
+area = "a700_packaging"
+type = "AI"
+description = "High range limit — AI_CAN_FILL_VOL"
+unit = "mL"
+equipment = "CAN_LINE"
+min = 330
+max = 500
+initial = 500
+
+[tags.AI_CAN_FILL_VOL_LIM_L]
+area = "a700_packaging"
+type = "AI"
+description = "Low range limit — AI_CAN_FILL_VOL"
+unit = "mL"
+equipment = "CAN_LINE"
+min = 330
+max = 500
+initial = 330
+
+[tags.AI_KEG_FILL_TEMP]
+area = "a700_packaging"
+type = "AI"
+description = "Temperature enchimento keg"
+unit = "°C"
+min = 0
+max = 15
+initial = 4
+equipment = "KEG_LINE"
+
+[tags.AI_KEG_FILL_TEMP_LIM_H]
+area = "a700_packaging"
+type = "AI"
+description = "High range limit — AI_KEG_FILL_TEMP"
+unit = "°C"
+equipment = "KEG_LINE"
+min = 0
+max = 15
+initial = 15
+
+[tags.AI_KEG_FILL_TEMP_LIM_L]
+area = "a700_packaging"
+type = "AI"
+description = "Low range limit — AI_KEG_FILL_TEMP"
+unit = "°C"
+equipment = "KEG_LINE"
+min = 0
+max = 15
+initial = 0
+
+[tags.AI_PACK_BEER_LOSS]
+area = "a700_packaging"
+type = "AI"
+description = "Beer losses in packaging"
+unit = "L/h"
+min = 0
+max = 50
+initial = 0
+equipment = "KEG_LINE"
+
+[tags.AI_PACK_BEER_LOSS_LIM_H]
+area = "a700_packaging"
+type = "AI"
+description = "High range limit — AI_PACK_BEER_LOSS"
+unit = "L/h"
+equipment = "KEG_LINE"
+min = 0
+max = 50
+initial = 50
+
+[tags.AI_PACK_BEER_LOSS_LIM_L]
+area = "a700_packaging"
+type = "AI"
+description = "Low range limit — AI_PACK_BEER_LOSS"
+unit = "L/h"
+equipment = "KEG_LINE"
+min = 0
+max = 50
+initial = 0
+
+[tags.AI_ELEC_KW_PACK]
+area = "a700_packaging"
+type = "AI"
+description = "Packaging electrical consumption"
+unit = "kW"
+min = 0
+max = 50
+initial = 5
+equipment = "KEG_LINE"
+
+[tags.AI_ELEC_KW_PACK_LIM_H]
+area = "a700_packaging"
+type = "AI"
+description = "High range limit — AI_ELEC_KW_PACK"
+unit = "kW"
+equipment = "KEG_LINE"
+min = 0
+max = 50
+initial = 50
+
+[tags.AI_ELEC_KW_PACK_LIM_L]
+area = "a700_packaging"
+type = "AI"
+description = "Low range limit — AI_ELEC_KW_PACK"
+unit = "kW"
+equipment = "KEG_LINE"
+min = 0
+max = 50
+initial = 0
+
+[tags.DI_CIP_PMP_RUN]
+area = "a800_cip"
+type = "DI"
+description = "Pump CIP running"
+unit = "bool"
+initial = 0
+equipment = "CIP"
+
+[tags.DI_CIP_PMP_FLT]
+area = "a800_cip"
+type = "DI"
+description = "Pump fault CIP"
+unit = "bool"
+initial = 0
+equipment = "CIP"
+
+[tags.DI_CIP_CAUST_LS]
+area = "a800_cip"
+type = "DI"
+description = "Caustic tank level switch"
+unit = "bool"
+initial = 1
+equipment = "CIP"
+
+[tags.DI_CIP_ACID_LS]
+area = "a800_cip"
+type = "DI"
+description = "Acid tank level switch"
+unit = "bool"
+initial = 1
+equipment = "CIP"
+
+[tags.DI_CIP_RINSE_LS]
+area = "a800_cip"
+type = "DI"
+description = "Rinse tank level switch"
+unit = "bool"
+initial = 1
+equipment = "CIP"
+
+[tags.DO_CIP_PUMP_RUN]
+area = "a800_cip"
+type = "DO"
+description = "Start pump CIP"
+unit = "bool"
+initial = 0
+equipment = "CIP"
+
+[tags.DO_CIP_HEAT_EN]
+area = "a800_cip"
+type = "DO"
+description = "Enable CIP caustic heating"
+unit = "bool"
+initial = 0
+equipment = "CIP"
+
+[tags.AI_CIP_TT_CAUST]
+area = "a800_cip"
+type = "AI"
+description = "Temperature solução CIP"
+unit = "°C"
+min = 0
+max = 90
+initial = 20
+equipment = "CIP"
+
+[tags.AI_CIP_TT_CAUST_LIM_H]
+area = "a800_cip"
+type = "AI"
+description = "High range limit — AI_CIP_TT_CAUST"
+unit = "°C"
+equipment = "CIP"
+min = 0
+max = 90
+initial = 90
+
+[tags.AI_CIP_TT_CAUST_LIM_L]
+area = "a800_cip"
+type = "AI"
+description = "Low range limit — AI_CIP_TT_CAUST"
+unit = "°C"
+equipment = "CIP"
+min = 0
+max = 90
+initial = 0
+
+[tags.AI_CIP_COND_RET]
+area = "a800_cip"
+type = "AI"
+description = "CIP return conductivity"
+unit = "mS/cm"
+min = 0
+max = 100
+initial = 0.5
+equipment = "CIP"
+
+[tags.AI_CIP_COND_RET_LIM_H]
+area = "a800_cip"
+type = "AI"
+description = "High range limit — AI_CIP_COND_RET"
+unit = "mS/cm"
+equipment = "CIP"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_CIP_COND_RET_LIM_L]
+area = "a800_cip"
+type = "AI"
+description = "Low range limit — AI_CIP_COND_RET"
+unit = "mS/cm"
+equipment = "CIP"
+min = 0
+max = 100
+initial = 0
+
+[tags.AI_CIP_PH_RET]
+area = "a800_cip"
+type = "AI"
+description = "CIP return pH"
+unit = "pH"
+min = 0
+max = 14
+initial = 7
+equipment = "CIP"
+
+[tags.AI_CIP_PH_RET_LIM_H]
+area = "a800_cip"
+type = "AI"
+description = "High range limit — AI_CIP_PH_RET"
+unit = "pH"
+equipment = "CIP"
+min = 0
+max = 14
+initial = 14
+
+[tags.AI_CIP_PH_RET_LIM_L]
+area = "a800_cip"
+type = "AI"
+description = "Low range limit — AI_CIP_PH_RET"
+unit = "pH"
+equipment = "CIP"
+min = 0
+max = 14
+initial = 0
+
+[tags.AI_CIP_FLOW]
+area = "a800_cip"
+type = "AI"
+description = "CIP flow"
+unit = "L/h"
+min = 0
+max = 500
+initial = 0
+equipment = "CIP"
+
+[tags.AI_CIP_FLOW_LIM_H]
+area = "a800_cip"
+type = "AI"
+description = "High range limit — AI_CIP_FLOW"
+unit = "L/h"
+equipment = "CIP"
+min = 0
+max = 500
+initial = 500
+
+[tags.AI_CIP_FLOW_LIM_L]
+area = "a800_cip"
+type = "AI"
+description = "Low range limit — AI_CIP_FLOW"
+unit = "L/h"
+equipment = "CIP"
+min = 0
+max = 500
+initial = 0
+
+[tags.AI_CIP_CAUST_LT]
+area = "a800_cip"
+type = "AI"
+description = "Caustic tank level"
+unit = "%"
+min = 0
+max = 100
+initial = 80
+equipment = "CIP"
+
+[tags.AI_CIP_CAUST_LT_LIM_H]
+area = "a800_cip"
+type = "AI"
+description = "High range limit — AI_CIP_CAUST_LT"
+unit = "%"
+equipment = "CIP"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_CIP_CAUST_LT_LIM_L]
+area = "a800_cip"
+type = "AI"
+description = "Low range limit — AI_CIP_CAUST_LT"
+unit = "%"
+equipment = "CIP"
+min = 0
+max = 100
+initial = 0
+
+[tags.AI_CIP_WATER_TOT]
+area = "a800_cip"
+type = "AI"
+description = "CIP water volume (totalizer)"
+unit = "L"
+min = 0
+max = 5000
+initial = 0
+equipment = "CIP"
+
+[tags.AI_ELEC_KW_CIP]
+area = "a800_cip"
+type = "AI"
+description = "CIP electrical consumption"
+unit = "kW"
+min = 0
+max = 30
+initial = 0
+equipment = "CIP"
+
+[tags.AI_ELEC_KW_CIP_LIM_H]
+area = "a800_cip"
+type = "AI"
+description = "High range limit — AI_ELEC_KW_CIP"
+unit = "kW"
+equipment = "CIP"
+min = 0
+max = 30
+initial = 30
+
+[tags.AI_ELEC_KW_CIP_LIM_L]
+area = "a800_cip"
+type = "AI"
+description = "Low range limit — AI_ELEC_KW_CIP"
+unit = "kW"
+equipment = "CIP"
+min = 0
+max = 30
+initial = 0
+
+[tags.AO_CIP_TEMP_SP]
+area = "a800_cip"
+type = "AO"
+description = "CIP temperature setpoint"
+unit = "°C"
+min = 0
+max = 80
+initial = 72
+equipment = "CIP"
+
+[tags.AO_CIP_TEMP_SP_LIM_H]
+area = "a800_cip"
+type = "AI"
+description = "High range limit — AO_CIP_TEMP_SP"
+unit = "°C"
+equipment = "CIP"
+min = 0
+max = 80
+initial = 80
+
+[tags.AO_CIP_TEMP_SP_LIM_L]
+area = "a800_cip"
+type = "AI"
+description = "Low range limit — AO_CIP_TEMP_SP"
+unit = "°C"
+equipment = "CIP"
+min = 0
+max = 80
+initial = 0
+
+[tags.AO_CIP_FLOW_SP]
+area = "a800_cip"
+type = "AO"
+description = "CIP flow setpoint"
+unit = "L/h"
+min = 0
+max = 500
+initial = 300
+equipment = "CIP"
+
+[tags.AO_CIP_FLOW_SP_LIM_H]
+area = "a800_cip"
+type = "AI"
+description = "High range limit — AO_CIP_FLOW_SP"
+unit = "L/h"
+equipment = "CIP"
+min = 0
+max = 500
+initial = 500
+
+[tags.AO_CIP_FLOW_SP_LIM_L]
+area = "a800_cip"
+type = "AI"
+description = "Low range limit — AO_CIP_FLOW_SP"
+unit = "L/h"
+equipment = "CIP"
+min = 0
+max = 500
+initial = 0
+
+[tags.AI_ELEC_KW_TOTAL]
+area = "a900_utilities"
+type = "AI"
+description = "Total plant electrical consumption"
+unit = "kW"
+min = 0
+max = 500
+initial = 42
+equipment = "METER_ELEC"
+
+[tags.AI_ELEC_KW_TOTAL_LIM_H]
+area = "a900_utilities"
+type = "AI"
+description = "High range limit — AI_ELEC_KW_TOTAL"
+unit = "kW"
+equipment = "METER_ELEC"
+min = 0
+max = 500
+initial = 500
+
+[tags.AI_ELEC_KW_TOTAL_LIM_L]
+area = "a900_utilities"
+type = "AI"
+description = "Low range limit — AI_ELEC_KW_TOTAL"
+unit = "kW"
+equipment = "METER_ELEC"
+min = 0
+max = 500
+initial = 0
+
+[tags.AI_ELEC_KWH_TOT]
+area = "a900_utilities"
+type = "AI"
+description = "Accumulated total energy"
+unit = "kWh"
+min = 0
+max = 999999
+initial = 0
+equipment = "METER_ELEC"
+
+[tags.AI_WATER_TOTAL]
+area = "a900_utilities"
+type = "AI"
+description = "Total water consumed"
+unit = "m3"
+min = 0
+max = 9999
+initial = 0
+equipment = "METER_WATER"
+
+[tags.AI_STEAM_TOTAL]
+area = "a900_utilities"
+type = "AI"
+description = "Total steam consumed"
+unit = "kg"
+min = 0
+max = 99999
+initial = 0
+equipment = "METER_STEAM"
+
+[tags.AI_CO2_CONSUMED]
+area = "a900_utilities"
+type = "AI"
+description = "Total CO2 consumed"
+unit = "kg"
+min = 0
+max = 9999
+initial = 0
+equipment = "METER_CO2"
+
+[tags.AI_AMBIENT_TT]
+area = "a900_utilities"
+type = "AI"
+description = "Temperature ambiente"
+unit = "°C"
+min = 0
+max = 50
+initial = 22
+equipment = "ENV_SENSOR"
+
+[tags.AI_AMBIENT_TT_LIM_H]
+area = "a900_utilities"
+type = "AI"
+description = "High range limit — AI_AMBIENT_TT"
+unit = "°C"
+equipment = "ENV_SENSOR"
+min = 0
+max = 50
+initial = 50
+
+[tags.AI_AMBIENT_TT_LIM_L]
+area = "a900_utilities"
+type = "AI"
+description = "Low range limit — AI_AMBIENT_TT"
+unit = "°C"
+equipment = "ENV_SENSOR"
+min = 0
+max = 50
+initial = 0
+
+[tags.AI_AMBIENT_RH]
+area = "a900_utilities"
+type = "AI"
+description = "Relative humidity"
+unit = "%"
+min = 0
+max = 100
+initial = 55
+equipment = "ENV_SENSOR"
+
+[tags.AI_AMBIENT_RH_LIM_H]
+area = "a900_utilities"
+type = "AI"
+description = "High range limit — AI_AMBIENT_RH"
+unit = "%"
+equipment = "ENV_SENSOR"
+min = 0
+max = 100
+initial = 100
+
+[tags.AI_AMBIENT_RH_LIM_L]
+area = "a900_utilities"
+type = "AI"
+description = "Low range limit — AI_AMBIENT_RH"
+unit = "%"
+equipment = "ENV_SENSOR"
+min = 0
+max = 100
+initial = 0
+

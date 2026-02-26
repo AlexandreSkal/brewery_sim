@@ -1,0 +1,46 @@
+[Unit]
+Description=Industrial Brewery PLC/SCADA Simulator
+Documentation=https://github.com/youruser/brewery-sim
+After=network-online.target mosquitto.service
+Wants=network-online.target
+# If mosquitto is on this same host, wait for it.
+# Remove the mosquitto.service lines if broker is remote.
+
+[Service]
+Type=simple
+User=brewery
+Group=brewery
+WorkingDirectory=/opt/brewery-sim
+
+# uv run ensures the venv is used — no need to activate it manually
+ExecStart=/home/brewery/.local/bin/uv run brewery-sim --speed 60
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Restart always — this is the "never stops" guarantee
+Restart=always
+RestartSec=10
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+# Clean environment — prevents inheriting unexpected vars from root
+Environment=PYTHONUNBUFFERED=1
+Environment=UV_NO_SYNC=0
+
+# Logging — journald captures stdout/stderr automatically
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=brewery-sim
+
+# Resource limits — Oracle ARM free tier has 24GB RAM / 4 OCPUs
+# Conservative limits so the sim doesn't starve other services
+MemoryMax=512M
+CPUQuota=50%
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/brewery-sim
+
+[Install]
+WantedBy=multi-user.target
