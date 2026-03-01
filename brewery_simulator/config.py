@@ -1,143 +1,60 @@
-# =============================================================================
-#  brewery-simulator — configuration
-#  Format: TOML  (preferred over YAML: typed values, no indentation bugs,
-#                  cleaner arrays, native support in Python 3.11+ via tomllib)
-# =============================================================================
+from __future__ import annotations
+import tomllib
+from pathlib import Path
 
-# ---------------------------------------------------------------------------
-# MQTT Broker
-# ---------------------------------------------------------------------------
-[mqtt]
-host        = "localhost"
-port        = 1883
-username    = ""            # leave empty for no auth
-password    = ""
-client_id   = "brewery-sim"
-topic_root  = "brewery"     # all tags published as brewery/<area>/<tag>
-qos         = 1
-retain      = true
-keepalive   = 60
-protocol    = 5             # MQTT version (5 = MQTT5, 4 = MQTT311)
 
-# TLS — set enabled=true and fill paths for secure brokers (e.g. HiveMQ Cloud)
-[mqtt.tls]
-enabled     = false
-ca_certs    = ""
-certfile    = ""
-keyfile     = ""
+class MQTTConfig:
+    def __init__(self, host="localhost", port=1883, username="", password="",
+                 client_id="brewery-sim", topic_root="brewery", qos=1,
+                 retain=True, keepalive=60, protocol=5, tls=None):
+        self.host = host
+        self.port = port
+        self.username = username
+        self.password = password
+        self.client_id = client_id
+        self.topic_root = topic_root
+        self.qos = qos
+        self.retain = retain
+        self.keepalive = keepalive
+        self.protocol = protocol
+        self._tls = tls or {}
 
-# ---------------------------------------------------------------------------
-# Simulator engine
-# ---------------------------------------------------------------------------
-[simulator]
-# Wall-clock tick interval in seconds at speed=1.0
-# Every tick the simulator advances one "process second"
-tick_interval   = 1.0       # real seconds per simulated second
+    @property
+    def tls_enabled(self): return self._tls.get("enabled", False)
+    @property
+    def tls_ca_certs(self): return self._tls.get("ca_certs", "")
+    @property
+    def tls_certfile(self): return self._tls.get("certfile", "")
+    @property
+    def tls_keyfile(self): return self._tls.get("keyfile", "")
 
-# Default speed multiplier (overridden by --speed CLI flag)
-# speed=1    → real-time  (tick_interval = 1.0s)
-# speed=60   → 1 simulated minute per real second
-# speed=3600 → 1 simulated hour per real second ("fast" mode)
-default_speed   = 1.0
 
-# How often to publish ALL tags regardless of change (heartbeat), in sim-seconds
-heartbeat_interval = 30
+class SimConfig:
+    def __init__(self, tick_interval=1.0, default_speed=1.0,
+                 heartbeat_interval=30, publish_on_change=True, random_seed=0):
+        self.tick_interval = tick_interval
+        self.default_speed = default_speed
+        self.heartbeat_interval = heartbeat_interval
+        self.publish_on_change = publish_on_change
+        self.random_seed = random_seed
 
-# Publish only changed tags between heartbeats (reduces MQTT traffic)
-publish_on_change = true
 
-# Seed for reproducible random sequences (set to 0 for truly random)
-random_seed = 0
+class BreweryConfig:
+    def __init__(self, mqtt, sim, process, physics):
+        self.mqtt = mqtt
+        self.sim = sim
+        self.process = process
+        self.physics = physics
 
-# ---------------------------------------------------------------------------
-# Process timing — all values in SIMULATED seconds
-# These control how long each state/phase lasts
-# At speed=60 a "3600s mash" completes in 60 real seconds
-# ---------------------------------------------------------------------------
-[process.milling]
-run_duration_min  = 1800    # 30 min milling run
-run_duration_max  = 2700    # 45 min
-cooldown_min      = 300
-cooldown_max      = 600
-fault_probability = 0.005   # per tick
 
-# Setpoints dos Level Switches (kg)
-# LS_HI ativa quando silo >= silo_ls_hi_sp
-# LS_LO ativa quando silo <= silo_ls_lo_sp
-silo_ls_hi_sp     = 4500.0
-silo_ls_lo_sp     = 200.0
-grc_ls_hi_sp      = 400.0
-
-# Targets para lógica crescente/decrescente do silo
-# O silo enche até silo_fill_target e drena até silo_drain_target
-silo_fill_target  = 4800.0
-silo_drain_target = 300.0
-
-[process.hlt]
-heat_duration_min = 1800
-heat_duration_max = 3600
-setpoint          = 72.0    # °C
-
-[process.mashing]
-# Step mash profile durations (seconds each)
-step_durations    = [900, 1800, 1200, 600]   # 15, 30, 20, 10 min
-step_temps        = [52.0, 63.0, 72.0, 78.0]
-temp_noise_std    = 0.3
-
-[process.lautering]
-duration_min      = 2700
-duration_max      = 4500
-turb_high_ntu     = 400.0
-turb_low_ntu      = 80.0
-
-[process.boiling]
-duration          = 3600    # 60 min
-evaporation_rate  = 0.08    # 8% per hour
-
-[process.whirlpool]
-pump_duration     = 600     # 10 min pumping
-stand_duration    = 900     # 15 min stand
-
-[process.cooling]
-duration_min      = 900
-duration_max      = 1800
-target_temp_ale   = 20.0
-target_temp_lager = 10.0
-
-[process.fermentation]
-# Phases: lag, active, diacetyl_rest, cold_crash, lager
-phase_durations   = [43200, 259200, 86400, 172800, 604800]   # 0.5d, 3d, 1d, 2d, 7d
-active_temp_sp    = 20.0
-cold_crash_sp     = 2.0
-lager_sp          = -1.0
-og_plato          = 13.5
-fg_plato          = 3.5
-pressure_build    = 1.2     # bar at peak
-
-[process.bbt]
-fill_duration     = 1800
-carb_duration     = 86400
-carb_pressure_sp  = 2.1     # bar
-temp_sp           = 2.0
-
-[process.packaging]
-keg_fill_time     = 120     # seconds per keg
-can_rate          = 2000    # cans per hour (sim)
-
-[process.cip]
-step_durations    = [600, 1200, 600, 600, 600]  # pre-rinse, caustic, rinse, acid, final
-caustic_temp_sp   = 72.0
-
-# ---------------------------------------------------------------------------
-# Physical model parameters
-# ---------------------------------------------------------------------------
-[physics]
-# Temperature approach rate: fraction of (sp - current) closed per second
-temp_approach_rate  = 0.002
-# Noise std added to analog signals every tick
-analog_noise_std    = 0.05
-# Level fill/drain rate: %/second
-level_fill_rate     = 0.15
-level_drain_rate    = 0.12
-# Pressure build rate: bar/second during fermentation
-pressure_build_rate = 0.00005
+def load_config(path):
+    with open(path, "rb") as f:
+        raw = tomllib.load(f)
+    mqtt_raw = dict(raw.get("mqtt", {}))
+    tls = mqtt_raw.pop("tls", {})
+    valid = {"host","port","username","password","client_id","topic_root","qos","retain","keepalive","protocol"}
+    mqtt = MQTTConfig(**{k: v for k, v in mqtt_raw.items() if k in valid}, tls=tls)
+    sim_raw = raw.get("simulator", {})
+    valid_sim = {"tick_interval","default_speed","heartbeat_interval","publish_on_change","random_seed"}
+    sim = SimConfig(**{k: v for k, v in sim_raw.items() if k in valid_sim})
+    return BreweryConfig(mqtt=mqtt, sim=sim, process=raw.get("process", {}), physics=raw.get("physics", {}))

@@ -28,7 +28,7 @@ class TagMeta:
     equipment: str
     min_val: float = 0.0
     max_val: float = 1.0
-    initial: float = 0.0
+    initial: Any = 0.0
 
 
 @dataclass
@@ -59,19 +59,25 @@ class TagStore:
             data = tomllib.load(f)
 
         for tag_name, props in data.get("tags", {}).items():
+            raw_initial = props.get("initial", 0)
+            raw_unit = props.get("unit", "")
+            # str tags (reason strings) — skip float conversion
+            is_str_tag = isinstance(raw_initial, str)
             meta = TagMeta(
                 name=tag_name,
                 area=props.get("area", "unknown"),
                 io_type=props.get("type", "AI"),
                 description=props.get("description", ""),
-                unit=props.get("unit", ""),
+                unit=raw_unit,
                 equipment=props.get("equipment", ""),
                 min_val=float(props.get("min", 0)),
                 max_val=float(props.get("max", 1)),
-                initial=float(props.get("initial", 0)),
+                initial=raw_initial,
             )
-            initial_val: Any = props.get("initial", 0)
-            if meta.io_type in ("DI", "DO"):
+            initial_val: Any = raw_initial
+            if is_str_tag:
+                pass  # keep as string
+            elif meta.io_type in ("DI", "DO"):
                 initial_val = bool(int(initial_val))
             else:
                 initial_val = float(initial_val)
@@ -91,8 +97,11 @@ class TagStore:
     def set(self, tag: str, value: Any) -> None:
         state = self._tags[tag]
         state.prev_value = state.value
-        if state.meta.io_type in ("DI", "DO"):
-            state.value = bool(value)
+        if isinstance(state.meta.initial, str) or isinstance(value, str):
+            # string tag (e.g. fault reason)
+            state.value = str(value)
+        elif state.meta.io_type in ("DI", "DO"):
+            state.value = int(value) if isinstance(value, int) and not isinstance(value, bool) else bool(value)
         else:
             state.value = float(value)
             state.clamp()

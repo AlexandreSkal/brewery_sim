@@ -40,7 +40,6 @@ class AreaSimulator(ABC):
     def _noise(self, std: float = 0.05) -> float:
         return self.rng.gauss(0.0, std)
 
-
     def _set_lvl(self, tag: str, pct: float) -> None:
         """Set a level tag by percentage (0-100). Converts to mm if unit=mm."""
         self.store.set_level_pct(tag, pct)
@@ -59,3 +58,21 @@ class AreaSimulator(ABC):
             return False
         rate = 1.0 / mean_seconds
         return self.rng.random() < (rate * dt)
+
+    def _trigger_fault(self, fault_tag: str, reason_tag: str, equip_key: str) -> None:
+        """
+        Set fault code (Int 1-3) and matching reason string.
+        Severity 0 = no alarm, 1 = low, 2 = medium, 3 = high.
+        Reason tag is only written if it exists in the store.
+        """
+        from brewery_simulator.fault_codes import pick_fault
+        code, reason = pick_fault(equip_key, self.rng)
+        self.store.set(fault_tag, code)
+        if reason_tag in self.store.all_tags():
+            self.store.set(reason_tag, reason)
+
+    def _clear_fault(self, fault_tag: str, reason_tag: str) -> None:
+        """Clear fault: code=0, reason='No fault'."""
+        self.store.set(fault_tag, 0)
+        if reason_tag in self.store.all_tags():
+            self.store.set(reason_tag, "No fault")

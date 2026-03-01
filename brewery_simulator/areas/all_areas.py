@@ -20,6 +20,7 @@ from typing import TYPE_CHECKING
 
 from brewery_simulator.areas.base import AreaSimulator
 from brewery_simulator import physics as phys
+from brewery_simulator.fault_codes import pick_fault, clear_fault
 
 if TYPE_CHECKING:
     from brewery_simulator.tag_store import TagStore
@@ -82,8 +83,9 @@ class MillLine(AreaSimulator):
         if self.state == MillState.IDLE:
             self._set(t["mill_run"], False); self._set(t["aug_run"], False)
             self._set(t["do_mill"], False); self._set(t["do_aug"], False)
-            self._set(t["mill_curr"], noise(0.0, 0.3, self.rng))
+            self._set(t["mill_curr"], 0.0)           # motor parado = corrente zero
             self._set(t["grc_ls_hi"], False)
+            # silo e grc permanecem congelados no IDLE (sem movimento de material)
             # transition
             if self.elapsed >= self.cooldown_target:
                 self.state = MillState.RUNNING
@@ -116,34 +118,25 @@ class MillLine(AreaSimulator):
             silo = max(0.0, min(5000.0, silo))
             self._set(t["silo_wt"], silo)
 
-            # ── Switches com histerese baseados nos setpoints do TOML ──
-            # LS_HI: ativa quando silo >= sp_hi, desativa quando silo < sp_hi
-            # LS_LO: ativa quando silo <= sp_lo, desativa quando silo > sp_lo
-            prev_ls_hi = self._get(t["silo_ls_hi"])
-            prev_ls_lo = self._get(t["silo_ls_lo"])
-
-            if prev_ls_hi:
-                # Já estava ativo — só desativa se cair ABAIXO do setpoint
-                self._set(t["silo_ls_hi"], silo >= self.silo_ls_hi_sp)
-            else:
-                # Estava inativo — ativa se ATINGIR ou superar o setpoint
-                self._set(t["silo_ls_hi"], silo >= self.silo_ls_hi_sp)
-
-            if prev_ls_lo:
-                self._set(t["silo_ls_lo"], silo <= self.silo_ls_lo_sp)
-            else:
-                self._set(t["silo_ls_lo"], silo <= self.silo_ls_lo_sp)
+            # ── Switches — lê setpoints do tag store (configurável pelo operador) ──
+            sp_silo_hi = self._get(t["silo_wt"] + "_LS_HI_SP") if (t["silo_wt"] + "_LS_HI_SP") in self.store.all_tags() else self.silo_ls_hi_sp
+            sp_silo_lo = self._get(t["silo_wt"] + "_LS_LO_SP") if (t["silo_wt"] + "_LS_LO_SP") in self.store.all_tags() else self.silo_ls_lo_sp
+            self._set(t["silo_ls_hi"], silo >= sp_silo_hi)
+            self._set(t["silo_ls_lo"], silo <= sp_silo_lo)
 
             # ── Grist Case ──
             grc = self._get(t["grc_wt"])
             grc = min(450.0, grc + dt_sim * self.rng.uniform(0.4, 0.7))
             self._set(t["grc_wt"], grc)
-            self._set(t["grc_ls_hi"], grc >= self.grc_ls_hi_sp)
+            sp_grc_hi = self._get(t["grc_wt"] + "_LS_HI_SP") if (t["grc_wt"] + "_LS_HI_SP") in self.store.all_tags() else self.grc_ls_hi_sp
+            self._set(t["grc_ls_hi"], grc >= sp_grc_hi)
 
-            # fault?
-            if self._random_fault(self.fault_prob, dt_sim):
+            # fault? — GRC cheio bloqueia o moinho (intertravamento real)
+            grc_full = self._get(t["grc_ls_hi"])
+            silo_empty = self._get(t["silo_ls_lo"])
+            if grc_full or silo_empty or self._random_fault(self.fault_prob, dt_sim):
                 self.state = MillState.FAULT
-                self._set(t["mill_fault"], True)
+                self._trigger_fault(t["mill_fault"], t["mill_fault"] + "_REASON", "MILL")
                 self.fault_recovery_target = self.elapsed + self.rng.uniform(60, 300)
             # done?
             elif self.elapsed >= self.run_target:
@@ -152,10 +145,12 @@ class MillLine(AreaSimulator):
 
         elif self.state == MillState.FAULT:
             self._set(t["mill_run"], False); self._set(t["aug_run"], False)
-            self._set(t["mill_curr"], 0.0)
+            self._set(t["do_mill"], False); self._set(t["do_aug"], False)
+            self._set(t["mill_curr"], 0.0)           # corrente zero em fault
+            # silo e grc congelam — sem material movendo
             if self.elapsed >= self.fault_recovery_target:
-                self._set(t["mill_fault"], False)
-                self._set(t["aug_fault"], False)
+                self._clear_fault(t["mill_fault"], t["mill_fault"] + "_REASON")
+                self._clear_fault(t["aug_fault"], t["aug_fault"] + "_REASON")
                 self.state = MillState.COOLDOWN
                 self.cooldown_target = self.elapsed + self.rng.uniform(30, 120)
 
@@ -222,14 +217,20 @@ class UtilitiesArea(AreaSimulator):
         if boiler_fault:
             self.boiler_fault_timer += dt_sim
             self._set("DI_BOILER_RUN", False)
-            self._set("AI_STEAM_PT", n(0.0, 0.05))
+            self._set("DO_BOILER_START", False)
+            # pressão e temperatura caem quando boiler para
+            pt_cur = self._get("AI_STEAM_PT")
+            pt_falling = phys.approach(pt_cur, 0.0, approach_rate * 2, dt_sim)
+            self._set("AI_STEAM_PT", max(0.0, n(pt_falling, 0.05)))
+            self._set("AI_STEAM_TT", n(100.0 + pt_falling * 12, 0.5))
             self._set("AI_STEAM_FLOW", 0.0)
+            self._set("DI_STEAM_HI_PRESS", False)
             if self.boiler_fault_timer > self.rng.uniform(120, 600):
-                self._set("DI_BOILER_FAULT", False)
+                self._clear_fault("DI_BOILER_FAULT", "DI_BOILER_FAULT_REASON")
                 self.boiler_fault_timer = 0.0
         else:
             if self._random_fault(0.0003, dt_sim):
-                self._set("DI_BOILER_FAULT", True)
+                self._trigger_fault("DI_BOILER_FAULT", "DI_BOILER_FAULT_REASON", "BOILER")
                 self._set("DI_STEAM_HI_PRESS", False)
             else:
                 self._set("DI_BOILER_RUN", True)
@@ -260,8 +261,11 @@ class UtilitiesArea(AreaSimulator):
             self.store.set_level_pct("AI_HLT1_LT", lvl1 + self.rng.uniform(0, 0.15) * dt_sim)
         else:
             self.store.set_level_pct("AI_HLT1_LT", n(lvl1, 0.02))
-        self._set("DI_HLT1_LS_HI", self.store.get_level_pct("AI_HLT1_LT") > 90)
-        self._set("DI_HLT1_LS_LO", self.store.get_level_pct("AI_HLT1_LT") < 10)
+        _hlt1_lvl = self.store.get_level_pct("AI_HLT1_LT")
+        _hlt1_hi_sp = self._get("AI_HLT1_LS_HI_SP") if "AI_HLT1_LS_HI_SP" in self.store.all_tags() else 90.0
+        _hlt1_lo_sp = self._get("AI_HLT1_LS_LO_SP") if "AI_HLT1_LS_LO_SP" in self.store.all_tags() else 10.0
+        self._set("DI_HLT1_LS_HI", _hlt1_lvl >= _hlt1_hi_sp)
+        self._set("DI_HLT1_LS_LO", _hlt1_lvl <= _hlt1_lo_sp)
 
         # ── HLT 2 (mirror with slight offset) ──
         hlt2_sp = self._get("AO_HLT2_HEAT_SP")
@@ -276,15 +280,21 @@ class UtilitiesArea(AreaSimulator):
             self.store.set_level_pct("AI_HLT2_LT", lvl2 + self.rng.uniform(0, 0.14) * dt_sim)
         else:
             self.store.set_level_pct("AI_HLT2_LT", n(lvl2, 0.02))
-        self._set("DI_HLT2_LS_HI", self.store.get_level_pct("AI_HLT2_LT") > 90)
-        self._set("DI_HLT2_LS_LO", self.store.get_level_pct("AI_HLT2_LT") < 10)
+        _hlt2_lvl = self.store.get_level_pct("AI_HLT2_LT")
+        _hlt2_hi_sp = self._get("AI_HLT2_LS_HI_SP") if "AI_HLT2_LS_HI_SP" in self.store.all_tags() else 90.0
+        _hlt2_lo_sp = self._get("AI_HLT2_LS_LO_SP") if "AI_HLT2_LS_LO_SP" in self.store.all_tags() else 10.0
+        self._set("DI_HLT2_LS_HI", _hlt2_lvl >= _hlt2_hi_sp)
+        self._set("DI_HLT2_LS_LO", _hlt2_lvl <= _hlt2_lo_sp)
 
         # ── CLT ──
         clt_sp = self._get("AO_CLT_TEMP_SP")
         clt_t = phys.approach(self._get("AI_CLT_TT"), clt_sp, approach_rate * 2, dt_sim)
         self._set("AI_CLT_TT", n(clt_t, noise_std))
-        self._set("DI_CLT_LS_HI", self.store.get_level_pct("AI_CLT_LT") > 88)
-        self._set("DI_CLT_LS_LO", self.store.get_level_pct("AI_CLT_LT") < 15)
+        _clt_lvl = self.store.get_level_pct("AI_CLT_LT")
+        _clt_hi_sp = self._get("AI_CLT_LS_HI_SP") if "AI_CLT_LS_HI_SP" in self.store.all_tags() else 88.0
+        _clt_lo_sp = self._get("AI_CLT_LS_LO_SP") if "AI_CLT_LS_LO_SP" in self.store.all_tags() else 15.0
+        self._set("DI_CLT_LS_HI", _clt_lvl >= _clt_hi_sp)
+        self._set("DI_CLT_LS_LO", _clt_lvl <= _clt_lo_sp)
 
         # ── RO ──
         self._set("DI_RO_RUN", True)
@@ -298,13 +308,23 @@ class UtilitiesArea(AreaSimulator):
         glycol_fault = self._get("DI_GLYCOL_PUMP_FLT")
         if glycol_fault:
             self.chiller_fault_timer += dt_sim
+            # glicol para — flow zero, temperatura do supply sobe (perde resfriamento)
+            self._set("DI_GLYCOL_PUMP_RUN", False)
+            self._set("DI_CHILLER_RUN", False)
+            self._set("AI_GLYCOL_FLOW", 0.0)
+            self._set("AI_ELEC_KW_CHILLER", 0.0)
+            gly_cur = self._get("AI_GLYCOL_TT_SUP")
+            gly_warm = phys.approach(gly_cur, 15.0, approach_rate, dt_sim)  # aquece sem resfriamento
+            self._set("AI_GLYCOL_TT_SUP", n(gly_warm, 0.2))
+            self._set("AI_GLYCOL_TT_RET", n(gly_warm + 3.0, 0.3))
             if self.chiller_fault_timer > self.rng.uniform(60, 300):
-                self._set("DI_GLYCOL_PUMP_FLT", False)
+                self._clear_fault("DI_GLYCOL_PUMP_FLT", "DI_GLYCOL_PUMP_FLT_REASON")
+                self._clear_fault("DI_CHILLER_FAULT", "DI_CHILLER_FAULT_REASON")
                 self.chiller_fault_timer = 0.0
         else:
             if self._random_fault(0.0002, dt_sim):
-                self._set("DI_GLYCOL_PUMP_FLT", True)
-                self._set("DI_CHILLER_FAULT", True)
+                self._trigger_fault("DI_GLYCOL_PUMP_FLT", "DI_GLYCOL_PUMP_FLT_REASON", "GLYCOL_PUMP")
+                self._trigger_fault("DI_CHILLER_FAULT", "DI_CHILLER_FAULT_REASON", "CHILLER")
             else:
                 self._set("DI_GLYCOL_PUMP_RUN", True)
                 self._set("DI_CHILLER_RUN", True)
@@ -410,17 +430,38 @@ class BrewhouseLine(AreaSimulator):
     def _n(self, v, s=None):
         return phys.add_noise(v, s or self.noise_std, self.rng)
 
+    def _ls(self, lvl: float, base_tag: str, default_hi: float, default_lo: float):
+        """Evaluate LS_HI and LS_LO against setpoint tags if they exist."""
+        hi_sp_tag = base_tag + "_LS_HI_SP"
+        lo_sp_tag = base_tag + "_LS_LO_SP"
+        hi_sp = self._get(hi_sp_tag) if hi_sp_tag in self.store.all_tags() else default_hi
+        lo_sp = self._get(lo_sp_tag) if lo_sp_tag in self.store.all_tags() else default_lo
+        return lvl >= hi_sp, lvl <= lo_sp
+
     def tick(self, dt_sim: float) -> None:
         self.elapsed += dt_sim
         self.phase_elapsed += dt_sim
         t = self.tags
 
-        # Fault propagation: if rake faulted, stop rake DO
+        # Fault propagation: rake fault para o rake e corrente cai
         if self._get(t["mt_rake_flt"]):
             self._set(t["do_mt_rake"], False)
             self._set(t["mt_rake_run"], False)
             if self._random_recovery(300, dt_sim):
-                self._set(t["mt_rake_flt"], False)
+                self._clear_fault(t["mt_rake_flt"], t["mt_rake_flt"] + "_REASON")
+
+        # Pump fault propagation
+        if self._get(t["pmp_mt_flt"]):
+            self._set(t["do_mt_pump"], False)
+            self._set(t["pmp_mt_run"], False)
+            if self._random_recovery(240, dt_sim):
+                self._clear_fault(t["pmp_mt_flt"], t["pmp_mt_flt"] + "_REASON")
+
+        if self._get(t["pmp_wp_flt"]):
+            self._set(t["do_wp_pump"], False)
+            self._set(t["pmp_wp_run"], False)
+            if self._random_recovery(240, dt_sim):
+                self._clear_fault(t["pmp_wp_flt"], t["pmp_wp_flt"] + "_REASON")
 
         if self.state == BrewhouseState.IDLE:
             self._zero_all()
@@ -464,19 +505,27 @@ class BrewhouseLine(AreaSimulator):
     def _tick_mashing(self, dt_sim: float):
         t = self.tags
         step_dur, step_temp = self.mash_steps[self.mash_step]
-        # heat mash
-        mt_tt = phys.approach(self._get(t["ai_mt_tt"]), step_temp, self.approach_rate, dt_sim)
+        boiler_ok = self._get("DI_BOILER_RUN")
+        # aquecimento só funciona se boiler está rodando
+        if boiler_ok:
+            mt_tt = phys.approach(self._get(t["ai_mt_tt"]), step_temp, self.approach_rate, dt_sim)
+        else:
+            # sem vapor: temperatura cai lentamente
+            mt_tt = phys.approach(self._get(t["ai_mt_tt"]), 20.0, self.approach_rate * 0.3, dt_sim)
         self._set(t["ai_mt_tt"], self._n(mt_tt, 0.3))
         self._set(t["ao_mt_sp"], step_temp)
-        self._set(t["do_mt_heat"], True)
-        self._set(t["do_mt_rake"], True)
-        self._set(t["mt_rake_run"], not self._get(t["mt_rake_flt"]))
+        self._set(t["do_mt_heat"], boiler_ok)
+        rake_flt = self._get(t["mt_rake_flt"])
+        self._set(t["do_mt_rake"], not rake_flt)
+        self._set(t["mt_rake_run"], not rake_flt)
         # fill tank
         lvl = self._get_lvl(t["ai_mt_lt"])
         if lvl < 85:
             self._set_lvl(t["ai_mt_lt"], phys.fill_tank(lvl, self.fill_rate, dt_sim))
-        self._set(t["mt_ls_hi"], self._get_lvl(t["ai_mt_lt"]) > 90)
-        self._set(t["mt_ls_lo"], self._get_lvl(t["ai_mt_lt"]) < 5)
+        _mt_lvl = self._get_lvl(t["ai_mt_lt"])
+        _mt_hi, _mt_lo = self._ls(_mt_lvl, "AI_MT" + t["ai_mt_lt"][5] + "_LT", 90.0, 5.0)
+        self._set(t["mt_ls_hi"], _mt_hi)
+        self._set(t["mt_ls_lo"], _mt_lo)
         self._set(t["ai_mt_ph"], self._n(5.4, 0.05))
         self._set(t["ai_wort_brix"], self._n(13.5, 0.2))
         self._set(t["ai_elec_bh"], self._n(30.0, 2.0))
@@ -515,8 +564,9 @@ class BrewhouseLine(AreaSimulator):
         else:
             lt_fill = phys.drain_tank(lt_lvl, self.drain_rate * 0.3, dt_sim)
         self._set_lvl(t["ai_lt_lt"], lt_fill)
-        self._set(t["lt_ls_hi"], lt_fill > 90)
-        self._set(t["lt_ls_lo"], lt_fill < 5)
+        _lt_hi, _lt_lo = self._ls(lt_fill, "AI_LT" + t["ai_lt_lt"][5] + "_LT", 90.0, 5.0)
+        self._set(t["lt_ls_hi"], _lt_hi)
+        self._set(t["lt_ls_lo"], _lt_lo)
 
         kt_lvl = phys.fill_tank(self._get_lvl(t["ai_kt_lt"]), self.fill_rate * 0.4, dt_sim)
         self._set_lvl(t["ai_kt_lt"], kt_lvl)
@@ -538,19 +588,30 @@ class BrewhouseLine(AreaSimulator):
 
     def _tick_boiling(self, dt_sim: float):
         t = self.tags
-        kt_tt = phys.approach(self._get(t["ai_kt_tt"]), 100.0, self.approach_rate * 2, dt_sim)
+        boiler_ok = self._get("DI_BOILER_RUN")
+        if boiler_ok:
+            kt_tt = phys.approach(self._get(t["ai_kt_tt"]), 100.0, self.approach_rate * 2, dt_sim)
+            self._set(t["do_kt_heat"], True)
+        else:
+            # sem boiler: kettle perde temperatura
+            kt_tt = phys.approach(self._get(t["ai_kt_tt"]), 20.0, self.approach_rate * 0.5, dt_sim)
+            self._set(t["do_kt_heat"], False)
         self._set(t["ai_kt_tt"], self._n(kt_tt, 0.3))
-        self._set(t["do_kt_heat"], True)
-        self._set(t["kt_ls_hi"], self._get_lvl(t["ai_kt_lt"]) > 88)
-        self._set(t["kt_ls_lo"], self._get_lvl(t["ai_kt_lt"]) < 5)
-        # Evaporate
-        if kt_tt > 97:
+        _kt_lvl = self._get_lvl(t["ai_kt_lt"])
+        _kt_hi, _kt_lo = self._ls(_kt_lvl, "AI_KT" + t["ai_kt_lt"][5] + "_LT", 88.0, 5.0)
+        self._set(t["kt_ls_hi"], _kt_hi)
+        self._set(t["kt_ls_lo"], _kt_lo)
+        # Evaporação só ocorre se temperatura de ebulição atingida
+        if kt_tt > 97 and boiler_ok:
             evap = 0.08 / 3600  # 8%/hr → per second
             lvl = self._get_lvl(t["ai_kt_lt"]) * (1 - evap * dt_sim)
             self._set_lvl(t["ai_kt_lt"], lvl)
             steam = self._n(220.0, 10.0)
             self._set(t["ai_kt_steam"], steam)
             self._set(t["ai_elec_bh"], self._n(60.0, 3.0))
+        else:
+            self._set(t["ai_kt_steam"], 0.0)
+            self._set(t["ai_elec_bh"], self._n(2.0, 0.3))
         if self.phase_elapsed >= self.boil_dur:
             self._enter_whirlpool()
 
@@ -571,8 +632,10 @@ class BrewhouseLine(AreaSimulator):
             self._set_lvl(t["ai_kt_lt"], kt_lvl)
             wp_lvl = phys.fill_tank(self._get_lvl(t["ai_wp_lt"]), self.fill_rate * 0.8, dt_sim)
             self._set_lvl(t["ai_wp_lt"], wp_lvl)
-        self._set(t["wp_ls_hi"], self._get_lvl(t["ai_wp_lt"]) > 88)
-        self._set(t["wp_ls_lo"], self._get_lvl(t["ai_wp_lt"]) < 5)
+        _wp_lvl = self._get_lvl(t["ai_wp_lt"])
+        _wp_hi, _wp_lo = self._ls(_wp_lvl, "AI_WP" + t["ai_wp_lt"][5] + "_LT", 88.0, 5.0)
+        self._set(t["wp_ls_hi"], _wp_hi)
+        self._set(t["wp_ls_lo"], _wp_lo)
         # Cool slightly
         wp_tt = phys.approach(self._get(t["ai_wp_tt"]), 85.0, self.approach_rate * 0.5, dt_sim)
         self._set(t["ai_wp_tt"], self._n(wp_tt, 0.3))
@@ -652,9 +715,17 @@ class CoolingArea(AreaSimulator):
             fault = self.store.get(fault_tag)
             if fault:
                 if self._random_recovery(300, dt_sim):
-                    self.store.set(fault_tag, False)
+                    self._clear_fault(fault_tag, fault_tag + "_REASON")
+                # pump parada: flow zero, sem resfriamento
                 self.store.set(run_tag, False)
                 self.store.set(do_wort, False)
+                self.store.set(do_water, False)
+                self.store.set(flow, 0.0)
+                self.store.set(o2, 0.0)
+                # temperatura wort sobe sem resfriamento
+                t_out_cur = self.store.get(tt_out)
+                t_out_warm = phys.approach(t_out_cur, 85.0, approach_rate * 2, dt_sim)
+                self.store.set(tt_out, n(t_out_warm, 0.3))
                 continue
 
             if active and chiller_ok:
@@ -664,6 +735,7 @@ class CoolingArea(AreaSimulator):
                 self.store.set(o2_valve, True)
                 t_in = n(92.0, 1.0)
                 self.store.set(tt_in, t_in)
+                # target saída depende do chiller — sem chiller não resfria adequadamente
                 target_out = 20.0
                 t_out_cur = self.store.get(tt_out)
                 t_out = phys.approach(t_out_cur, target_out, approach_rate * 5, dt_sim)
@@ -671,6 +743,15 @@ class CoolingArea(AreaSimulator):
                 self.store.set(flow, n(600.0, 20.0))
                 self.store.set(o2, n(8.2, 0.3))
                 self.store.set(ao_water, n(75.0, 2.0))
+            elif active and not chiller_ok:
+                # pump ativa mas chiller falhou: wort não resfria adequadamente
+                self.store.set(run_tag, True)
+                self.store.set(do_wort, True)
+                self.store.set(flow, n(600.0, 20.0))
+                t_out_cur = self.store.get(tt_out)
+                t_out_warm = phys.approach(t_out_cur, 60.0, approach_rate * 3, dt_sim)
+                self.store.set(tt_out, n(t_out_warm, 0.5))
+                self.store.set(o2, 0.0)  # sem resfriamento adequado, DO não é injetado
             else:
                 self.store.set(run_tag, False)
                 self.store.set(do_wort, False)
@@ -680,7 +761,7 @@ class CoolingArea(AreaSimulator):
                 self.store.set(o2, 0.0)
                 self.store.set(ao_water, 0.0)
                 if self._random_fault(0.0001, dt_sim):
-                    self.store.set(fault_tag, True)
+                    self._trigger_fault(fault_tag, fault_tag + "_REASON", "HX_PUMP")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -737,6 +818,15 @@ class FVSimulator(AreaSimulator):
     def _n(self, v, s=0.05):
         return phys.add_noise(v, s, self.rng)
 
+    def _ls(self, lvl: float):
+        """Read LS setpoints from store for this FV."""
+        n = self.tags["lt"][4]  # FV number char e.g. '1'
+        hi_tag = f"AI_FV{n}_LS_HI_SP"
+        lo_tag = f"AI_FV{n}_LS_LO_SP"
+        hi_sp = self.store.get(hi_tag) if hi_tag in self.store.all_tags() else 90.0
+        lo_sp = self.store.get(lo_tag) if lo_tag in self.store.all_tags() else 5.0
+        return lvl >= hi_sp, lvl <= lo_sp
+
     def tick(self, dt_sim: float) -> None:
         self.elapsed += dt_sim
         self.phase_elapsed += dt_sim
@@ -752,8 +842,9 @@ class FVSimulator(AreaSimulator):
         elif ph == FermentationPhase.FILLING:
             lvl = phys.fill_tank(self._get_lvl(t["lt"]), self.fill_rate, dt_sim)
             self._set_lvl(t["lt"], lvl)
-            self._set(t["ls_hi"], lvl > 90)
-            self._set(t["ls_lo"], lvl < 5)
+            _ls_hi, _ls_lo = self._ls(lvl)
+            self._set(t["ls_hi"], _ls_hi)
+            self._set(t["ls_lo"], _ls_lo)
             self._set(t["tt"], self._n(20.0, 0.5))
             self._set(t["brix"], self._n(self.og, 0.2))
             self._set(t["ph"], self._n(5.4, 0.05))
@@ -762,10 +853,16 @@ class FVSimulator(AreaSimulator):
                 self._enter_lag()
 
         elif ph == FermentationPhase.LAG:
+            glycol_ok = self._get("DI_GLYCOL_PUMP_RUN")
             self._set(t["do_gly"], True)
             sp = self.active_temp_sp
             self._set(t["temp_sp"], sp)
-            tt = phys.approach(self._get(t["tt"]), sp, self.approach_rate, dt_sim)
+            if glycol_ok:
+                tt = phys.approach(self._get(t["tt"]), sp, self.approach_rate, dt_sim)
+            else:
+                # sem glicol: temperatura deriva para ambiente
+                tt = phys.approach(self._get(t["tt"]), 25.0, self.approach_rate * 0.5, dt_sim)
+            self._set(t["gly_run"], glycol_ok)
             self._set(t["tt"], self._n(tt, 0.1))
             self._set(t["pt"], self._n(0.05, 0.01))
             self._set(t["brix"], self._n(self.og, 0.1))
@@ -775,12 +872,17 @@ class FVSimulator(AreaSimulator):
 
         elif ph == FermentationPhase.ACTIVE:
             self.active_brix_elapsed += dt_sim
+            glycol_ok = self._get("DI_GLYCOL_PUMP_RUN")
             self._set(t["do_gly"], True)
             self._set(t["do_spund"], True)
-            self._set(t["gly_run"], True)
+            self._set(t["gly_run"], glycol_ok)
             sp = self.active_temp_sp
             self._set(t["temp_sp"], sp)
-            tt = phys.approach(self._get(t["tt"]), sp, self.approach_rate * 2, dt_sim)
+            if glycol_ok:
+                tt = phys.approach(self._get(t["tt"]), sp, self.approach_rate * 2, dt_sim)
+            else:
+                # sem glicol: fermentação aquece descontroladamente
+                tt = phys.approach(self._get(t["tt"]), 32.0, self.approach_rate * 1.5, dt_sim)
             self._set(t["tt"], self._n(tt, 0.1))
             # Brix drops
             brix = phys.fermentation_brix(self.active_brix_elapsed, self.og, self.fg, self.phase_durs[1])
@@ -790,7 +892,10 @@ class FVSimulator(AreaSimulator):
             pt = phys.pressure_from_co2(brix_drop, tt)
             self._set(t["pt"], self._n(pt, 0.02))
             self._set(t["do_vent"], pt > 1.8)
-            self._set(t["prv"], pt > 2.5)
+            if pt > 2.5:
+                self._trigger_fault(t["prv"], t["prv"] + "_REASON", "FV_PRV")
+            else:
+                self._clear_fault(t["prv"], t["prv"] + "_REASON")
             self._set(t["ph"], self._n(4.2 - brix_drop * 0.02, 0.05))
             co2 = self._n(brix_drop * 0.35, 0.1)
             self._set(t["co2"], max(0.0, co2))
@@ -809,9 +914,14 @@ class FVSimulator(AreaSimulator):
                 self._enter_cold_crash()
 
         elif ph == FermentationPhase.COLD_CRASH:
+            glycol_ok = self._get("DI_GLYCOL_PUMP_RUN")
             sp = self.cold_crash_sp
             self._set(t["temp_sp"], sp)
-            tt = phys.approach(self._get(t["tt"]), sp, self.approach_rate * 0.5, dt_sim)
+            self._set(t["gly_run"], glycol_ok)
+            if glycol_ok:
+                tt = phys.approach(self._get(t["tt"]), sp, self.approach_rate * 0.5, dt_sim)
+            else:
+                tt = phys.approach(self._get(t["tt"]), 15.0, self.approach_rate * 0.3, dt_sim)
             self._set(t["tt"], self._n(tt, 0.1))
             self._set(t["brix"], self._n(self.fg, 0.05))
             pt = phys.approach(self._get(t["pt"]), 0.5, self.approach_rate * 0.5, dt_sim)
@@ -823,8 +933,9 @@ class FVSimulator(AreaSimulator):
         elif ph == FermentationPhase.DRAINING:
             lvl = phys.drain_tank(self._get_lvl(t["lt"]), self.drain_rate * 0.5, dt_sim)
             self._set_lvl(t["lt"], lvl)
-            self._set(t["ls_hi"], lvl > 90)
-            self._set(t["ls_lo"], lvl < 5)
+            _ls_hi, _ls_lo = self._ls(lvl)
+            self._set(t["ls_hi"], _ls_hi)
+            self._set(t["ls_lo"], _ls_lo)
             if lvl <= 5:
                 self._reset()
 
@@ -960,6 +1071,14 @@ class BBTSimulator(AreaSimulator):
     def _n(self, v, s=0.05):
         return phys.add_noise(v, s, self.rng)
 
+    def _ls(self, lvl: float):
+        n = self.tags["lt"][5]  # BBT number char
+        hi_tag = f"AI_BBT{n}_LS_HI_SP"
+        lo_tag = f"AI_BBT{n}_LS_LO_SP"
+        hi_sp = self.store.get(hi_tag) if hi_tag in self.store.all_tags() else 90.0
+        lo_sp = self.store.get(lo_tag) if lo_tag in self.store.all_tags() else 5.0
+        return lvl >= hi_sp, lvl <= lo_sp
+
     def tick(self, dt_sim):
         self.elapsed += dt_sim
         self.phase_elapsed += dt_sim
@@ -978,8 +1097,9 @@ class BBTSimulator(AreaSimulator):
         elif self.state == BBTState.FILLING:
             lvl = phys.fill_tank(self._get_lvl(t["lt"]), self.fill_rate * 0.5, dt_sim)
             self._set_lvl(t["lt"], lvl)
-            self._set(t["ls_hi"], lvl > 90)
-            self._set(t["ls_lo"], lvl < 5)
+            _ls_hi, _ls_lo = self._ls(lvl)
+            self._set(t["ls_hi"], _ls_hi)
+            self._set(t["ls_lo"], _ls_lo)
             self._set(t["tt"], self._n(4.0, 0.3))
             self._set(t["ph"], self._n(4.1, 0.03))
             self._set(t["turb"], self._n(15.0, 2.0))
@@ -989,9 +1109,13 @@ class BBTSimulator(AreaSimulator):
                 self._set(t["do_carb"], True)
 
         elif self.state == BBTState.CARBONATING:
+            glycol_ok = self.store.get("DI_GLYCOL_PUMP_RUN")
             self._set(t["do_gly"], True)
             self._set(t["do_carb"], True)
-            tt = phys.approach(self._get(t["tt"]), self.temp_sp, self.approach_rate, dt_sim)
+            if glycol_ok:
+                tt = phys.approach(self._get(t["tt"]), self.temp_sp, self.approach_rate, dt_sim)
+            else:
+                tt = phys.approach(self._get(t["tt"]), 15.0, self.approach_rate * 0.3, dt_sim)
             self._set(t["tt"], self._n(tt, 0.1))
             self._set(t["temp_sp"], self.temp_sp)
             # CO2 rises
@@ -1007,8 +1131,12 @@ class BBTSimulator(AreaSimulator):
                 self.phase_elapsed = 0.0
 
         elif self.state == BBTState.READY:
+            glycol_ok = self.store.get("DI_GLYCOL_PUMP_RUN")
             self._set(t["do_gly"], True)
-            tt = phys.approach(self._get(t["tt"]), self.temp_sp, self.approach_rate * 0.5, dt_sim)
+            if glycol_ok:
+                tt = phys.approach(self._get(t["tt"]), self.temp_sp, self.approach_rate * 0.5, dt_sim)
+            else:
+                tt = phys.approach(self._get(t["tt"]), 15.0, self.approach_rate * 0.2, dt_sim)
             self._set(t["tt"], self._n(tt, 0.05))
             self._set(t["co2"], self._n(5.5, 0.05))
             self._set(t["pt"], self._n(self.carb_sp, 0.02))
@@ -1024,8 +1152,9 @@ class BBTSimulator(AreaSimulator):
         elif self.state == BBTState.DRAINING:
             lvl = phys.drain_tank(self._get_lvl(t["lt"]), self.drain_rate * 0.3, dt_sim)
             self._set_lvl(t["lt"], lvl)
-            self._set(t["ls_hi"], lvl > 90)
-            self._set(t["ls_lo"], lvl < 5)
+            _ls_hi, _ls_lo = self._ls(lvl)
+            self._set(t["ls_hi"], _ls_hi)
+            self._set(t["ls_lo"], _ls_lo)
             if lvl <= 5:
                 self.state = BBTState.EMPTY
                 self.phase_elapsed = 0.0
@@ -1102,10 +1231,10 @@ class PackagingArea(AreaSimulator):
         if keg_fault:
             keg_running = False
             if self._random_recovery(300, dt_sim):
-                self.store.set("DI_KEG_LINE_FLT", False)
+                self._clear_fault("DI_KEG_LINE_FLT", "DI_KEG_LINE_FLT_REASON")
         else:
             if self._random_fault(0.0001, dt_sim):
-                self.store.set("DI_KEG_LINE_FLT", True)
+                self._trigger_fault("DI_KEG_LINE_FLT", "DI_KEG_LINE_FLT_REASON", "KEG_LINE")
 
         self.store.set("DI_KEG_LINE_RUN", keg_running)
         self.store.set("DO_KEG_LINE_START", keg_running)
@@ -1136,10 +1265,10 @@ class PackagingArea(AreaSimulator):
         if can_fault:
             can_running = False
             if self._random_recovery(200, dt_sim):
-                self.store.set("DI_CAN_LINE_FLT", False)
+                self._clear_fault("DI_CAN_LINE_FLT", "DI_CAN_LINE_FLT_REASON")
         else:
             if self._random_fault(0.00015, dt_sim):
-                self.store.set("DI_CAN_LINE_FLT", True)
+                self._trigger_fault("DI_CAN_LINE_FLT", "DI_CAN_LINE_FLT_REASON", "CAN_LINE")
 
         self.store.set("DI_CAN_LINE_RUN", can_running)
         self.store.set("DO_CAN_LINE_START", can_running)
@@ -1357,7 +1486,7 @@ class MESCalculator(AreaSimulator):
         # Active alarms
         active = sum(1 for tag, state in self.store.all_tags().items()
                      if ("FAULT" in tag or "FLT" in tag or "PRV" in tag)
-                     and state.value is True)
+                     and isinstance(state.value, (int, bool)) and state.value)
         self.store.set("MES_ACTIVE_ALARMS", float(active))
 
         # Batch counter

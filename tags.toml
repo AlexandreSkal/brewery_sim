@@ -6477,3 +6477,726 @@ min = 0
 max = 100
 initial = 0
 
+# ============================================================
+# FAULT CODE + REASON TAGS — patch para tags.toml
+# Adicionar ao final do arquivo existente
+# 
+# Convenção:
+#   DI_{EQUIP}_FAULT  → Int 0-3 (0=no alarm, 1=low, 2=medium, 3=high)
+#   DI_{EQUIP}_FAULT_REASON → String com o texto do alarme ativo
+# ============================================================
+
+# ── A100 MILLING ─────────────────────────────────────────────
+
+[tags.DI_MILL_A_FAULT_REASON]
+area = "a100_milling"
+type = "DI"
+description = "Alarm reason Mill A"
+unit = "str"
+initial = "No fault"
+equipment = "MILL_A"
+
+[tags.DI_MILL_B_FAULT_REASON]
+area = "a100_milling"
+type = "DI"
+description = "Alarm reason Mill B"
+unit = "str"
+initial = "No fault"
+equipment = "MILL_B"
+
+[tags.DI_AUG_A_FAULT_REASON]
+area = "a100_milling"
+type = "DI"
+description = "Alarm reason Auger A"
+unit = "str"
+initial = "No fault"
+equipment = "MILL_A"
+
+[tags.DI_AUG_B_FAULT_REASON]
+area = "a100_milling"
+type = "DI"
+description = "Alarm reason Auger B"
+unit = "str"
+initial = "No fault"
+equipment = "MILL_B"
+
+# ── A200 UTILITIES ────────────────────────────────────────────
+
+[tags.DI_BOILER_FAULT_REASON]
+area = "a200_utilities"
+type = "DI"
+description = "Alarm reason Boiler"
+unit = "str"
+initial = "No fault"
+equipment = "BOILER"
+
+[tags.DI_RO_FAULT_REASON]
+area = "a200_utilities"
+type = "DI"
+description = "Alarm reason RO System"
+unit = "str"
+initial = "No fault"
+equipment = "RO"
+
+[tags.DI_GLYCOL_PUMP_FLT_REASON]
+area = "a200_utilities"
+type = "DI"
+description = "Alarm reason Glycol Pump"
+unit = "str"
+initial = "No fault"
+equipment = "CHILLER"
+
+[tags.DI_CHILLER_FAULT_REASON]
+area = "a200_utilities"
+type = "DI"
+description = "Alarm reason Chiller"
+unit = "str"
+initial = "No fault"
+equipment = "CHILLER"
+
+# ── A300 BREWHOUSE ────────────────────────────────────────────
+
+[tags.DI_MT1_RAKE_FLT_REASON]
+area = "a300_brewhouse"
+type = "DI"
+description = "Alarm reason Rake MT1"
+unit = "str"
+initial = "No fault"
+equipment = "MT1"
+
+[tags.DI_MT2_RAKE_FLT_REASON]
+area = "a300_brewhouse"
+type = "DI"
+description = "Alarm reason Rake MT2"
+unit = "str"
+initial = "No fault"
+equipment = "MT2"
+
+[tags.DI_PMP_MT1_FLT_REASON]
+area = "a300_brewhouse"
+type = "DI"
+description = "Alarm reason Pump MT1"
+unit = "str"
+initial = "No fault"
+equipment = "MT1"
+
+[tags.DI_PMP_MT2_FLT_REASON]
+area = "a300_brewhouse"
+type = "DI"
+description = "Alarm reason Pump MT2"
+unit = "str"
+initial = "No fault"
+equipment = "MT2"
+
+[tags.DI_LT1_RAKE_FLT_REASON]
+area = "a300_brewhouse"
+type = "DI"
+description = "Alarm reason Rake LT1"
+unit = "str"
+initial = "No fault"
+equipment = "LT1"
+
+[tags.DI_LT2_RAKE_FLT_REASON]
+area = "a300_brewhouse"
+type = "DI"
+description = "Alarm reason Rake LT2"
+unit = "str"
+initial = "No fault"
+equipment = "LT2"
+
+[tags.DI_PMP_WP1_FLT_REASON]
+area = "a300_brewhouse"
+type = "DI"
+description = "Alarm reason Pump WP1"
+unit = "str"
+initial = "No fault"
+equipment = "WP1"
+
+[tags.DI_PMP_WP2_FLT_REASON]
+area = "a300_brewhouse"
+type = "DI"
+description = "Alarm reason Pump WP2"
+unit = "str"
+initial = "No fault"
+equipment = "WP2"
+
+# ── A400 COOLING ──────────────────────────────────────────────
+
+[tags.DI_HX1_PMP_FLT_REASON]
+area = "a400_cooling"
+type = "DI"
+description = "Alarm reason HX1 Pump"
+unit = "str"
+initial = "No fault"
+equipment = "HX1"
+
+[tags.DI_HX2_PMP_FLT_REASON]
+area = "a400_cooling"
+type = "DI"
+description = "Alarm reason HX2 Pump"
+unit = "str"
+initial = "No fault"
+equipment = "HX2"
+
+# ── A500 FERMENTATION ─────────────────────────────────────────
+
+[tags.DI_FV1_PRV_REASON]
+area = "a500_fermentation"
+type = "DI"
+description = "Alarm reason FV1 PRV"
+unit = "str"
+initial = "No fault"
+equipment = "FV1"
+
+[tags.DI_FV2_PRV_REASON]
+area = "a500_fermentation"
+type = "DI"
+description = "Alarm reason FV2 PRV"
+unit = "str"
+initial = "No fault"
+equipment = "FV2"
+
+[tags.DI_FV3_PRV_REASON]
+area = "a500_fermentation"
+type = "DI"
+description = "Alarm reason FV3 PRV"
+unit = "str"
+initial = "No fault"
+equipment = "FV3"
+
+[tags.DI_FV4_PRV_REASON]
+area = "a500_fermentation"
+type = "DI"
+description = "Alarm reason FV4 PRV"
+unit = "str"
+initial = "No fault"
+equipment = "FV4"
+
+[tags.DI_FV5_PRV_REASON]
+area = "a500_fermentation"
+type = "DI"
+description = "Alarm reason FV5 PRV"
+unit = "str"
+initial = "No fault"
+equipment = "FV5"
+
+[tags.DI_FV6_PRV_REASON]
+area = "a500_fermentation"
+type = "DI"
+description = "Alarm reason FV6 PRV"
+unit = "str"
+initial = "No fault"
+equipment = "FV6"
+
+# ── A600 MATURATION ───────────────────────────────────────────
+
+[tags.DI_CENT_FAULT_REASON]
+area = "a600_maturation"
+type = "DI"
+description = "Alarm reason Centrifuge"
+unit = "str"
+initial = "No fault"
+equipment = "CENTRIFUGE"
+
+[tags.DI_FILT_PMP_FLT_REASON]
+area = "a600_maturation"
+type = "DI"
+description = "Alarm reason Filter Pump"
+unit = "str"
+initial = "No fault"
+equipment = "FILTER"
+
+# ── A700 PACKAGING ────────────────────────────────────────────
+
+[tags.DI_KEG_LINE_FLT_REASON]
+area = "a700_packaging"
+type = "DI"
+description = "Alarm reason Keg Line"
+unit = "str"
+initial = "No fault"
+equipment = "KEG_LINE"
+
+[tags.DI_CAN_LINE_FLT_REASON]
+area = "a700_packaging"
+type = "DI"
+description = "Alarm reason Can Line"
+unit = "str"
+initial = "No fault"
+equipment = "CAN_LINE"
+
+[tags.DI_LABEL_FLT_REASON]
+area = "a700_packaging"
+type = "DI"
+description = "Alarm reason Labeler"
+unit = "str"
+initial = "No fault"
+equipment = "KEG_LINE"
+
+# ── A800 CIP ─────────────────────────────────────────────────
+
+[tags.DI_CIP_PMP_FLT_REASON]
+area = "a800_cip"
+type = "DI"
+description = "Alarm reason CIP Pump"
+unit = "str"
+initial = "No fault"
+equipment = "CIP"
+
+# ============================================================
+# Level Switch Setpoints — append to tags.toml
+# Cada equipamento tem LS_HI_SP e LS_LO_SP
+# O simulador lê esses valores para decidir quando ativar o switch
+# Valores em % (0-100) — mesma escala usada internamente
+# ============================================================
+
+# ── A100 MILLING ────────────────────────────────────────────
+
+[tags.AI_SILO_A_LS_HI_SP]
+area = "a100_milling"
+type = "AO"
+description = "Setpoint LS_HI Silo A (kg)"
+unit = "kg"
+min = 0
+max = 5000
+initial = 4500
+equipment = "SILO_A"
+
+[tags.AI_SILO_A_LS_LO_SP]
+area = "a100_milling"
+type = "AO"
+description = "Setpoint LS_LO Silo A (kg)"
+unit = "kg"
+min = 0
+max = 5000
+initial = 200
+equipment = "SILO_A"
+
+[tags.AI_SILO_B_LS_HI_SP]
+area = "a100_milling"
+type = "AO"
+description = "Setpoint LS_HI Silo B (kg)"
+unit = "kg"
+min = 0
+max = 5000
+initial = 4500
+equipment = "SILO_B"
+
+[tags.AI_SILO_B_LS_LO_SP]
+area = "a100_milling"
+type = "AO"
+description = "Setpoint LS_LO Silo B (kg)"
+unit = "kg"
+min = 0
+max = 5000
+initial = 200
+equipment = "SILO_B"
+
+[tags.AI_GRC_A_LS_HI_SP]
+area = "a100_milling"
+type = "AO"
+description = "Setpoint LS_HI Grist Case A (kg)"
+unit = "kg"
+min = 0
+max = 500
+initial = 400
+equipment = "MILL_A"
+
+[tags.AI_GRC_B_LS_HI_SP]
+area = "a100_milling"
+type = "AO"
+description = "Setpoint LS_HI Grist Case B (kg)"
+unit = "kg"
+min = 0
+max = 500
+initial = 400
+equipment = "MILL_B"
+
+# ── A200 UTILITIES ──────────────────────────────────────────
+
+[tags.AI_HLT1_LS_HI_SP]
+area = "a200_utilities"
+type = "AO"
+description = "Setpoint LS_HI HLT 1 (%)"
+unit = "%"
+min = 0
+max = 2200
+initial = 2000
+equipment = "HLT1"
+
+[tags.AI_HLT1_LS_LO_SP]
+area = "a200_utilities"
+type = "AO"
+description = "Setpoint LS_LO HLT 1 (%)"
+unit = "%"
+min = 0
+max = 2200
+initial = 450
+equipment = "HLT1"
+
+[tags.AI_HLT2_LS_HI_SP]
+area = "a200_utilities"
+type = "AO"
+description = "Setpoint LS_HI HLT 2 (%)"
+unit = "%"
+min = 0
+max = 2200
+initial = 1900
+equipment = "HLT2"
+
+[tags.AI_HLT2_LS_LO_SP]
+area = "a200_utilities"
+type = "AO"
+description = "Setpoint LS_LO HLT 2 (%)"
+unit = "%"
+min = 0
+max = 2200
+initial = 500
+equipment = "HLT2"
+
+[tags.AI_CLT_LS_HI_SP]
+area = "a200_utilities"
+type = "AO"
+description = "Setpoint LS_HI CLT (%)"
+unit = "mm"
+min = 0
+max = 2000
+initial = 1700
+equipment = "CLT"
+
+[tags.AI_CLT_LS_LO_SP]
+area = "a200_utilities"
+type = "AO"
+description = "Setpoint LS_LO CLT (%)"
+unit = "mm"
+min = 0
+max = 2000
+initial = 300
+equipment = "CLT"
+
+# ── A300 BREWHOUSE ──────────────────────────────────────────
+
+[tags.AI_MT1_LS_HI_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_HI Mash Tun 1 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 90
+equipment = "MT1"
+
+[tags.AI_MT1_LS_LO_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_LO Mash Tun 1 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "MT1"
+
+[tags.AI_LT1_LS_HI_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_HI Lauter Tun 1 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 90
+equipment = "LT1"
+
+[tags.AI_LT1_LS_LO_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_LO Lauter Tun 1 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "LT1"
+
+[tags.AI_KT1_LS_HI_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_HI Kettle 1 (%)"
+unit = "%"
+min = 0
+max = 2400
+initial = 2000
+equipment = "KT1"
+
+[tags.AI_KT1_LS_LO_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_LO Kettle 1 (%)"
+unit = "%"
+min = 0
+max = 2400
+initial = 500
+equipment = "KT1"
+
+[tags.AI_WP1_LS_HI_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_HI Whirlpool 1 (%)"
+unit = "%"
+min = 0
+max = 1200
+initial = 1000
+equipment = "WP1"
+
+[tags.AI_WP1_LS_LO_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_LO Whirlpool 1 (%)"
+unit = "%"
+min = 0
+max = 1200
+initial = 200
+equipment = "WP1"
+
+[tags.AI_MT2_LS_HI_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_HI Mash Tun 2 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 90
+equipment = "MT2"
+
+[tags.AI_MT2_LS_LO_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_LO Mash Tun 2 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "MT2"
+
+[tags.AI_LT2_LS_HI_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_HI Lauter Tun 2 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 90
+equipment = "LT2"
+
+[tags.AI_LT2_LS_LO_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_LO Lauter Tun 2 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "LT2"
+
+[tags.AI_KT2_LS_HI_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_HI Kettle 2 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 88
+equipment = "KT2"
+
+[tags.AI_KT2_LS_LO_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_LO Kettle 2 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "KT2"
+
+[tags.AI_WP2_LS_HI_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_HI Whirlpool 2 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 88
+equipment = "WP2"
+
+[tags.AI_WP2_LS_LO_SP]
+area = "a300_brewhouse"
+type = "AO"
+description = "Setpoint LS_LO Whirlpool 2 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "WP2"
+
+# ── A500 FERMENTATION ───────────────────────────────────────
+
+[tags.AI_FV1_LS_HI_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Setpoint LS_HI FV1 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 90
+equipment = "FV1"
+
+[tags.AI_FV1_LS_LO_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Setpoint LS_LO FV1 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "FV1"
+
+[tags.AI_FV2_LS_HI_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Setpoint LS_HI FV2 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 90
+equipment = "FV2"
+
+[tags.AI_FV2_LS_LO_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Setpoint LS_LO FV2 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "FV2"
+
+[tags.AI_FV3_LS_HI_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Setpoint LS_HI FV3 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 90
+equipment = "FV3"
+
+[tags.AI_FV3_LS_LO_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Setpoint LS_LO FV3 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "FV3"
+
+[tags.AI_FV4_LS_HI_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Setpoint LS_HI FV4 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 90
+equipment = "FV4"
+
+[tags.AI_FV4_LS_LO_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Setpoint LS_LO FV4 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "FV4"
+
+[tags.AI_FV5_LS_HI_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Setpoint LS_HI FV5 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 90
+equipment = "FV5"
+
+[tags.AI_FV5_LS_LO_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Setpoint LS_LO FV5 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "FV5"
+
+[tags.AI_FV6_LS_HI_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Setpoint LS_HI FV6 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 90
+equipment = "FV6"
+
+[tags.AI_FV6_LS_LO_SP]
+area = "a500_fermentation"
+type = "AO"
+description = "Setpoint LS_LO FV6 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "FV6"
+
+# ── A600 MATURATION ─────────────────────────────────────────
+
+[tags.AI_BBT1_LS_HI_SP]
+area = "a600_maturation"
+type = "AO"
+description = "Setpoint LS_HI BBT1 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 90
+equipment = "BBT1"
+
+[tags.AI_BBT1_LS_LO_SP]
+area = "a600_maturation"
+type = "AO"
+description = "Setpoint LS_LO BBT1 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "BBT1"
+
+[tags.AI_BBT2_LS_HI_SP]
+area = "a600_maturation"
+type = "AO"
+description = "Setpoint LS_HI BBT2 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 90
+equipment = "BBT2"
+
+[tags.AI_BBT2_LS_LO_SP]
+area = "a600_maturation"
+type = "AO"
+description = "Setpoint LS_LO BBT2 (%)"
+unit = "%"
+min = 0
+max = 100
+initial = 5
+equipment = "BBT2"
+
+
