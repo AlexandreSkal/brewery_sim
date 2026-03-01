@@ -7200,3 +7200,1129 @@ initial = 5
 equipment = "BBT2"
 
 
+# ================================================================
+# MES Tags — adicionar ao final do tags.toml
+# Area: a900_mes  |  Tópico MQTT: brewery/a900_mes/<TAG>
+# ================================================================
+
+# ── DASHBOARD 1 — Plant Overview ─────────────────────────────────
+
+[tags.MES_PLANT_HL_SHIFT]
+area="a900_mes"
+type="AI"
+description="hl produzidos turno atual"
+unit="hl"
+min=0
+max=500
+initial=0
+equipment="MES"
+[tags.MES_PLANT_HL_SHIFT_PREV]
+area="a900_mes"
+type="AI"
+description="hl turno anterior"
+unit="hl"
+min=0
+max=500
+initial=0
+equipment="MES"
+[tags.MES_PLANT_HL_DAILY]
+area="a900_mes"
+type="AI"
+description="hl produzidos hoje"
+unit="hl"
+min=0
+max=1500
+initial=0
+equipment="MES"
+[tags.MES_PLANT_HL_DAILY_PREV]
+area="a900_mes"
+type="AI"
+description="hl dia anterior"
+unit="hl"
+min=0
+max=1500
+initial=0
+equipment="MES"
+[tags.MES_PLANT_HL_SESSION]
+area="a900_mes"
+type="AI"
+description="hl totais na sessao"
+unit="hl"
+min=0
+max=999999
+initial=0
+equipment="MES"
+[tags.MES_PLANT_SHIFT_NUM]
+area="a900_mes"
+type="AI"
+description="Numero do turno 1/2/3"
+unit=""
+min=1
+max=3
+initial=1
+equipment="MES"
+[tags.MES_PLANT_SHIFT_PCT]
+area="a900_mes"
+type="AI"
+description="Pct meta producao turno"
+unit="%"
+min=0
+max=150
+initial=0
+equipment="MES"
+[tags.MES_PLANT_DAILY_PCT]
+area="a900_mes"
+type="AI"
+description="Pct meta producao diaria"
+unit="%"
+min=0
+max=150
+initial=0
+equipment="MES"
+[tags.MES_PLANT_TARGET_HL_SHIFT]
+area="a900_mes"
+type="AO"
+description="Meta producao por turno"
+unit="hl"
+min=0
+max=500
+initial=120
+equipment="MES"
+[tags.MES_PLANT_BATCH_TODAY]
+area="a900_mes"
+type="AI"
+description="Bateladas concluidas hoje"
+unit="batch"
+min=0
+max=10
+initial=0
+equipment="MES"
+[tags.MES_PLANT_BATCH_TOTAL]
+area="a900_mes"
+type="AI"
+description="Bateladas totais sessao"
+unit="batch"
+min=0
+max=9999
+initial=0
+equipment="MES"
+[tags.MES_PLANT_OEE]
+area="a900_mes"
+type="AI"
+description="OEE geral planta (A*P*Q)"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_PLANT_OEE_TARGET]
+area="a900_mes"
+type="AO"
+description="Meta OEE planta"
+unit="%"
+min=0
+max=100
+initial=80
+equipment="MES"
+[tags.MES_PLANT_AVAIL]
+area="a900_mes"
+type="AI"
+description="Disponibilidade planta"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_PLANT_PERF]
+area="a900_mes"
+type="AI"
+description="Performance planta"
+unit="%"
+min=0
+max=100
+initial=88
+equipment="MES"
+[tags.MES_PLANT_QUAL]
+area="a900_mes"
+type="AI"
+description="Qualidade planta"
+unit="%"
+min=0
+max=100
+initial=96
+equipment="MES"
+[tags.MES_PLANT_ALARMS_ACTIVE]
+area="a900_mes"
+type="AI"
+description="Alarmes ativos agora"
+unit=""
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_PLANT_ALARMS_DAILY]
+area="a900_mes"
+type="AI"
+description="Pico alarmes hoje"
+unit=""
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_PLANT_ALM_MILLING]
+area="a900_mes"
+type="AI"
+description="Alarmes Milling"
+unit=""
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_PLANT_ALM_UTILITIES]
+area="a900_mes"
+type="AI"
+description="Alarmes Utilities"
+unit=""
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_PLANT_ALM_BREWHOUSE]
+area="a900_mes"
+type="AI"
+description="Alarmes Brewhouse"
+unit=""
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_PLANT_ALM_FERM]
+area="a900_mes"
+type="AI"
+description="Alarmes Fermentacao"
+unit=""
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_PLANT_ALM_PACKAGING]
+area="a900_mes"
+type="AI"
+description="Alarmes Packaging"
+unit=""
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_PLANT_BEER_LOSS_PCT]
+area="a900_mes"
+type="AI"
+description="Beer loss total pct"
+unit="%"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_PLANT_CO2_RECOVERY]
+area="a900_mes"
+type="AI"
+description="Recuperacao CO2 pct"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+
+# ── DASHBOARD 2 — Milling ────────────────────────────────────────
+[tags.MES_MILL_OEE]
+area="a900_mes"
+type="AI"
+description="OEE Milling"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_MILL_AVAIL]
+area="a900_mes"
+type="AI"
+description="Disponibilidade Milling"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_MILL_A_RUN]
+area="a900_mes"
+type="AI"
+description="Mill A rodando 0/1"
+unit=""
+min=0
+max=1
+initial=0
+equipment="MES"
+[tags.MES_MILL_B_RUN]
+area="a900_mes"
+type="AI"
+description="Mill B rodando 0/1"
+unit=""
+min=0
+max=1
+initial=0
+equipment="MES"
+[tags.MES_MILL_SILO_A_WT]
+area="a900_mes"
+type="AI"
+description="Peso Silo A kg"
+unit="kg"
+min=0
+max=5000
+initial=0
+equipment="MES"
+[tags.MES_MILL_SILO_B_WT]
+area="a900_mes"
+type="AI"
+description="Peso Silo B kg"
+unit="kg"
+min=0
+max=5000
+initial=0
+equipment="MES"
+[tags.MES_MILL_SILO_A_PCT]
+area="a900_mes"
+type="AI"
+description="Nivel Silo A pct"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_MILL_SILO_B_PCT]
+area="a900_mes"
+type="AI"
+description="Nivel Silo B pct"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+
+# ── DASHBOARD 2 — Brewhouse ──────────────────────────────────────
+[tags.MES_BH1_OEE]
+area="a900_mes"
+type="AI"
+description="OEE Brewhouse L1"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_BH1_AVAIL]
+area="a900_mes"
+type="AI"
+description="Disponibilidade BH L1"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_BH1_MT_TEMP]
+area="a900_mes"
+type="AI"
+description="Temp Mash Tun 1 C"
+unit="°C"
+min=0
+max=100
+initial=20
+equipment="MES"
+[tags.MES_BH1_KT_TEMP]
+area="a900_mes"
+type="AI"
+description="Temp Kettle 1 C"
+unit="°C"
+min=0
+max=120
+initial=20
+equipment="MES"
+[tags.MES_BH1_WORT_BRIX]
+area="a900_mes"
+type="AI"
+description="Brix mosto L1"
+unit="°P"
+min=0
+max=30
+initial=0
+equipment="MES"
+[tags.MES_BH1_KW]
+area="a900_mes"
+type="AI"
+description="Consumo eletrico BH L1"
+unit="kW"
+min=0
+max=150
+initial=0
+equipment="MES"
+[tags.MES_BH1_EFF]
+area="a900_mes"
+type="AI"
+description="Eficiencia brewhouse L1"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_BH2_OEE]
+area="a900_mes"
+type="AI"
+description="OEE Brewhouse L2"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_BH2_AVAIL]
+area="a900_mes"
+type="AI"
+description="Disponibilidade BH L2"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_BH2_MT_TEMP]
+area="a900_mes"
+type="AI"
+description="Temp Mash Tun 2 C"
+unit="°C"
+min=0
+max=100
+initial=20
+equipment="MES"
+[tags.MES_BH2_KT_TEMP]
+area="a900_mes"
+type="AI"
+description="Temp Kettle 2 C"
+unit="°C"
+min=0
+max=120
+initial=20
+equipment="MES"
+[tags.MES_BH2_WORT_BRIX]
+area="a900_mes"
+type="AI"
+description="Brix mosto L2"
+unit="°P"
+min=0
+max=30
+initial=0
+equipment="MES"
+[tags.MES_BH2_KW]
+area="a900_mes"
+type="AI"
+description="Consumo eletrico BH L2"
+unit="kW"
+min=0
+max=150
+initial=0
+equipment="MES"
+[tags.MES_BH2_EFF]
+area="a900_mes"
+type="AI"
+description="Eficiencia brewhouse L2"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+
+# ── DASHBOARD 2 — Fermentacao ────────────────────────────────────
+[tags.MES_FERM_FV_ACTIVE]
+area="a900_mes"
+type="AI"
+description="FVs em processo count"
+unit=""
+min=0
+max=6
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV_IDLE]
+area="a900_mes"
+type="AI"
+description="FVs disponiveis count"
+unit=""
+min=0
+max=6
+initial=6
+equipment="MES"
+[tags.MES_FERM_AVG_TEMP]
+area="a900_mes"
+type="AI"
+description="Temp media FVs ativos"
+unit="°C"
+min=-5
+max=30
+initial=0
+equipment="MES"
+[tags.MES_FERM_AVG_BRIX]
+area="a900_mes"
+type="AI"
+description="Brix medio FVs ativos"
+unit="°P"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_FERM_AVG_CO2]
+area="a900_mes"
+type="AI"
+description="CO2 medio FVs ativos"
+unit="g/L"
+min=0
+max=8
+initial=0
+equipment="MES"
+[tags.MES_FERM_BBT_READY]
+area="a900_mes"
+type="AI"
+description="BBTs prontos packaging"
+unit=""
+min=0
+max=2
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV1_ACTIVE]
+area="a900_mes"
+type="AI"
+description="FV1 em processo 0/1"
+unit=""
+min=0
+max=1
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV1_BRIX]
+area="a900_mes"
+type="AI"
+description="FV1 Brix inline"
+unit="°P"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV1_TEMP]
+area="a900_mes"
+type="AI"
+description="FV1 Temperatura"
+unit="°C"
+min=-5
+max=30
+initial=20
+equipment="MES"
+[tags.MES_FERM_FV1_PRESS]
+area="a900_mes"
+type="AI"
+description="FV1 Pressao"
+unit="bar"
+min=0
+max=3
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV2_ACTIVE]
+area="a900_mes"
+type="AI"
+description="FV2 em processo 0/1"
+unit=""
+min=0
+max=1
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV2_BRIX]
+area="a900_mes"
+type="AI"
+description="FV2 Brix inline"
+unit="°P"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV2_TEMP]
+area="a900_mes"
+type="AI"
+description="FV2 Temperatura"
+unit="°C"
+min=-5
+max=30
+initial=20
+equipment="MES"
+[tags.MES_FERM_FV2_PRESS]
+area="a900_mes"
+type="AI"
+description="FV2 Pressao"
+unit="bar"
+min=0
+max=3
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV3_ACTIVE]
+area="a900_mes"
+type="AI"
+description="FV3 em processo 0/1"
+unit=""
+min=0
+max=1
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV3_BRIX]
+area="a900_mes"
+type="AI"
+description="FV3 Brix inline"
+unit="°P"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV3_TEMP]
+area="a900_mes"
+type="AI"
+description="FV3 Temperatura"
+unit="°C"
+min=-5
+max=30
+initial=20
+equipment="MES"
+[tags.MES_FERM_FV3_PRESS]
+area="a900_mes"
+type="AI"
+description="FV3 Pressao"
+unit="bar"
+min=0
+max=3
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV4_ACTIVE]
+area="a900_mes"
+type="AI"
+description="FV4 em processo 0/1"
+unit=""
+min=0
+max=1
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV4_BRIX]
+area="a900_mes"
+type="AI"
+description="FV4 Brix inline"
+unit="°P"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV4_TEMP]
+area="a900_mes"
+type="AI"
+description="FV4 Temperatura"
+unit="°C"
+min=-5
+max=30
+initial=20
+equipment="MES"
+[tags.MES_FERM_FV4_PRESS]
+area="a900_mes"
+type="AI"
+description="FV4 Pressao"
+unit="bar"
+min=0
+max=3
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV5_ACTIVE]
+area="a900_mes"
+type="AI"
+description="FV5 em processo 0/1"
+unit=""
+min=0
+max=1
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV5_BRIX]
+area="a900_mes"
+type="AI"
+description="FV5 Brix inline"
+unit="°P"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV5_TEMP]
+area="a900_mes"
+type="AI"
+description="FV5 Temperatura"
+unit="°C"
+min=-5
+max=30
+initial=20
+equipment="MES"
+[tags.MES_FERM_FV5_PRESS]
+area="a900_mes"
+type="AI"
+description="FV5 Pressao"
+unit="bar"
+min=0
+max=3
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV6_ACTIVE]
+area="a900_mes"
+type="AI"
+description="FV6 em processo 0/1"
+unit=""
+min=0
+max=1
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV6_BRIX]
+area="a900_mes"
+type="AI"
+description="FV6 Brix inline"
+unit="°P"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_FERM_FV6_TEMP]
+area="a900_mes"
+type="AI"
+description="FV6 Temperatura"
+unit="°C"
+min=-5
+max=30
+initial=20
+equipment="MES"
+[tags.MES_FERM_FV6_PRESS]
+area="a900_mes"
+type="AI"
+description="FV6 Pressao"
+unit="bar"
+min=0
+max=3
+initial=0
+equipment="MES"
+
+# ── DASHBOARD 2 — Packaging ──────────────────────────────────────
+[tags.MES_PKG_OEE]
+area="a900_mes"
+type="AI"
+description="OEE Packaging"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_PKG_AVAIL]
+area="a900_mes"
+type="AI"
+description="Disponibilidade Packaging"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_PKG_KEG_RUN]
+area="a900_mes"
+type="AI"
+description="Keg line rodando 0/1"
+unit=""
+min=0
+max=1
+initial=0
+equipment="MES"
+[tags.MES_PKG_CAN_RUN]
+area="a900_mes"
+type="AI"
+description="Can line rodando 0/1"
+unit=""
+min=0
+max=1
+initial=0
+equipment="MES"
+[tags.MES_PKG_KEG_COUNT]
+area="a900_mes"
+type="AI"
+description="Kegs enchidos sessao"
+unit="kegs"
+min=0
+max=99999
+initial=0
+equipment="MES"
+[tags.MES_PKG_CAN_COUNT]
+area="a900_mes"
+type="AI"
+description="Latas enchidas sessao"
+unit="cans"
+min=0
+max=9999999
+initial=0
+equipment="MES"
+[tags.MES_PKG_HL_KEG]
+area="a900_mes"
+type="AI"
+description="hl envasado keg"
+unit="hl"
+min=0
+max=50000
+initial=0
+equipment="MES"
+[tags.MES_PKG_HL_CAN]
+area="a900_mes"
+type="AI"
+description="hl envasado lata"
+unit="hl"
+min=0
+max=50000
+initial=0
+equipment="MES"
+[tags.MES_PKG_HL_TOTAL]
+area="a900_mes"
+type="AI"
+description="hl total envasado"
+unit="hl"
+min=0
+max=100000
+initial=0
+equipment="MES"
+[tags.MES_PKG_BEER_LOSS_PCT]
+area="a900_mes"
+type="AI"
+description="Beer loss packaging pct"
+unit="%"
+min=0
+max=10
+initial=0
+equipment="MES"
+
+# ── DASHBOARD 3 — Utilities ──────────────────────────────────────
+[tags.MES_UTIL_WATER_HL]
+area="a900_mes"
+type="AI"
+description="Consumo agua hl/hl"
+unit="hl/hl"
+min=0
+max=10
+initial=3.5
+equipment="MES"
+[tags.MES_UTIL_KWH_HL]
+area="a900_mes"
+type="AI"
+description="Consumo energia kWh/hl"
+unit="kWh/hl"
+min=0
+max=200
+initial=55
+equipment="MES"
+[tags.MES_UTIL_STEAM_HL]
+area="a900_mes"
+type="AI"
+description="Consumo vapor kg/hl"
+unit="kg/hl"
+min=0
+max=50
+initial=25
+equipment="MES"
+[tags.MES_UTIL_TARGET_WATER]
+area="a900_mes"
+type="AO"
+description="Meta consumo agua hl/hl"
+unit="hl/hl"
+min=0
+max=10
+initial=3.5
+equipment="MES"
+[tags.MES_UTIL_TARGET_KWH]
+area="a900_mes"
+type="AO"
+description="Meta consumo energia kWh/hl"
+unit="kWh/hl"
+min=0
+max=200
+initial=55
+equipment="MES"
+[tags.MES_UTIL_WATER_PCT]
+area="a900_mes"
+type="AI"
+description="Pct meta agua >100 acima"
+unit="%"
+min=0
+max=200
+initial=100
+equipment="MES"
+[tags.MES_UTIL_KWH_PCT]
+area="a900_mes"
+type="AI"
+description="Pct meta energia >100 acima"
+unit="%"
+min=0
+max=200
+initial=100
+equipment="MES"
+[tags.MES_UTIL_KW_HLT]
+area="a900_mes"
+type="AI"
+description="Potencia HLTs kW"
+unit="kW"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_UTIL_KW_BH]
+area="a900_mes"
+type="AI"
+description="Potencia Brewhouse total kW"
+unit="kW"
+min=0
+max=300
+initial=0
+equipment="MES"
+[tags.MES_UTIL_KW_CHILLER]
+area="a900_mes"
+type="AI"
+description="Potencia Chiller kW"
+unit="kW"
+min=0
+max=150
+initial=0
+equipment="MES"
+[tags.MES_UTIL_KW_PACK]
+area="a900_mes"
+type="AI"
+description="Potencia Packaging kW"
+unit="kW"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_UTIL_KW_TOTAL]
+area="a900_mes"
+type="AI"
+description="Potencia total planta kW"
+unit="kW"
+min=0
+max=600
+initial=0
+equipment="MES"
+[tags.MES_UTIL_WATER_TOTAL]
+area="a900_mes"
+type="AI"
+description="Agua total sessao m3"
+unit="m³"
+min=0
+max=999999
+initial=0
+equipment="MES"
+[tags.MES_UTIL_STEAM_TOTAL]
+area="a900_mes"
+type="AI"
+description="Vapor total sessao kg"
+unit="kg"
+min=0
+max=999999
+initial=0
+equipment="MES"
+[tags.MES_UTIL_KWH_TOTAL]
+area="a900_mes"
+type="AI"
+description="Energia total sessao kWh"
+unit="kWh"
+min=0
+max=999999
+initial=0
+equipment="MES"
+[tags.MES_UTIL_BOILER_RUN]
+area="a900_mes"
+type="AI"
+description="Boiler rodando 0/1"
+unit=""
+min=0
+max=1
+initial=0
+equipment="MES"
+[tags.MES_UTIL_CHILLER_RUN]
+area="a900_mes"
+type="AI"
+description="Chiller rodando 0/1"
+unit=""
+min=0
+max=1
+initial=0
+equipment="MES"
+[tags.MES_UTIL_GLYCOL_TEMP]
+area="a900_mes"
+type="AI"
+description="Temp supply glicol C"
+unit="°C"
+min=-10
+max=10
+initial=-2
+equipment="MES"
+[tags.MES_UTIL_STEAM_PRESS]
+area="a900_mes"
+type="AI"
+description="Pressao vapor bar"
+unit="bar"
+min=0
+max=10
+initial=4
+equipment="MES"
+
+# ── DASHBOARD 3 — Qualidade ──────────────────────────────────────
+[tags.MES_QUAL_AVG_ATT]
+area="a900_mes"
+type="AI"
+description="Atenuacao media ultimas bateladas"
+unit="%"
+min=60
+max=90
+initial=78
+equipment="MES"
+[tags.MES_QUAL_AVG_ABV]
+area="a900_mes"
+type="AI"
+description="ABV medio estimado"
+unit="%"
+min=3
+max=9
+initial=5
+equipment="MES"
+[tags.MES_QUAL_AVG_CO2]
+area="a900_mes"
+type="AI"
+description="CO2 medio ultimas bateladas"
+unit="g/L"
+min=4
+max=7
+initial=5.3
+equipment="MES"
+[tags.MES_QUAL_BEER_LOSS]
+area="a900_mes"
+type="AI"
+description="Beer loss acumulado pct"
+unit="%"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_QUAL_CO2_RECOVERY]
+area="a900_mes"
+type="AI"
+description="Recuperacao CO2 pct"
+unit="%"
+min=0
+max=100
+initial=0
+equipment="MES"
+[tags.MES_QUAL_FV1_ABV]
+area="a900_mes"
+type="AI"
+description="FV1 ABV estimado"
+unit="%"
+min=0
+max=10
+initial=5
+equipment="MES"
+[tags.MES_QUAL_FV1_BRIX]
+area="a900_mes"
+type="AI"
+description="FV1 Brix inline"
+unit="°P"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_QUAL_FV2_ABV]
+area="a900_mes"
+type="AI"
+description="FV2 ABV estimado"
+unit="%"
+min=0
+max=10
+initial=5
+equipment="MES"
+[tags.MES_QUAL_FV2_BRIX]
+area="a900_mes"
+type="AI"
+description="FV2 Brix inline"
+unit="°P"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_QUAL_FV3_ABV]
+area="a900_mes"
+type="AI"
+description="FV3 ABV estimado"
+unit="%"
+min=0
+max=10
+initial=5
+equipment="MES"
+[tags.MES_QUAL_FV3_BRIX]
+area="a900_mes"
+type="AI"
+description="FV3 Brix inline"
+unit="°P"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_QUAL_FV4_ABV]
+area="a900_mes"
+type="AI"
+description="FV4 ABV estimado"
+unit="%"
+min=0
+max=10
+initial=5
+equipment="MES"
+[tags.MES_QUAL_FV4_BRIX]
+area="a900_mes"
+type="AI"
+description="FV4 Brix inline"
+unit="°P"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_QUAL_FV5_ABV]
+area="a900_mes"
+type="AI"
+description="FV5 ABV estimado"
+unit="%"
+min=0
+max=10
+initial=5
+equipment="MES"
+[tags.MES_QUAL_FV5_BRIX]
+area="a900_mes"
+type="AI"
+description="FV5 Brix inline"
+unit="°P"
+min=0
+max=20
+initial=0
+equipment="MES"
+[tags.MES_QUAL_FV6_ABV]
+area="a900_mes"
+type="AI"
+description="FV6 ABV estimado"
+unit="%"
+min=0
+max=10
+initial=5
+equipment="MES"
+[tags.MES_QUAL_FV6_BRIX]
+area="a900_mes"
+type="AI"
+description="FV6 Brix inline"
+unit="°P"
+min=0
+max=20
+initial=0
+equipment="MES"

@@ -20,7 +20,6 @@ from typing import TYPE_CHECKING
 
 from brewery_simulator.areas.base import AreaSimulator
 from brewery_simulator import physics as phys
-from brewery_simulator.fault_codes import pick_fault, clear_fault
 
 if TYPE_CHECKING:
     from brewery_simulator.tag_store import TagStore
@@ -83,9 +82,8 @@ class MillLine(AreaSimulator):
         if self.state == MillState.IDLE:
             self._set(t["mill_run"], False); self._set(t["aug_run"], False)
             self._set(t["do_mill"], False); self._set(t["do_aug"], False)
-            self._set(t["mill_curr"], 0.0)           # motor parado = corrente zero
+            self._set(t["mill_curr"], noise(0.0, 0.3, self.rng))
             self._set(t["grc_ls_hi"], False)
-            # silo e grc permanecem congelados no IDLE (sem movimento de material)
             # transition
             if self.elapsed >= self.cooldown_target:
                 self.state = MillState.RUNNING
@@ -118,25 +116,34 @@ class MillLine(AreaSimulator):
             silo = max(0.0, min(5000.0, silo))
             self._set(t["silo_wt"], silo)
 
-            # ── Switches — lê setpoints do tag store (configurável pelo operador) ──
-            sp_silo_hi = self._get(t["silo_wt"] + "_LS_HI_SP") if (t["silo_wt"] + "_LS_HI_SP") in self.store.all_tags() else self.silo_ls_hi_sp
-            sp_silo_lo = self._get(t["silo_wt"] + "_LS_LO_SP") if (t["silo_wt"] + "_LS_LO_SP") in self.store.all_tags() else self.silo_ls_lo_sp
-            self._set(t["silo_ls_hi"], silo >= sp_silo_hi)
-            self._set(t["silo_ls_lo"], silo <= sp_silo_lo)
+            # ── Switches com histerese baseados nos setpoints do TOML ──
+            # LS_HI: ativa quando silo >= sp_hi, desativa quando silo < sp_hi
+            # LS_LO: ativa quando silo <= sp_lo, desativa quando silo > sp_lo
+            prev_ls_hi = self._get(t["silo_ls_hi"])
+            prev_ls_lo = self._get(t["silo_ls_lo"])
+
+            if prev_ls_hi:
+                # Já estava ativo — só desativa se cair ABAIXO do setpoint
+                self._set(t["silo_ls_hi"], silo >= self.silo_ls_hi_sp)
+            else:
+                # Estava inativo — ativa se ATINGIR ou superar o setpoint
+                self._set(t["silo_ls_hi"], silo >= self.silo_ls_hi_sp)
+
+            if prev_ls_lo:
+                self._set(t["silo_ls_lo"], silo <= self.silo_ls_lo_sp)
+            else:
+                self._set(t["silo_ls_lo"], silo <= self.silo_ls_lo_sp)
 
             # ── Grist Case ──
             grc = self._get(t["grc_wt"])
             grc = min(450.0, grc + dt_sim * self.rng.uniform(0.4, 0.7))
             self._set(t["grc_wt"], grc)
-            sp_grc_hi = self._get(t["grc_wt"] + "_LS_HI_SP") if (t["grc_wt"] + "_LS_HI_SP") in self.store.all_tags() else self.grc_ls_hi_sp
-            self._set(t["grc_ls_hi"], grc >= sp_grc_hi)
+            self._set(t["grc_ls_hi"], grc >= self.grc_ls_hi_sp)
 
-            # fault? — GRC cheio bloqueia o moinho (intertravamento real)
-            grc_full = self._get(t["grc_ls_hi"])
-            silo_empty = self._get(t["silo_ls_lo"])
-            if grc_full or silo_empty or self._random_fault(self.fault_prob, dt_sim):
+            # fault?
+            if self._random_fault(self.fault_prob, dt_sim):
                 self.state = MillState.FAULT
-                self._trigger_fault(t["mill_fault"], t["mill_fault"] + "_REASON", "MILL")
+                self._set(t["mill_fault"], True)
                 self.fault_recovery_target = self.elapsed + self.rng.uniform(60, 300)
             # done?
             elif self.elapsed >= self.run_target:
@@ -145,12 +152,10 @@ class MillLine(AreaSimulator):
 
         elif self.state == MillState.FAULT:
             self._set(t["mill_run"], False); self._set(t["aug_run"], False)
-            self._set(t["do_mill"], False); self._set(t["do_aug"], False)
-            self._set(t["mill_curr"], 0.0)           # corrente zero em fault
-            # silo e grc congelam — sem material movendo
+            self._set(t["mill_curr"], 0.0)
             if self.elapsed >= self.fault_recovery_target:
-                self._clear_fault(t["mill_fault"], t["mill_fault"] + "_REASON")
-                self._clear_fault(t["aug_fault"], t["aug_fault"] + "_REASON")
+                self._set(t["mill_fault"], False)
+                self._set(t["aug_fault"], False)
                 self.state = MillState.COOLDOWN
                 self.cooldown_target = self.elapsed + self.rng.uniform(30, 120)
 
@@ -217,20 +222,14 @@ class UtilitiesArea(AreaSimulator):
         if boiler_fault:
             self.boiler_fault_timer += dt_sim
             self._set("DI_BOILER_RUN", False)
-            self._set("DO_BOILER_START", False)
-            # pressão e temperatura caem quando boiler para
-            pt_cur = self._get("AI_STEAM_PT")
-            pt_falling = phys.approach(pt_cur, 0.0, approach_rate * 2, dt_sim)
-            self._set("AI_STEAM_PT", max(0.0, n(pt_falling, 0.05)))
-            self._set("AI_STEAM_TT", n(100.0 + pt_falling * 12, 0.5))
+            self._set("AI_STEAM_PT", n(0.0, 0.05))
             self._set("AI_STEAM_FLOW", 0.0)
-            self._set("DI_STEAM_HI_PRESS", False)
             if self.boiler_fault_timer > self.rng.uniform(120, 600):
-                self._clear_fault("DI_BOILER_FAULT", "DI_BOILER_FAULT_REASON")
+                self._set("DI_BOILER_FAULT", False)
                 self.boiler_fault_timer = 0.0
         else:
             if self._random_fault(0.0003, dt_sim):
-                self._trigger_fault("DI_BOILER_FAULT", "DI_BOILER_FAULT_REASON", "BOILER")
+                self._set("DI_BOILER_FAULT", True)
                 self._set("DI_STEAM_HI_PRESS", False)
             else:
                 self._set("DI_BOILER_RUN", True)
@@ -261,11 +260,8 @@ class UtilitiesArea(AreaSimulator):
             self.store.set_level_pct("AI_HLT1_LT", lvl1 + self.rng.uniform(0, 0.15) * dt_sim)
         else:
             self.store.set_level_pct("AI_HLT1_LT", n(lvl1, 0.02))
-        _hlt1_lvl = self.store.get_level_pct("AI_HLT1_LT")
-        _hlt1_hi_sp = self._get("AI_HLT1_LS_HI_SP") if "AI_HLT1_LS_HI_SP" in self.store.all_tags() else 90.0
-        _hlt1_lo_sp = self._get("AI_HLT1_LS_LO_SP") if "AI_HLT1_LS_LO_SP" in self.store.all_tags() else 10.0
-        self._set("DI_HLT1_LS_HI", _hlt1_lvl >= _hlt1_hi_sp)
-        self._set("DI_HLT1_LS_LO", _hlt1_lvl <= _hlt1_lo_sp)
+        self._set("DI_HLT1_LS_HI", self.store.get_level_pct("AI_HLT1_LT") > 90)
+        self._set("DI_HLT1_LS_LO", self.store.get_level_pct("AI_HLT1_LT") < 10)
 
         # ── HLT 2 (mirror with slight offset) ──
         hlt2_sp = self._get("AO_HLT2_HEAT_SP")
@@ -280,21 +276,15 @@ class UtilitiesArea(AreaSimulator):
             self.store.set_level_pct("AI_HLT2_LT", lvl2 + self.rng.uniform(0, 0.14) * dt_sim)
         else:
             self.store.set_level_pct("AI_HLT2_LT", n(lvl2, 0.02))
-        _hlt2_lvl = self.store.get_level_pct("AI_HLT2_LT")
-        _hlt2_hi_sp = self._get("AI_HLT2_LS_HI_SP") if "AI_HLT2_LS_HI_SP" in self.store.all_tags() else 90.0
-        _hlt2_lo_sp = self._get("AI_HLT2_LS_LO_SP") if "AI_HLT2_LS_LO_SP" in self.store.all_tags() else 10.0
-        self._set("DI_HLT2_LS_HI", _hlt2_lvl >= _hlt2_hi_sp)
-        self._set("DI_HLT2_LS_LO", _hlt2_lvl <= _hlt2_lo_sp)
+        self._set("DI_HLT2_LS_HI", self.store.get_level_pct("AI_HLT2_LT") > 90)
+        self._set("DI_HLT2_LS_LO", self.store.get_level_pct("AI_HLT2_LT") < 10)
 
         # ── CLT ──
         clt_sp = self._get("AO_CLT_TEMP_SP")
         clt_t = phys.approach(self._get("AI_CLT_TT"), clt_sp, approach_rate * 2, dt_sim)
         self._set("AI_CLT_TT", n(clt_t, noise_std))
-        _clt_lvl = self.store.get_level_pct("AI_CLT_LT")
-        _clt_hi_sp = self._get("AI_CLT_LS_HI_SP") if "AI_CLT_LS_HI_SP" in self.store.all_tags() else 88.0
-        _clt_lo_sp = self._get("AI_CLT_LS_LO_SP") if "AI_CLT_LS_LO_SP" in self.store.all_tags() else 15.0
-        self._set("DI_CLT_LS_HI", _clt_lvl >= _clt_hi_sp)
-        self._set("DI_CLT_LS_LO", _clt_lvl <= _clt_lo_sp)
+        self._set("DI_CLT_LS_HI", self.store.get_level_pct("AI_CLT_LT") > 88)
+        self._set("DI_CLT_LS_LO", self.store.get_level_pct("AI_CLT_LT") < 15)
 
         # ── RO ──
         self._set("DI_RO_RUN", True)
@@ -308,23 +298,13 @@ class UtilitiesArea(AreaSimulator):
         glycol_fault = self._get("DI_GLYCOL_PUMP_FLT")
         if glycol_fault:
             self.chiller_fault_timer += dt_sim
-            # glicol para — flow zero, temperatura do supply sobe (perde resfriamento)
-            self._set("DI_GLYCOL_PUMP_RUN", False)
-            self._set("DI_CHILLER_RUN", False)
-            self._set("AI_GLYCOL_FLOW", 0.0)
-            self._set("AI_ELEC_KW_CHILLER", 0.0)
-            gly_cur = self._get("AI_GLYCOL_TT_SUP")
-            gly_warm = phys.approach(gly_cur, 15.0, approach_rate, dt_sim)  # aquece sem resfriamento
-            self._set("AI_GLYCOL_TT_SUP", n(gly_warm, 0.2))
-            self._set("AI_GLYCOL_TT_RET", n(gly_warm + 3.0, 0.3))
             if self.chiller_fault_timer > self.rng.uniform(60, 300):
-                self._clear_fault("DI_GLYCOL_PUMP_FLT", "DI_GLYCOL_PUMP_FLT_REASON")
-                self._clear_fault("DI_CHILLER_FAULT", "DI_CHILLER_FAULT_REASON")
+                self._set("DI_GLYCOL_PUMP_FLT", False)
                 self.chiller_fault_timer = 0.0
         else:
             if self._random_fault(0.0002, dt_sim):
-                self._trigger_fault("DI_GLYCOL_PUMP_FLT", "DI_GLYCOL_PUMP_FLT_REASON", "GLYCOL_PUMP")
-                self._trigger_fault("DI_CHILLER_FAULT", "DI_CHILLER_FAULT_REASON", "CHILLER")
+                self._set("DI_GLYCOL_PUMP_FLT", True)
+                self._set("DI_CHILLER_FAULT", True)
             else:
                 self._set("DI_GLYCOL_PUMP_RUN", True)
                 self._set("DI_CHILLER_RUN", True)
@@ -430,38 +410,17 @@ class BrewhouseLine(AreaSimulator):
     def _n(self, v, s=None):
         return phys.add_noise(v, s or self.noise_std, self.rng)
 
-    def _ls(self, lvl: float, base_tag: str, default_hi: float, default_lo: float):
-        """Evaluate LS_HI and LS_LO against setpoint tags if they exist."""
-        hi_sp_tag = base_tag + "_LS_HI_SP"
-        lo_sp_tag = base_tag + "_LS_LO_SP"
-        hi_sp = self._get(hi_sp_tag) if hi_sp_tag in self.store.all_tags() else default_hi
-        lo_sp = self._get(lo_sp_tag) if lo_sp_tag in self.store.all_tags() else default_lo
-        return lvl >= hi_sp, lvl <= lo_sp
-
     def tick(self, dt_sim: float) -> None:
         self.elapsed += dt_sim
         self.phase_elapsed += dt_sim
         t = self.tags
 
-        # Fault propagation: rake fault para o rake e corrente cai
+        # Fault propagation: if rake faulted, stop rake DO
         if self._get(t["mt_rake_flt"]):
             self._set(t["do_mt_rake"], False)
             self._set(t["mt_rake_run"], False)
             if self._random_recovery(300, dt_sim):
-                self._clear_fault(t["mt_rake_flt"], t["mt_rake_flt"] + "_REASON")
-
-        # Pump fault propagation
-        if self._get(t["pmp_mt_flt"]):
-            self._set(t["do_mt_pump"], False)
-            self._set(t["pmp_mt_run"], False)
-            if self._random_recovery(240, dt_sim):
-                self._clear_fault(t["pmp_mt_flt"], t["pmp_mt_flt"] + "_REASON")
-
-        if self._get(t["pmp_wp_flt"]):
-            self._set(t["do_wp_pump"], False)
-            self._set(t["pmp_wp_run"], False)
-            if self._random_recovery(240, dt_sim):
-                self._clear_fault(t["pmp_wp_flt"], t["pmp_wp_flt"] + "_REASON")
+                self._set(t["mt_rake_flt"], False)
 
         if self.state == BrewhouseState.IDLE:
             self._zero_all()
@@ -505,27 +464,19 @@ class BrewhouseLine(AreaSimulator):
     def _tick_mashing(self, dt_sim: float):
         t = self.tags
         step_dur, step_temp = self.mash_steps[self.mash_step]
-        boiler_ok = self._get("DI_BOILER_RUN")
-        # aquecimento só funciona se boiler está rodando
-        if boiler_ok:
-            mt_tt = phys.approach(self._get(t["ai_mt_tt"]), step_temp, self.approach_rate, dt_sim)
-        else:
-            # sem vapor: temperatura cai lentamente
-            mt_tt = phys.approach(self._get(t["ai_mt_tt"]), 20.0, self.approach_rate * 0.3, dt_sim)
+        # heat mash
+        mt_tt = phys.approach(self._get(t["ai_mt_tt"]), step_temp, self.approach_rate, dt_sim)
         self._set(t["ai_mt_tt"], self._n(mt_tt, 0.3))
         self._set(t["ao_mt_sp"], step_temp)
-        self._set(t["do_mt_heat"], boiler_ok)
-        rake_flt = self._get(t["mt_rake_flt"])
-        self._set(t["do_mt_rake"], not rake_flt)
-        self._set(t["mt_rake_run"], not rake_flt)
+        self._set(t["do_mt_heat"], True)
+        self._set(t["do_mt_rake"], True)
+        self._set(t["mt_rake_run"], not self._get(t["mt_rake_flt"]))
         # fill tank
         lvl = self._get_lvl(t["ai_mt_lt"])
         if lvl < 85:
             self._set_lvl(t["ai_mt_lt"], phys.fill_tank(lvl, self.fill_rate, dt_sim))
-        _mt_lvl = self._get_lvl(t["ai_mt_lt"])
-        _mt_hi, _mt_lo = self._ls(_mt_lvl, "AI_MT" + t["ai_mt_lt"][5] + "_LT", 90.0, 5.0)
-        self._set(t["mt_ls_hi"], _mt_hi)
-        self._set(t["mt_ls_lo"], _mt_lo)
+        self._set(t["mt_ls_hi"], self._get_lvl(t["ai_mt_lt"]) > 90)
+        self._set(t["mt_ls_lo"], self._get_lvl(t["ai_mt_lt"]) < 5)
         self._set(t["ai_mt_ph"], self._n(5.4, 0.05))
         self._set(t["ai_wort_brix"], self._n(13.5, 0.2))
         self._set(t["ai_elec_bh"], self._n(30.0, 2.0))
@@ -564,9 +515,8 @@ class BrewhouseLine(AreaSimulator):
         else:
             lt_fill = phys.drain_tank(lt_lvl, self.drain_rate * 0.3, dt_sim)
         self._set_lvl(t["ai_lt_lt"], lt_fill)
-        _lt_hi, _lt_lo = self._ls(lt_fill, "AI_LT" + t["ai_lt_lt"][5] + "_LT", 90.0, 5.0)
-        self._set(t["lt_ls_hi"], _lt_hi)
-        self._set(t["lt_ls_lo"], _lt_lo)
+        self._set(t["lt_ls_hi"], lt_fill > 90)
+        self._set(t["lt_ls_lo"], lt_fill < 5)
 
         kt_lvl = phys.fill_tank(self._get_lvl(t["ai_kt_lt"]), self.fill_rate * 0.4, dt_sim)
         self._set_lvl(t["ai_kt_lt"], kt_lvl)
@@ -588,30 +538,19 @@ class BrewhouseLine(AreaSimulator):
 
     def _tick_boiling(self, dt_sim: float):
         t = self.tags
-        boiler_ok = self._get("DI_BOILER_RUN")
-        if boiler_ok:
-            kt_tt = phys.approach(self._get(t["ai_kt_tt"]), 100.0, self.approach_rate * 2, dt_sim)
-            self._set(t["do_kt_heat"], True)
-        else:
-            # sem boiler: kettle perde temperatura
-            kt_tt = phys.approach(self._get(t["ai_kt_tt"]), 20.0, self.approach_rate * 0.5, dt_sim)
-            self._set(t["do_kt_heat"], False)
+        kt_tt = phys.approach(self._get(t["ai_kt_tt"]), 100.0, self.approach_rate * 2, dt_sim)
         self._set(t["ai_kt_tt"], self._n(kt_tt, 0.3))
-        _kt_lvl = self._get_lvl(t["ai_kt_lt"])
-        _kt_hi, _kt_lo = self._ls(_kt_lvl, "AI_KT" + t["ai_kt_lt"][5] + "_LT", 88.0, 5.0)
-        self._set(t["kt_ls_hi"], _kt_hi)
-        self._set(t["kt_ls_lo"], _kt_lo)
-        # Evaporação só ocorre se temperatura de ebulição atingida
-        if kt_tt > 97 and boiler_ok:
+        self._set(t["do_kt_heat"], True)
+        self._set(t["kt_ls_hi"], self._get_lvl(t["ai_kt_lt"]) > 88)
+        self._set(t["kt_ls_lo"], self._get_lvl(t["ai_kt_lt"]) < 5)
+        # Evaporate
+        if kt_tt > 97:
             evap = 0.08 / 3600  # 8%/hr → per second
             lvl = self._get_lvl(t["ai_kt_lt"]) * (1 - evap * dt_sim)
             self._set_lvl(t["ai_kt_lt"], lvl)
             steam = self._n(220.0, 10.0)
             self._set(t["ai_kt_steam"], steam)
             self._set(t["ai_elec_bh"], self._n(60.0, 3.0))
-        else:
-            self._set(t["ai_kt_steam"], 0.0)
-            self._set(t["ai_elec_bh"], self._n(2.0, 0.3))
         if self.phase_elapsed >= self.boil_dur:
             self._enter_whirlpool()
 
@@ -632,10 +571,8 @@ class BrewhouseLine(AreaSimulator):
             self._set_lvl(t["ai_kt_lt"], kt_lvl)
             wp_lvl = phys.fill_tank(self._get_lvl(t["ai_wp_lt"]), self.fill_rate * 0.8, dt_sim)
             self._set_lvl(t["ai_wp_lt"], wp_lvl)
-        _wp_lvl = self._get_lvl(t["ai_wp_lt"])
-        _wp_hi, _wp_lo = self._ls(_wp_lvl, "AI_WP" + t["ai_wp_lt"][5] + "_LT", 88.0, 5.0)
-        self._set(t["wp_ls_hi"], _wp_hi)
-        self._set(t["wp_ls_lo"], _wp_lo)
+        self._set(t["wp_ls_hi"], self._get_lvl(t["ai_wp_lt"]) > 88)
+        self._set(t["wp_ls_lo"], self._get_lvl(t["ai_wp_lt"]) < 5)
         # Cool slightly
         wp_tt = phys.approach(self._get(t["ai_wp_tt"]), 85.0, self.approach_rate * 0.5, dt_sim)
         self._set(t["ai_wp_tt"], self._n(wp_tt, 0.3))
@@ -715,17 +652,9 @@ class CoolingArea(AreaSimulator):
             fault = self.store.get(fault_tag)
             if fault:
                 if self._random_recovery(300, dt_sim):
-                    self._clear_fault(fault_tag, fault_tag + "_REASON")
-                # pump parada: flow zero, sem resfriamento
+                    self.store.set(fault_tag, False)
                 self.store.set(run_tag, False)
                 self.store.set(do_wort, False)
-                self.store.set(do_water, False)
-                self.store.set(flow, 0.0)
-                self.store.set(o2, 0.0)
-                # temperatura wort sobe sem resfriamento
-                t_out_cur = self.store.get(tt_out)
-                t_out_warm = phys.approach(t_out_cur, 85.0, approach_rate * 2, dt_sim)
-                self.store.set(tt_out, n(t_out_warm, 0.3))
                 continue
 
             if active and chiller_ok:
@@ -735,7 +664,6 @@ class CoolingArea(AreaSimulator):
                 self.store.set(o2_valve, True)
                 t_in = n(92.0, 1.0)
                 self.store.set(tt_in, t_in)
-                # target saída depende do chiller — sem chiller não resfria adequadamente
                 target_out = 20.0
                 t_out_cur = self.store.get(tt_out)
                 t_out = phys.approach(t_out_cur, target_out, approach_rate * 5, dt_sim)
@@ -743,15 +671,6 @@ class CoolingArea(AreaSimulator):
                 self.store.set(flow, n(600.0, 20.0))
                 self.store.set(o2, n(8.2, 0.3))
                 self.store.set(ao_water, n(75.0, 2.0))
-            elif active and not chiller_ok:
-                # pump ativa mas chiller falhou: wort não resfria adequadamente
-                self.store.set(run_tag, True)
-                self.store.set(do_wort, True)
-                self.store.set(flow, n(600.0, 20.0))
-                t_out_cur = self.store.get(tt_out)
-                t_out_warm = phys.approach(t_out_cur, 60.0, approach_rate * 3, dt_sim)
-                self.store.set(tt_out, n(t_out_warm, 0.5))
-                self.store.set(o2, 0.0)  # sem resfriamento adequado, DO não é injetado
             else:
                 self.store.set(run_tag, False)
                 self.store.set(do_wort, False)
@@ -761,7 +680,7 @@ class CoolingArea(AreaSimulator):
                 self.store.set(o2, 0.0)
                 self.store.set(ao_water, 0.0)
                 if self._random_fault(0.0001, dt_sim):
-                    self._trigger_fault(fault_tag, fault_tag + "_REASON", "HX_PUMP")
+                    self.store.set(fault_tag, True)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -818,15 +737,6 @@ class FVSimulator(AreaSimulator):
     def _n(self, v, s=0.05):
         return phys.add_noise(v, s, self.rng)
 
-    def _ls(self, lvl: float):
-        """Read LS setpoints from store for this FV."""
-        n = self.tags["lt"][4]  # FV number char e.g. '1'
-        hi_tag = f"AI_FV{n}_LS_HI_SP"
-        lo_tag = f"AI_FV{n}_LS_LO_SP"
-        hi_sp = self.store.get(hi_tag) if hi_tag in self.store.all_tags() else 90.0
-        lo_sp = self.store.get(lo_tag) if lo_tag in self.store.all_tags() else 5.0
-        return lvl >= hi_sp, lvl <= lo_sp
-
     def tick(self, dt_sim: float) -> None:
         self.elapsed += dt_sim
         self.phase_elapsed += dt_sim
@@ -842,9 +752,8 @@ class FVSimulator(AreaSimulator):
         elif ph == FermentationPhase.FILLING:
             lvl = phys.fill_tank(self._get_lvl(t["lt"]), self.fill_rate, dt_sim)
             self._set_lvl(t["lt"], lvl)
-            _ls_hi, _ls_lo = self._ls(lvl)
-            self._set(t["ls_hi"], _ls_hi)
-            self._set(t["ls_lo"], _ls_lo)
+            self._set(t["ls_hi"], lvl > 90)
+            self._set(t["ls_lo"], lvl < 5)
             self._set(t["tt"], self._n(20.0, 0.5))
             self._set(t["brix"], self._n(self.og, 0.2))
             self._set(t["ph"], self._n(5.4, 0.05))
@@ -853,16 +762,10 @@ class FVSimulator(AreaSimulator):
                 self._enter_lag()
 
         elif ph == FermentationPhase.LAG:
-            glycol_ok = self._get("DI_GLYCOL_PUMP_RUN")
             self._set(t["do_gly"], True)
             sp = self.active_temp_sp
             self._set(t["temp_sp"], sp)
-            if glycol_ok:
-                tt = phys.approach(self._get(t["tt"]), sp, self.approach_rate, dt_sim)
-            else:
-                # sem glicol: temperatura deriva para ambiente
-                tt = phys.approach(self._get(t["tt"]), 25.0, self.approach_rate * 0.5, dt_sim)
-            self._set(t["gly_run"], glycol_ok)
+            tt = phys.approach(self._get(t["tt"]), sp, self.approach_rate, dt_sim)
             self._set(t["tt"], self._n(tt, 0.1))
             self._set(t["pt"], self._n(0.05, 0.01))
             self._set(t["brix"], self._n(self.og, 0.1))
@@ -872,17 +775,12 @@ class FVSimulator(AreaSimulator):
 
         elif ph == FermentationPhase.ACTIVE:
             self.active_brix_elapsed += dt_sim
-            glycol_ok = self._get("DI_GLYCOL_PUMP_RUN")
             self._set(t["do_gly"], True)
             self._set(t["do_spund"], True)
-            self._set(t["gly_run"], glycol_ok)
+            self._set(t["gly_run"], True)
             sp = self.active_temp_sp
             self._set(t["temp_sp"], sp)
-            if glycol_ok:
-                tt = phys.approach(self._get(t["tt"]), sp, self.approach_rate * 2, dt_sim)
-            else:
-                # sem glicol: fermentação aquece descontroladamente
-                tt = phys.approach(self._get(t["tt"]), 32.0, self.approach_rate * 1.5, dt_sim)
+            tt = phys.approach(self._get(t["tt"]), sp, self.approach_rate * 2, dt_sim)
             self._set(t["tt"], self._n(tt, 0.1))
             # Brix drops
             brix = phys.fermentation_brix(self.active_brix_elapsed, self.og, self.fg, self.phase_durs[1])
@@ -892,10 +790,7 @@ class FVSimulator(AreaSimulator):
             pt = phys.pressure_from_co2(brix_drop, tt)
             self._set(t["pt"], self._n(pt, 0.02))
             self._set(t["do_vent"], pt > 1.8)
-            if pt > 2.5:
-                self._trigger_fault(t["prv"], t["prv"] + "_REASON", "FV_PRV")
-            else:
-                self._clear_fault(t["prv"], t["prv"] + "_REASON")
+            self._set(t["prv"], pt > 2.5)
             self._set(t["ph"], self._n(4.2 - brix_drop * 0.02, 0.05))
             co2 = self._n(brix_drop * 0.35, 0.1)
             self._set(t["co2"], max(0.0, co2))
@@ -914,14 +809,9 @@ class FVSimulator(AreaSimulator):
                 self._enter_cold_crash()
 
         elif ph == FermentationPhase.COLD_CRASH:
-            glycol_ok = self._get("DI_GLYCOL_PUMP_RUN")
             sp = self.cold_crash_sp
             self._set(t["temp_sp"], sp)
-            self._set(t["gly_run"], glycol_ok)
-            if glycol_ok:
-                tt = phys.approach(self._get(t["tt"]), sp, self.approach_rate * 0.5, dt_sim)
-            else:
-                tt = phys.approach(self._get(t["tt"]), 15.0, self.approach_rate * 0.3, dt_sim)
+            tt = phys.approach(self._get(t["tt"]), sp, self.approach_rate * 0.5, dt_sim)
             self._set(t["tt"], self._n(tt, 0.1))
             self._set(t["brix"], self._n(self.fg, 0.05))
             pt = phys.approach(self._get(t["pt"]), 0.5, self.approach_rate * 0.5, dt_sim)
@@ -933,9 +823,8 @@ class FVSimulator(AreaSimulator):
         elif ph == FermentationPhase.DRAINING:
             lvl = phys.drain_tank(self._get_lvl(t["lt"]), self.drain_rate * 0.5, dt_sim)
             self._set_lvl(t["lt"], lvl)
-            _ls_hi, _ls_lo = self._ls(lvl)
-            self._set(t["ls_hi"], _ls_hi)
-            self._set(t["ls_lo"], _ls_lo)
+            self._set(t["ls_hi"], lvl > 90)
+            self._set(t["ls_lo"], lvl < 5)
             if lvl <= 5:
                 self._reset()
 
@@ -1071,14 +960,6 @@ class BBTSimulator(AreaSimulator):
     def _n(self, v, s=0.05):
         return phys.add_noise(v, s, self.rng)
 
-    def _ls(self, lvl: float):
-        n = self.tags["lt"][5]  # BBT number char
-        hi_tag = f"AI_BBT{n}_LS_HI_SP"
-        lo_tag = f"AI_BBT{n}_LS_LO_SP"
-        hi_sp = self.store.get(hi_tag) if hi_tag in self.store.all_tags() else 90.0
-        lo_sp = self.store.get(lo_tag) if lo_tag in self.store.all_tags() else 5.0
-        return lvl >= hi_sp, lvl <= lo_sp
-
     def tick(self, dt_sim):
         self.elapsed += dt_sim
         self.phase_elapsed += dt_sim
@@ -1097,9 +978,8 @@ class BBTSimulator(AreaSimulator):
         elif self.state == BBTState.FILLING:
             lvl = phys.fill_tank(self._get_lvl(t["lt"]), self.fill_rate * 0.5, dt_sim)
             self._set_lvl(t["lt"], lvl)
-            _ls_hi, _ls_lo = self._ls(lvl)
-            self._set(t["ls_hi"], _ls_hi)
-            self._set(t["ls_lo"], _ls_lo)
+            self._set(t["ls_hi"], lvl > 90)
+            self._set(t["ls_lo"], lvl < 5)
             self._set(t["tt"], self._n(4.0, 0.3))
             self._set(t["ph"], self._n(4.1, 0.03))
             self._set(t["turb"], self._n(15.0, 2.0))
@@ -1109,13 +989,9 @@ class BBTSimulator(AreaSimulator):
                 self._set(t["do_carb"], True)
 
         elif self.state == BBTState.CARBONATING:
-            glycol_ok = self.store.get("DI_GLYCOL_PUMP_RUN")
             self._set(t["do_gly"], True)
             self._set(t["do_carb"], True)
-            if glycol_ok:
-                tt = phys.approach(self._get(t["tt"]), self.temp_sp, self.approach_rate, dt_sim)
-            else:
-                tt = phys.approach(self._get(t["tt"]), 15.0, self.approach_rate * 0.3, dt_sim)
+            tt = phys.approach(self._get(t["tt"]), self.temp_sp, self.approach_rate, dt_sim)
             self._set(t["tt"], self._n(tt, 0.1))
             self._set(t["temp_sp"], self.temp_sp)
             # CO2 rises
@@ -1131,12 +1007,8 @@ class BBTSimulator(AreaSimulator):
                 self.phase_elapsed = 0.0
 
         elif self.state == BBTState.READY:
-            glycol_ok = self.store.get("DI_GLYCOL_PUMP_RUN")
             self._set(t["do_gly"], True)
-            if glycol_ok:
-                tt = phys.approach(self._get(t["tt"]), self.temp_sp, self.approach_rate * 0.5, dt_sim)
-            else:
-                tt = phys.approach(self._get(t["tt"]), 15.0, self.approach_rate * 0.2, dt_sim)
+            tt = phys.approach(self._get(t["tt"]), self.temp_sp, self.approach_rate * 0.5, dt_sim)
             self._set(t["tt"], self._n(tt, 0.05))
             self._set(t["co2"], self._n(5.5, 0.05))
             self._set(t["pt"], self._n(self.carb_sp, 0.02))
@@ -1152,9 +1024,8 @@ class BBTSimulator(AreaSimulator):
         elif self.state == BBTState.DRAINING:
             lvl = phys.drain_tank(self._get_lvl(t["lt"]), self.drain_rate * 0.3, dt_sim)
             self._set_lvl(t["lt"], lvl)
-            _ls_hi, _ls_lo = self._ls(lvl)
-            self._set(t["ls_hi"], _ls_hi)
-            self._set(t["ls_lo"], _ls_lo)
+            self._set(t["ls_hi"], lvl > 90)
+            self._set(t["ls_lo"], lvl < 5)
             if lvl <= 5:
                 self.state = BBTState.EMPTY
                 self.phase_elapsed = 0.0
@@ -1231,10 +1102,10 @@ class PackagingArea(AreaSimulator):
         if keg_fault:
             keg_running = False
             if self._random_recovery(300, dt_sim):
-                self._clear_fault("DI_KEG_LINE_FLT", "DI_KEG_LINE_FLT_REASON")
+                self.store.set("DI_KEG_LINE_FLT", False)
         else:
             if self._random_fault(0.0001, dt_sim):
-                self._trigger_fault("DI_KEG_LINE_FLT", "DI_KEG_LINE_FLT_REASON", "KEG_LINE")
+                self.store.set("DI_KEG_LINE_FLT", True)
 
         self.store.set("DI_KEG_LINE_RUN", keg_running)
         self.store.set("DO_KEG_LINE_START", keg_running)
@@ -1265,10 +1136,10 @@ class PackagingArea(AreaSimulator):
         if can_fault:
             can_running = False
             if self._random_recovery(200, dt_sim):
-                self._clear_fault("DI_CAN_LINE_FLT", "DI_CAN_LINE_FLT_REASON")
+                self.store.set("DI_CAN_LINE_FLT", False)
         else:
             if self._random_fault(0.00015, dt_sim):
-                self._trigger_fault("DI_CAN_LINE_FLT", "DI_CAN_LINE_FLT_REASON", "CAN_LINE")
+                self.store.set("DI_CAN_LINE_FLT", True)
 
         self.store.set("DI_CAN_LINE_RUN", can_running)
         self.store.set("DO_CAN_LINE_START", can_running)
@@ -1399,99 +1270,496 @@ class CIPArea(AreaSimulator):
 # ─────────────────────────────────────────────────────────────────────────────
 
 class MESCalculator(AreaSimulator):
-    """Computes MES KPIs from raw IO values."""
+    """
+    MES KPI Calculator — Area a900_mes
+    Publica em brewery/a900_mes/<TAG>
+
+    Legado (compatibilidade)   : MES_OEE_*  MES_WATER_HL  MES_ACTIVE_ALARMS ...
+    Dashboard 1 - Plant Overview : MES_PLANT_*
+    Dashboard 2 - Producao & OEE : MES_MILL_*  MES_BH1_*  MES_BH2_*
+                                   MES_FERM_*  MES_PKG_*
+    Dashboard 3 - Utilities/Qual : MES_UTIL_*  MES_QUAL_*
+    """
 
     def __init__(self, store, cfg, rng, fermentation_area: FermentationArea,
                  packaging_area: PackagingArea, utilities_area: UtilitiesArea) -> None:
         super().__init__(store, cfg, rng)
         self.ferm = fermentation_area
-        self.pkg = packaging_area
+        self.pkg  = packaging_area
         self.util = utilities_area
-        self.bh1_fault_time = 0.0
-        self.bh2_fault_time = 0.0
-        self.bh1_run_time = 0.0
-        self.bh2_run_time = 0.0
-        self.pkg_fault_time = 0.0
-        self.pkg_run_time = 0.0
-        self.elapsed = 0.0
-        self.batches_today = 0
-        self.batch_timer = 0.0
-        self.batch_interval = 3600 * 8  # ~1 batch per 8h sim
+
+        # OEE accumulators
+        self.elapsed           = 0.0
+        self.bh1_run_time      = 0.0;  self.bh1_fault_time  = 0.0
+        self.bh2_run_time      = 0.0;  self.bh2_fault_time  = 0.0
+        self.pkg_run_time      = 0.0;  self.pkg_fault_time  = 0.0
+        self.mill_run_time     = 0.0;  self.mill_fault_time = 0.0
+        self.util_fault_time   = 0.0
+
+        # Producao acumulada
+        self.batches_today     = 0
+        self.batch_timer       = 0.0
+        self.batch_interval    = 3600 * 8      # 1 batch por 8h sim
+        self.hl_acc            = 0.0
+        self.prev_keg          = 0.0
+        self.prev_can          = 0.0
+
+        # Turno (8h) e dia (24h)
+        self.shift_timer       = 0.0;  self.shift_interval = 3600 * 8
+        self.day_timer         = 0.0;  self.day_interval   = 3600 * 24
+        self.shift_num         = 1
+        self.shift_hl          = 0.0;  self.shift_hl_prev  = 0.0
+        self.daily_hl          = 0.0;  self.daily_hl_prev  = 0.0
+        self.daily_batches     = 0
+        self.daily_alarms_max  = 0
+
+        # Historico qualidade (ultimas 6 bateladas)
+        self.q_att = [78.0 + i * 0.4 for i in range(6)]
+        self.q_abv = [5.0  + i * 0.1 for i in range(6)]
+        self.q_co2 = [5.3  + i * 0.02 for i in range(6)]
+
+        # Targets configuráveis
+        self.tgt_hl_shift  = 120.0
+        self.tgt_oee       = 80.0
+        self.tgt_water_hl  = 3.5
+        self.tgt_kwh_hl    = 55.0
+
+        # OEE coerente — cada área tem seu próprio "OEE alvo" que oscila
+        # lentamente entre OEE_MIN e OEE_MAX via random walk.
+        # A × P × Q são sempre derivados do OEE resultante, garantindo que
+        # a multiplicação seja exata.
+        self.OEE_MIN   = 77.0   # % — pior valor aceitável
+        self.OEE_MAX   = 96.0   # % — melhor valor aceitável
+        # Intervalo típico de cada componente (usado na decomposição)
+        self.AVAIL_MIN = 0.88;  self.AVAIL_MAX = 1.00
+        self.PERF_MIN  = 0.85;  self.PERF_MAX  = 0.98
+        self.QUAL_MIN  = 0.95;  self.QUAL_MAX  = 0.995
+        # Estado do random walk por área (começa no meio do range)
+        self.oee_bh1_rw  = 87.0
+        self.oee_bh2_rw  = 85.0
+        self.oee_pkg_rw  = 83.0
+        self.oee_mill_rw = 89.0
+        # Velocidade do random walk (% por segundo de sim)
+        self.OEE_DRIFT   = 0.02
+
+    # ── helpers ────────────────────────────────────────────────────────────
+    def _s(self, tag, val):    self.store.set(tag, val)
+    def _g(self, tag):         return self.store.get(tag)
+    def _n(self, v, s):        return phys.add_noise(v, s, self.rng)
+    def _cl(self, v, lo, hi):  return max(lo, min(hi, v))
+
+    def _count_fv_active(self):
+        return sum(1 for i in range(1, 7) if self._g(f"AI_FV{i}_LT") > 100)
+
+    def _fv_mean(self, suffix):
+        vals = [self._g(f"AI_FV{i}_{suffix}") for i in range(1, 7)
+                if self._g(f"AI_FV{i}_LT") > 100]
+        return sum(vals) / len(vals) if vals else 0.0
+
+    def _bbt_ready(self):
+        return sum(1 for i in range(1, 3)
+                   if self._g(f"AI_BBT{i}_LT") > 500 and self._g(f"AI_BBT{i}_CO2") > 4.5)
+
+    def _oee_walk(self, current, dt_sim):
+        """Random walk no range [OEE_MIN, OEE_MAX] com reversão à média."""
+        mid   = (self.OEE_MIN + self.OEE_MAX) / 2
+        # Força de reversão proporcional ao desvio da média
+        pull  = (mid - current) * 0.0001
+        step  = self.rng.gauss(0, self.OEE_DRIFT) * dt_sim + pull * dt_sim
+        return self._cl(current + step, self.OEE_MIN, self.OEE_MAX)
+
+    def _decompose_oee(self, oee_pct):
+        """
+        Distribui OEE% em Avail, Perf e Qual garantindo A × P × Q = OEE exato.
+
+        Estratégia sem clamp que quebre a identidade:
+          1. Sorteia Avail dentro de um range seguro
+          2. Sorteia Perf dentro de um range seguro
+          3. Qual = OEE / (Avail × Perf) — calculada exata
+          4. Os ranges de Avail e Perf são definidos de forma que
+             Qual resultante SEMPRE fique em [QUAL_MIN, QUAL_MAX]
+             sem precisar de clamp extra.
+        """
+        oee = oee_pct / 100.0
+
+        # ── Range de Avail e Perf que garante Qual dentro do limite ──────
+        # Qual = oee / (A × P)
+        # Qual_max = QUAL_MAX  →  A × P >= oee / QUAL_MAX
+        # Qual_min = QUAL_MIN  →  A × P <= oee / QUAL_MIN
+        ap_min = oee / self.QUAL_MAX   # produto mínimo de A×P
+        ap_max = oee / self.QUAL_MIN   # produto máximo de A×P
+
+        # Clampa ap dentro do possível dado os ranges individuais
+        ap_min = self._cl(ap_min, self.AVAIL_MIN * self.PERF_MIN,
+                                  self.AVAIL_MAX * self.PERF_MAX)
+        ap_max = self._cl(ap_max, ap_min,
+                                  self.AVAIL_MAX * self.PERF_MAX)
+
+        # Sorteia o produto A×P alvo dentro do range permitido
+        # Usa proporção do OEE para dar naturalidade (OEE alto → A×P mais alto)
+        t    = (oee_pct - self.OEE_MIN) / max(1e-6, self.OEE_MAX - self.OEE_MIN)
+        ap_t = ap_min + t * (ap_max - ap_min)
+        ap   = self._cl(self.rng.gauss(ap_t, (ap_max - ap_min) * 0.1),
+                        ap_min, ap_max)
+
+        # Distribui ap entre Avail e Perf dentro dos ranges individuais
+        # Avail recebe a maior parte (tipicamente > Perf em cervejarias)
+        avail_ideal = self._cl(ap ** 0.45, self.AVAIL_MIN, self.AVAIL_MAX)
+        avail       = self._cl(
+            self.rng.gauss(avail_ideal, 0.005),
+            self.AVAIL_MIN, self.AVAIL_MAX)
+
+        # Perf é determinado: P = ap / A (sem clamp extra que quebre ap)
+        perf = ap / max(avail, 1e-6)
+
+        # Se Perf saiu do range individual, ajusta Avail para compensar
+        # mas mantém ap fixo → Qual não muda
+        if perf > self.PERF_MAX:
+            perf  = self.PERF_MAX
+            avail = ap / perf
+        elif perf < self.PERF_MIN:
+            perf  = self.PERF_MIN
+            avail = ap / perf
+
+        avail = self._cl(avail, self.AVAIL_MIN, self.AVAIL_MAX)
+        perf  = ap / max(avail, 1e-6)   # recalcula para manter ap exato
+
+        # Qual é a folga — exata por construção
+        qual = oee / max(avail * perf, 1e-9)
+        qual = self._cl(qual, self.QUAL_MIN, self.QUAL_MAX)
+
+        # Ajuste final: reconstrói Perf de Qual para garantir identidade
+        # A × P × Q = oee  →  P = oee / (A × Q)
+        perf = oee / max(avail * qual, 1e-9)
+        perf = self._cl(perf, self.PERF_MIN, self.PERF_MAX)
+
+        return avail * 100, perf * 100, qual * 100
+
+    def _active_alarms(self):
+        return sum(1 for tag, st in self.store.all_tags().items()
+                   if ("FAULT" in tag or "FLT" in tag or "PRV" in tag)
+                   and isinstance(st.value, (int, float, bool)) and st.value)
+
+    def _alarms_by_area(self):
+        d = dict(milling=0, utilities=0, brewhouse=0, fermentation=0, packaging=0)
+        for tag, st in self.store.all_tags().items():
+            if ("FAULT" in tag or "FLT" in tag or "PRV" in tag) and st.value:
+                a = st.meta.area
+                if   "mill"  in a: d["milling"]      += 1
+                elif "util"  in a: d["utilities"]    += 1
+                elif "brew"  in a: d["brewhouse"]    += 1
+                elif "ferm"  in a: d["fermentation"] += 1
+                elif "pack"  in a: d["packaging"]    += 1
+        return d
 
     def tick(self, dt_sim):
-        self.elapsed += dt_sim
-        n = lambda v, s: phys.add_noise(v, s, self.rng)
-
-        # OEE counters
-        if self.store.get("DI_MT1_RAKE_RUN") or self.store.get("DI_KT1_LS_HI"):
-            self.bh1_run_time += dt_sim
-        if self.store.get("DI_MT1_RAKE_FLT") or self.store.get("DI_PMP_MT1_FLT"):
-            self.bh1_fault_time += dt_sim
-
-        if self.store.get("DI_MT2_RAKE_RUN") or self.store.get("DI_KT2_LS_HI"):
-            self.bh2_run_time += dt_sim
-        if self.store.get("DI_MT2_RAKE_FLT") or self.store.get("DI_PMP_MT2_FLT"):
-            self.bh2_fault_time += dt_sim
-
-        if self.store.get("DI_KEG_LINE_RUN") or self.store.get("DI_CAN_LINE_RUN"):
-            self.pkg_run_time += dt_sim
-        if self.store.get("DI_KEG_LINE_FLT") or self.store.get("DI_CAN_LINE_FLT"):
-            self.pkg_fault_time += dt_sim
-
-        total = max(1.0, self.elapsed)
-
-        avail_bh1 = max(0, 1 - self.bh1_fault_time / total)
-        avail_bh2 = max(0, 1 - self.bh2_fault_time / total)
-        avail_pkg = max(0, 1 - self.pkg_fault_time / total)
-
-        # OEE = A × P × Q (simplified: performance=0.88, quality=0.96)
-        perf = 0.88
-        qual = 0.96
-        self.store.set("MES_OEE_BH1", n(avail_bh1 * perf * qual * 100, 0.3))
-        self.store.set("MES_OEE_BH2", n(avail_bh2 * perf * qual * 100, 0.3))
-        self.store.set("MES_OEE_PKG", n(avail_pkg * perf * qual * 100, 0.5))
-
-        # Brewhouse efficiency
-        brix1 = self.store.get("AI_WORT1_BRIX")
-        brix2 = self.store.get("AI_WORT2_BRIX")
-        eff1 = min(100, max(0, (brix1 / 13.5) * 75 + n(0, 1.0))) if brix1 > 0 else n(75.0, 1.5)
-        eff2 = min(100, max(0, (brix2 / 13.5) * 75 + n(0, 1.0))) if brix2 > 0 else n(74.5, 1.5)
-        self.store.set("MES_BH_EFF_L1", eff1)
-        self.store.set("MES_BH_EFF_L2", eff2)
-
-        # Utility KPIs
-        total_water = self.store.get("AI_WATER_TOTAL")  # m3
-        total_kwh = self.store.get("AI_ELEC_KWH_TOT")
-        total_steam = self.store.get("AI_STEAM_TOTAL")  # kg
-        prod_hl = max(0.1, (self.pkg.keg_count * 0.02 + self.pkg.can_count * 0.000355))
-
-        self.store.set("MES_WATER_HL", n(total_water / prod_hl, 0.1))
-        self.store.set("MES_STEAM_HL", n(total_steam / 1000 / prod_hl, 0.5))
-        self.store.set("MES_KWH_HL", n(total_kwh / prod_hl, 0.2))
-
-        # CO2 recovery
-        co2_rec = self.ferm.co2_recovered
-        co2_con = max(0.001, self.ferm.co2_consumed)
-        self.store.set("MES_CO2_RECOVERY", n(min(100, co2_rec / co2_con * 100), 1.0))
-
-        # Beer loss
-        fv_bbt_loss = self.store.get("AI_BEER_LOSS_FV_BBT")
-        pack_loss = self.pkg.total_beer_loss
-        total_loss_pct = min(20, (fv_bbt_loss + pack_loss) / max(1, prod_hl * 100) * 100)
-        self.store.set("MES_BEER_LOSS_PCT", n(total_loss_pct, 0.1))
-
-        # Production today
-        self.store.set("MES_PROD_TODAY_HL", n(prod_hl, 0.5))
-
-        # Active alarms
-        active = sum(1 for tag, state in self.store.all_tags().items()
-                     if ("FAULT" in tag or "FLT" in tag or "PRV" in tag)
-                     and isinstance(state.value, (int, bool)) and state.value)
-        self.store.set("MES_ACTIVE_ALARMS", float(active))
-
-        # Batch counter
+        self.elapsed     += dt_sim
+        self.shift_timer += dt_sim
+        self.day_timer   += dt_sim
         self.batch_timer += dt_sim
+        n  = self._n
+        cl = self._cl
+
+        # ── Reset turno 8h ─────────────────────────────────────────────────
+        if self.shift_timer >= self.shift_interval:
+            self.shift_timer   = 0.0
+            self.shift_hl_prev = self.shift_hl
+            self.shift_hl      = 0.0
+            self.shift_num     = (self.shift_num % 3) + 1
+
+        # ── Reset dia 24h ──────────────────────────────────────────────────
+        if self.day_timer >= self.day_interval:
+            self.day_timer        = 0.0
+            self.daily_hl_prev    = self.daily_hl
+            self.daily_hl         = 0.0
+            self.daily_batches    = 0
+            self.daily_alarms_max = 0
+
+        # ── Batch counter + atualiza historico qualidade ───────────────────
         if self.batch_timer >= self.batch_interval:
             self.batches_today += 1
-            self.batch_timer = 0.0
-        self.store.set("MES_BATCH_COUNT", float(self.batches_today))
+            self.daily_batches += 1
+            self.batch_timer    = 0.0
+            og  = max(10.0, self._fv_mean("BRIX"))
+            fg  = og * self.rng.uniform(0.24, 0.28)
+            att = cl((og - fg) / max(0.1, og) * 100, 60, 90)
+            abv = cl((og - fg) * 0.131, 3.0, 9.0)
+            self.q_att = self.q_att[1:] + [att]
+            self.q_abv = self.q_abv[1:] + [abv]
+            self.q_co2 = self.q_co2[1:] + [n(5.3, 0.1)]
+
+        # ── Producao acumulada ─────────────────────────────────────────────
+        keg = self.pkg.keg_count
+        can = self.pkg.can_count
+        dhl = (max(0, keg - self.prev_keg) * 0.02
+               + max(0, can - self.prev_can) * 0.000355)
+        self.hl_acc   += dhl
+        self.shift_hl += dhl
+        self.daily_hl += dhl
+        self.prev_keg  = keg
+        self.prev_can  = can
+        prod_hl = max(0.1, self.hl_acc)
+
+        # ── OEE — random walk por área + decomposição coerente A×P×Q ──────
+        # Cada área tem um OEE "alvo" que oscila lentamente (77–96%).
+        # A, P e Q são derivados do OEE de forma que A × P × Q = OEE exato.
+        # Faults do processo puxam o OEE para baixo (−2 a −5 pp por falha ativa).
+
+        def _fault_penalty(fault_tags):
+            return sum(2.5 for t in fault_tags if self._g(t))
+
+        bh1_penalty  = _fault_penalty(["DI_MT1_RAKE_FLT", "DI_PMP_MT1_FLT"])
+        bh2_penalty  = _fault_penalty(["DI_MT2_RAKE_FLT", "DI_PMP_MT2_FLT"])
+        pkg_penalty  = _fault_penalty(["DI_KEG_LINE_FLT", "DI_CAN_LINE_FLT"])
+        mill_penalty = _fault_penalty(["DI_MILL_A_FAULT", "DI_MILL_B_FAULT"])
+
+        # Avança random walk e aplica penalidade de fault
+        self.oee_bh1_rw  = self._oee_walk(self.oee_bh1_rw,  dt_sim)
+        self.oee_bh2_rw  = self._oee_walk(self.oee_bh2_rw,  dt_sim)
+        self.oee_pkg_rw  = self._oee_walk(self.oee_pkg_rw,  dt_sim)
+        self.oee_mill_rw = self._oee_walk(self.oee_mill_rw, dt_sim)
+
+        oee_bh1  = cl(self.oee_bh1_rw  - bh1_penalty,  self.OEE_MIN, self.OEE_MAX)
+        oee_bh2  = cl(self.oee_bh2_rw  - bh2_penalty,  self.OEE_MIN, self.OEE_MAX)
+        oee_pkg  = cl(self.oee_pkg_rw  - pkg_penalty,  self.OEE_MIN, self.OEE_MAX)
+        oee_mill = cl(self.oee_mill_rw - mill_penalty, self.OEE_MIN, self.OEE_MAX)
+        oee_plt  = cl((oee_bh1 + oee_bh2 + oee_pkg + oee_mill) / 4,
+                       self.OEE_MIN, self.OEE_MAX)
+
+        # Decomposição: A, P, Q individuais por área — A × P × Q = OEE exato
+        avail_bh1, perf_bh1, qual_bh1   = self._decompose_oee(oee_bh1)
+        avail_bh2, perf_bh2, qual_bh2   = self._decompose_oee(oee_bh2)
+        avail_pkg, perf_pkg, qual_pkg    = self._decompose_oee(oee_pkg)
+        avail_mill, perf_mill, qual_mill = self._decompose_oee(oee_mill)
+
+        # Planta: média das áreas, com A×P×Q próprio coerente com oee_plt
+        avail_plt, perf_plt, qual_plt    = self._decompose_oee(oee_plt)
+
+        # Aliases legados (usados no resto do tick e nos tags legados)
+        a_bh1  = avail_bh1 / 100
+        a_bh2  = avail_bh2 / 100
+        a_pkg  = avail_pkg / 100
+        a_mill = avail_mill / 100
+        a_plt  = avail_plt  / 100
+        perf   = perf_plt   / 100
+        qual   = qual_plt   / 100
+
+        # ── Utilities ──────────────────────────────────────────────────────
+        t_water  = self._g("AI_WATER_TOTAL")
+        t_kwh    = self._g("AI_ELEC_KWH_TOT")
+        t_steam  = self._g("AI_STEAM_TOTAL")
+        kw_hlt   = self._g("AI_ELEC_KW_HLT")
+        kw_bh    = self._g("AI_ELEC_KW_BH1") + self._g("AI_ELEC_KW_BH2")
+        kw_chill = self._g("AI_ELEC_KW_CHILLER")
+        kw_pack  = self._g("AI_ELEC_KW_PACK")
+        kw_total = kw_hlt + kw_bh + kw_chill + kw_pack
+        water_hl = t_water / prod_hl
+        kwh_hl   = t_kwh   / prod_hl
+        steam_hl = t_steam / 1000 / prod_hl
+
+        # ── CO2 + Beer loss ────────────────────────────────────────────────
+        co2_rec  = self.ferm.co2_recovered
+        co2_con  = max(0.001, self.ferm.co2_consumed)
+        co2_pct  = cl(co2_rec / co2_con * 100, 0, 100)
+        loss_pct = cl((self._g("AI_BEER_LOSS_FV_BBT") + self.pkg.total_beer_loss)
+                      / max(1, prod_hl * 100) * 100, 0, 20)
+
+        # ── Qualidade ──────────────────────────────────────────────────────
+        avg_att = sum(self.q_att) / 6
+        avg_abv = sum(self.q_abv) / 6
+        avg_co2 = sum(self.q_co2) / 6
+
+        # ── Fermentacao ────────────────────────────────────────────────────
+        fv_active   = self._count_fv_active()
+        fv_avg_temp = self._fv_mean("TT")
+        fv_avg_brix = self._fv_mean("BRIX")
+        fv_avg_co2  = self._fv_mean("CO2_PPM")
+        bbt_ready   = self._bbt_ready()
+
+        # ── Alarmes ────────────────────────────────────────────────────────
+        alarms    = self._active_alarms()
+        alm_areas = self._alarms_by_area()
+        self.daily_alarms_max = max(self.daily_alarms_max, alarms)
+
+        # ── Metas turno ────────────────────────────────────────────────────
+        shift_pct = cl(self.shift_hl / max(0.1, self.tgt_hl_shift) * 100, 0, 150)
+        daily_pct = cl(self.daily_hl / max(0.1, self.tgt_hl_shift * 3) * 100, 0, 150)
+
+        # ── Brewhouse legado ───────────────────────────────────────────────
+        brix1 = self._g("AI_WORT1_BRIX")
+        brix2 = self._g("AI_WORT2_BRIX")
+        eff1  = (n(75.0, 1.5) if brix1 <= 0
+                 else cl((brix1 / 13.5) * 75 + n(0, 1), 0, 100))
+        eff2  = (n(74.5, 1.5) if brix2 <= 0
+                 else cl((brix2 / 13.5) * 75 + n(0, 1), 0, 100))
+
+        # ══════════════════════════════════════════════════════════════════
+        # LEGADO — mantém compatibilidade com tags existentes
+        # ══════════════════════════════════════════════════════════════════
+        self._s("MES_OEE_BH1",       round(oee_bh1,  2))
+        self._s("MES_OEE_BH2",       round(oee_bh2,  2))
+        self._s("MES_OEE_PKG",       round(oee_pkg,  2))
+        self._s("MES_BH_EFF_L1",     eff1)
+        self._s("MES_BH_EFF_L2",     eff2)
+        self._s("MES_WATER_HL",      n(water_hl, 0.1))
+        self._s("MES_STEAM_HL",      n(steam_hl, 0.5))
+        self._s("MES_KWH_HL",        n(kwh_hl,   0.2))
+        self._s("MES_CO2_RECOVERY",  n(co2_pct,  1.0))
+        self._s("MES_BEER_LOSS_PCT", n(loss_pct, 0.1))
+        self._s("MES_PROD_TODAY_HL", n(prod_hl,  0.5))
+        self._s("MES_ACTIVE_ALARMS", float(alarms))
+        self._s("MES_BATCH_COUNT",   float(self.batches_today))
+
+        # ══════════════════════════════════════════════════════════════════
+        # DASHBOARD 1 — Plant Overview
+        # Tópico: brewery/a900_mes/MES_PLANT_*
+        # ══════════════════════════════════════════════════════════════════
+
+        # Producao turno / dia / sessao
+        self._s("MES_PLANT_HL_SHIFT",        n(self.shift_hl,      0.3))
+        self._s("MES_PLANT_HL_SHIFT_PREV",   n(self.shift_hl_prev, 0.3))
+        self._s("MES_PLANT_HL_DAILY",        n(self.daily_hl,      0.5))
+        self._s("MES_PLANT_HL_DAILY_PREV",   n(self.daily_hl_prev, 0.5))
+        self._s("MES_PLANT_HL_SESSION",      n(prod_hl,            0.5))
+        self._s("MES_PLANT_SHIFT_NUM",       float(self.shift_num))
+        self._s("MES_PLANT_SHIFT_PCT",       n(shift_pct,          0.5))
+        self._s("MES_PLANT_DAILY_PCT",       n(daily_pct,          0.5))
+        self._s("MES_PLANT_TARGET_HL_SHIFT", self.tgt_hl_shift)
+        self._s("MES_PLANT_BATCH_TODAY",     float(self.daily_batches))
+        self._s("MES_PLANT_BATCH_TOTAL",     float(self.batches_today))
+
+        # OEE planta (A x P x Q — coerentes: A × P × Q = OEE exato)
+        self._s("MES_PLANT_OEE",             round(oee_plt,  2))
+        self._s("MES_PLANT_OEE_TARGET",      self.tgt_oee)
+        self._s("MES_PLANT_AVAIL",           round(avail_plt,2))
+        self._s("MES_PLANT_PERF",            round(perf_plt, 2))
+        self._s("MES_PLANT_QUAL",            round(qual_plt, 2))
+
+        # Alarmes por area
+        self._s("MES_PLANT_ALARMS_ACTIVE",   float(alarms))
+        self._s("MES_PLANT_ALARMS_DAILY",    float(self.daily_alarms_max))
+        self._s("MES_PLANT_ALM_MILLING",     float(alm_areas["milling"]))
+        self._s("MES_PLANT_ALM_UTILITIES",   float(alm_areas["utilities"]))
+        self._s("MES_PLANT_ALM_BREWHOUSE",   float(alm_areas["brewhouse"]))
+        self._s("MES_PLANT_ALM_FERM",        float(alm_areas["fermentation"]))
+        self._s("MES_PLANT_ALM_PACKAGING",   float(alm_areas["packaging"]))
+
+        # Qualidade / sustentabilidade resumo
+        self._s("MES_PLANT_BEER_LOSS_PCT",   n(loss_pct, 0.1))
+        self._s("MES_PLANT_CO2_RECOVERY",    n(co2_pct,  1.0))
+
+        # ══════════════════════════════════════════════════════════════════
+        # DASHBOARD 2 — Producao & OEE por area
+        # Tópico: brewery/a900_mes/MES_{AREA}_*
+        # ══════════════════════════════════════════════════════════════════
+
+        # Milling
+        self._s("MES_MILL_OEE",         round(oee_mill,  2))
+        self._s("MES_MILL_AVAIL",       round(avail_mill,2))
+        self._s("MES_MILL_A_RUN",       1.0 if self._g("DI_MILL_A_RUN")   else 0.0)
+        self._s("MES_MILL_B_RUN",       1.0 if self._g("DI_MILL_B_RUN")   else 0.0)
+        silo_a = self._g("AI_SILO_A_WT")
+        silo_b = self._g("AI_SILO_B_WT")
+        self._s("MES_MILL_SILO_A_WT",   n(silo_a, 0.5))
+        self._s("MES_MILL_SILO_B_WT",   n(silo_b, 0.5))
+        self._s("MES_MILL_SILO_A_PCT",  n(cl(silo_a / 5000 * 100, 0, 100), 0.3))
+        self._s("MES_MILL_SILO_B_PCT",  n(cl(silo_b / 5000 * 100, 0, 100), 0.3))
+
+        # Brewhouse Linha 1
+        self._s("MES_BH1_OEE",          round(oee_bh1,  2))
+        self._s("MES_BH1_AVAIL",        round(avail_bh1,2))
+        self._s("MES_BH1_MT_TEMP",      n(self._g("AI_MT1_TT"),    0.2))
+        self._s("MES_BH1_KT_TEMP",      n(self._g("AI_KT1_TT"),    0.2))
+        self._s("MES_BH1_WORT_BRIX",    n(self._g("AI_WORT1_BRIX"),0.1))
+        self._s("MES_BH1_KW",           n(self._g("AI_ELEC_KW_BH1"), 1.0))
+        self._s("MES_BH1_EFF",          eff1)
+
+        # Brewhouse Linha 2
+        self._s("MES_BH2_OEE",          round(oee_bh2,  2))
+        self._s("MES_BH2_AVAIL",        round(avail_bh2,2))
+        self._s("MES_BH2_MT_TEMP",      n(self._g("AI_MT2_TT"),    0.2))
+        self._s("MES_BH2_KT_TEMP",      n(self._g("AI_KT2_TT"),    0.2))
+        self._s("MES_BH2_WORT_BRIX",    n(self._g("AI_WORT2_BRIX"),0.1))
+        self._s("MES_BH2_KW",           n(self._g("AI_ELEC_KW_BH2"), 1.0))
+        self._s("MES_BH2_EFF",          eff2)
+
+        # Fermentacao resumo
+        self._s("MES_FERM_FV_ACTIVE",   float(fv_active))
+        self._s("MES_FERM_FV_IDLE",     float(6 - fv_active))
+        self._s("MES_FERM_AVG_TEMP",    n(fv_avg_temp, 0.1))
+        self._s("MES_FERM_AVG_BRIX",    n(fv_avg_brix, 0.05))
+        self._s("MES_FERM_AVG_CO2",     n(fv_avg_co2,  0.2))
+        self._s("MES_FERM_BBT_READY",   float(bbt_ready))
+
+        # Fermentacao per FV (FV1-6)
+        for i in range(1, 7):
+            self._s(f"MES_FERM_FV{i}_ACTIVE",
+                    1.0 if self._g(f"AI_FV{i}_LT") > 100 else 0.0)
+            self._s(f"MES_FERM_FV{i}_BRIX",
+                    n(self._g(f"AI_FV{i}_BRIX"), 0.05))
+            self._s(f"MES_FERM_FV{i}_TEMP",
+                    n(self._g(f"AI_FV{i}_TT"), 0.1))
+            self._s(f"MES_FERM_FV{i}_PRESS",
+                    n(self._g(f"AI_FV{i}_PT"), 0.01))
+
+        # Packaging
+        keg_hl = keg * 0.02
+        can_hl = can * 0.000355
+        self._s("MES_PKG_OEE",           round(oee_pkg,  2))
+        self._s("MES_PKG_AVAIL",         round(avail_pkg,2))
+        self._s("MES_PKG_KEG_RUN",       1.0 if self._g("DI_KEG_LINE_RUN") else 0.0)
+        self._s("MES_PKG_CAN_RUN",       1.0 if self._g("DI_CAN_LINE_RUN") else 0.0)
+        self._s("MES_PKG_KEG_COUNT",     float(keg))
+        self._s("MES_PKG_CAN_COUNT",     float(can))
+        self._s("MES_PKG_HL_KEG",        n(keg_hl, 0.1))
+        self._s("MES_PKG_HL_CAN",        n(can_hl, 0.05))
+        self._s("MES_PKG_HL_TOTAL",      n(keg_hl + can_hl, 0.1))
+        self._s("MES_PKG_BEER_LOSS_PCT", n(loss_pct, 0.1))
+
+        # ══════════════════════════════════════════════════════════════════
+        # DASHBOARD 3 — Utilities & Qualidade
+        # Tópico: brewery/a900_mes/MES_UTIL_*  MES_QUAL_*
+        # ══════════════════════════════════════════════════════════════════
+
+        # Consumos especificos vs metas
+        self._s("MES_UTIL_WATER_HL",     n(water_hl,  0.1))
+        self._s("MES_UTIL_KWH_HL",       n(kwh_hl,    0.2))
+        self._s("MES_UTIL_STEAM_HL",     n(steam_hl,  0.5))
+        self._s("MES_UTIL_TARGET_WATER", self.tgt_water_hl)
+        self._s("MES_UTIL_TARGET_KWH",   self.tgt_kwh_hl)
+        self._s("MES_UTIL_WATER_PCT",
+                n(cl(water_hl / self.tgt_water_hl * 100, 0, 200), 0.5))
+        self._s("MES_UTIL_KWH_PCT",
+                n(cl(kwh_hl   / self.tgt_kwh_hl   * 100, 0, 200), 0.5))
+
+        # Potencia instantanea por area
+        self._s("MES_UTIL_KW_HLT",       n(kw_hlt,   0.5))
+        self._s("MES_UTIL_KW_BH",        n(kw_bh,    1.0))
+        self._s("MES_UTIL_KW_CHILLER",   n(kw_chill, 1.0))
+        self._s("MES_UTIL_KW_PACK",      n(kw_pack,  0.5))
+        self._s("MES_UTIL_KW_TOTAL",     n(kw_total, 1.5))
+
+        # Totais acumulados na sessao
+        self._s("MES_UTIL_WATER_TOTAL",  n(t_water, 0.2))
+        self._s("MES_UTIL_STEAM_TOTAL",  n(t_steam, 1.0))
+        self._s("MES_UTIL_KWH_TOTAL",    n(t_kwh,   0.5))
+
+        # Status utilities
+        self._s("MES_UTIL_BOILER_RUN",   1.0 if self._g("DI_BOILER_RUN")  else 0.0)
+        self._s("MES_UTIL_CHILLER_RUN",  1.0 if self._g("DI_CHILLER_RUN") else 0.0)
+        self._s("MES_UTIL_GLYCOL_TEMP",  n(self._g("AI_GLYCOL_TT_SUP"), 0.05))
+        self._s("MES_UTIL_STEAM_PRESS",  n(self._g("AI_STEAM_PT"),       0.02))
+
+        # Qualidade media ultimas bateladas
+        self._s("MES_QUAL_AVG_ATT",      n(avg_att, 0.3))
+        self._s("MES_QUAL_AVG_ABV",      n(avg_abv, 0.05))
+        self._s("MES_QUAL_AVG_CO2",      n(avg_co2, 0.03))
+        self._s("MES_QUAL_BEER_LOSS",    n(loss_pct, 0.1))
+        self._s("MES_QUAL_CO2_RECOVERY", n(co2_pct,  1.0))
+
+        # Qualidade inline por FV
+        for i in range(1, 7):
+            self._s(f"MES_QUAL_FV{i}_ABV",
+                    n(cl(self.q_abv[i - 1], 0, 10), 0.05))
+            self._s(f"MES_QUAL_FV{i}_BRIX",
+                    n(self._g(f"AI_FV{i}_BRIX"), 0.05))
